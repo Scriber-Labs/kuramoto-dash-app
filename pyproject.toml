@@ -1,0 +1,19 @@
+[project]
+name = "kuramoto-dash-app"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "black>=26.5.1",
+    "dash>=4.4.1",
+    "kuramoto-benchmark-suite",
+    "matplotlib>=3.11.2",
+    "networkx>=3.7",
+    "numpy>=2.5.3",
+    "pandas>=3.0.6",
+    "plotly>=7.1.0",
+    "ruff>=0.16.8",
+    "scipy>=1.18.1",
+]
+
+[tool.uv.sources]
+kuramoto-benchmark-suite = { git = "https://github.com/Scriber-Labs/kuramoto-benchmark-suite.git" }
