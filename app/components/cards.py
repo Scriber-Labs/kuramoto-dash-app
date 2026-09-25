@@ -19,8 +19,8 @@ def metric_cards(data: dict[str, Any] | None, frame: int | None) -> html.Div | l
     idx = max(0, min(int(frame or 0), len(order) - 1))
 
     cards = [
-        ("Current r", f"{order[idx]:.3f}"),
-        ("Peak r", f"{np.max(order):.3f}"),
+        ("Current r", f"{float(order[idx]):.3f}"),
+        ("Peak r", f"{float(np.max(order)):.3f}"),
         ("Time", f"{float(time[idx]):.2f}s"),
         ("Oscillators", f"{theta.shape[1]}"),
     ]

@@ -7,7 +7,6 @@ from typing import Any
 
 import numpy as np
 from kuramoto.api import generate_kuramoto_dataset
-from kuramoto.config import parse_simulation_config
 from kuramoto.model import order_parameter
 from kuramoto.solvers import RotorSolver
 from kuramoto.topologies import load_topology

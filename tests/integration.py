@@ -7,9 +7,8 @@ import json
 
 import numpy as np
 
-from app.callbacks.visualization import register_visualization_callbacks
+from app.callbacks.visualization import handle_update_visuals
 from app.services import collect_config, export_dataset_npz, generate_dataset, package_simulation_payload
-from dash import Dash
 
 
 def test_end_to_end_simulation_and_export_pipeline() -> None:
@@ -42,10 +41,7 @@ def test_end_to_end_simulation_and_export_pipeline() -> None:
     assert len(payload["time"]) == 60
 
     # 4. Visualization figures generation
-    app = Dash(__name__)
-    register_visualization_callbacks(app)
-    update_fn = app.callback_map["unit-circle.figure"]["callback"]
-    figures_and_cards = update_fn(payload, frame=30)
+    figures_and_cards = handle_update_visuals(payload, frame=30)
     assert len(figures_and_cards) == 7
 
     # 5. Export to compressed benchmark .npz

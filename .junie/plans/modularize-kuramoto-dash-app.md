@@ -163,7 +163,7 @@ The Dash application layout is composed and interactive callbacks are wired acro
 - Implement `app/callbacks/dataset.py` managing timeline animation intervals and compressed `.npz` benchmark downloads.
 - Assemble and expose the application entry point in `app/app.py`.
 
-### * Step 5: Implement automated unit and integration tests
+### ✓ Step 5: Implement automated unit and integration tests
 A testing suite validates component generation, simulation execution, and callback logic without manual browser interaction.
 
 - Implement `tests/services.py` to verify simulation outputs, array shapes, and validation error handling.

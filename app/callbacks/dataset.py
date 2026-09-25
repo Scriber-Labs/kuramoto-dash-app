@@ -78,7 +78,9 @@ def register_dataset_callbacks(app: Dash) -> None:
         if not data:
             return None
 
+        dataset_data: dict[str, Any] = data
+
         def write_dataset(file_object: Any) -> None:
-            export_dataset_npz(data, file_object)
+            export_dataset_npz(dataset_data, file_object)
 
         return dcc.send_bytes(write_dataset, "kuramoto_benchmark.npz")

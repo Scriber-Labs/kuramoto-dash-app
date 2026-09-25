@@ -1,3 +1,7 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "kuramoto-dash-app"
 version = "0.1.0"
@@ -14,6 +18,11 @@ dependencies = [
     "ruff>=0.16.8",
     "scipy>=1.18.1",
 ]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]
+exclude = ["assets*", "notebooks*", "docs*", "tests*"]
 
 [tool.uv.sources]
 kuramoto-benchmark-suite = { git = "https://github.com/Scriber-Labs/kuramoto-benchmark-suite.git" }
