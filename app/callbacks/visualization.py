@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from typing import Any
-
 import numpy as np
 from dash import Dash, Input, Output
 import plotly.graph_objects as go
@@ -50,7 +49,9 @@ def handle_update_visuals(
     phase = theta[index]
     mean_field = np.mean(np.exp(1j * phase))
     osc_colors = network_colors(frequencies)
-    seed_val = int(data.get("config", {}).get("seed", 42))
+    config = data.get("config", {})
+    seed_val = int(config.get("seed", 42))
+    network_type = str(config.get("network_type", "All-to-All"))
 
     return (
         unit_circle_figure(
@@ -62,7 +63,7 @@ def handle_update_visuals(
         order_figure(time, order, index),
         phase_heatmap_figure(time, theta),
         phase_trajectories_figure(time, theta, frequencies),
-        network_figure(adjacency, frequencies, seed_val),
+        network_figure(adjacency, frequencies, seed_val, network_type=network_type),
         frequency_distribution_figure(frequencies),
         metric_cards(data, index),
     )

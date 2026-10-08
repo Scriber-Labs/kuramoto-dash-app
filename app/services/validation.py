@@ -29,6 +29,7 @@ def validate_simulation_inputs(
     frequency_mean: float | None = None,
     frequency_std: float | None = None,
     custom_frequencies: str | None = None,
+    custom_adjacency: str | None = None,
 ) -> dict[str, Any]:
     """Validate and sanitize user input simulation parameters.
 
@@ -37,15 +38,21 @@ def validate_simulation_inputs(
     ValueError
         If any parameter violates domain constraints or boundaries.
     """
-    try:
-        n = int(n_oscillators if n_oscillators is not None else DEFAULTS["n_oscillators"])
-    except (TypeError, ValueError) as err:
-        raise ValueError("Oscillator count must be an integer.") from err
+    net_type = (network_type or DEFAULTS["network_type"]).strip()
 
-    if n < MIN_OSCILLATORS:
-        raise ValueError(f"The model needs at least {MIN_OSCILLATORS} oscillators.")
-    if n > MAX_OSCILLATORS:
-        raise ValueError(f"The dashboard supports at most {MAX_OSCILLATORS} oscillators per run.")
+    # If Tree of Life is selected, n_oscillators is fixed to 10
+    if net_type.lower() in {"tree_of_life", "tree of life", "etz hayim"}:
+        n = 10
+    else:
+        try:
+            n = int(n_oscillators if n_oscillators is not None else DEFAULTS["n_oscillators"])
+        except (TypeError, ValueError) as err:
+            raise ValueError("Oscillator count must be an integer.") from err
+
+        if n < MIN_OSCILLATORS:
+            raise ValueError(f"The model needs at least {MIN_OSCILLATORS} oscillators.")
+        if n > MAX_OSCILLATORS:
+            raise ValueError(f"The dashboard supports at most {MAX_OSCILLATORS} oscillators per run.")
 
     try:
         total_time = float(simulation_time if simulation_time is not None else DEFAULTS["simulation_time"])
@@ -81,9 +88,9 @@ def validate_simulation_inputs(
         raise ValueError("Frequency standard deviation must be positive.")
 
     freq_dist = frequency_distribution or DEFAULTS["frequency_distribution"]
-    net_type = network_type or DEFAULTS["network_type"]
     solv = solver or DEFAULTS["solver"]
     cust_freq = str(custom_frequencies if custom_frequencies is not None else DEFAULTS["custom_frequencies"])
+    cust_adj = str(custom_adjacency if custom_adjacency is not None else DEFAULTS["custom_adjacency"])
 
     return {
         "n_oscillators": n,
@@ -97,4 +104,5 @@ def validate_simulation_inputs(
         "frequency_mean": mean_val,
         "frequency_std": std_val,
         "custom_frequencies": cust_freq,
+        "custom_adjacency": cust_adj,
     }

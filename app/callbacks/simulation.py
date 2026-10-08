@@ -3,9 +3,7 @@
 from __future__ import annotations
 
 from typing import Any
-
 from dash import Dash, Input, Output, State, ctx
-
 from app.services import collect_config, generate_dataset, package_simulation_payload
 
 
@@ -22,6 +20,7 @@ def handle_run_or_reset(
     frequency_mean: float | None,
     frequency_std: float | None,
     custom_frequencies: str | None,
+    custom_adjacency: str | None = None,
 ) -> tuple[dict[str, Any] | None, int, int, str]:
     """Execute simulation run or reset state."""
     if triggered_id == "reset-btn":
@@ -40,6 +39,7 @@ def handle_run_or_reset(
             frequency_mean=frequency_mean,
             frequency_std=frequency_std,
             custom_frequencies=custom_frequencies,
+            custom_adjacency=custom_adjacency,
         )
         dataset = generate_dataset(**config)
         payload = package_simulation_payload(dataset, config)
@@ -71,6 +71,7 @@ def register_simulation_callbacks(app: Dash) -> None:
         State("frequency-mean", "value"),
         State("frequency-std", "value"),
         State("custom-frequencies", "value"),
+        State("custom-adjacency", "value"),
         prevent_initial_call=True,
     )
     def run_or_reset(
@@ -87,6 +88,7 @@ def register_simulation_callbacks(app: Dash) -> None:
         frequency_mean: float | None,
         frequency_std: float | None,
         custom_frequencies: str | None,
+        custom_adjacency: str | None,
     ) -> tuple[dict[str, Any] | None, int, int, str]:
         return handle_run_or_reset(
             triggered_id=getattr(ctx, "triggered_id", None),
@@ -101,4 +103,5 @@ def register_simulation_callbacks(app: Dash) -> None:
             frequency_mean=frequency_mean,
             frequency_std=frequency_std,
             custom_frequencies=custom_frequencies,
+            custom_adjacency=custom_adjacency,
         )

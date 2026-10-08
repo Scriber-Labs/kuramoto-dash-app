@@ -25,7 +25,7 @@ include = ["app*"]
 exclude = ["assets*", "notebooks*", "docs*", "tests*"]
 
 [tool.uv.sources]
-kuramoto-benchmark-suite = { git = "https://github.com/Scriber-Labs/kuramoto-benchmark-suite.git" }
+kuramoto-benchmark-suite = { path = "../kuramoto-benchmark-suite", editable = true }
 
 [dependency-groups]
 dev = [

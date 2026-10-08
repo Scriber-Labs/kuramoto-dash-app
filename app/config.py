@@ -21,6 +21,7 @@ DEFAULTS: dict[str, Any] = {
     "bimodal_left": -1.0,
     "bimodal_right": 1.0,
     "custom_frequencies": "-2, -1, -0.5, 0, 0.5, 1, 2",
+    "custom_adjacency": "",
 }
 
 # Network and oscillator visual colorscale

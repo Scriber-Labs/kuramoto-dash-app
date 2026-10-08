@@ -3,9 +3,7 @@
 from __future__ import annotations
 
 from typing import Any
-
 from dash import dcc, html
-
 from app.config import DEFAULTS
 
 
@@ -34,13 +32,26 @@ def sidebar_controls() -> html.Aside:
                     id="network-type",
                     className="dash-dropdown",
                     options=[
-                        {"label": "All-to-all", "value": "All-to-All"},
-                        {"label": "Ring / nearest neighbor", "value": "Ring"},
-                        {"label": "Random sparse", "value": "Random"},
+                        {"label": "All-to-All", "value": "All-to-All"},
+                        {"label": "Ring / Nearest Neighbor", "value": "Ring"},
+                        {"label": "Random Sparse", "value": "Random"},
+                        {"label": "Small-World (Watts-Strogatz)", "value": "Small-World"},
+                        {"label": "Tree of Life (Etz Hayim)", "value": "Tree of Life"},
+                        {"label": "Custom Adjacency Matrix", "value": "Custom Adjacency"},
                     ],
                     value=DEFAULTS["network_type"],
                     clearable=False,
                 ),
+            ),
+            control_group(
+                "Custom Adjacency Matrix (Rows/CSV/JSON)",
+                dcc.Textarea(
+                    id="custom-adjacency",
+                    value=DEFAULTS["custom_adjacency"],
+                    placeholder="0 1 1\n1 0 1\n1 1 0",
+                    style={"width": "100%", "height": "60px", "fontSize": "12px"},
+                ),
+                "Used when Custom Adjacency Matrix is selected.",
             ),
             html.Div(
                 [
@@ -103,6 +114,7 @@ def sidebar_controls() -> html.Aside:
                     options=[
                         {"label": "RK45", "value": "RK45"},
                         {"label": "Euler", "value": "Euler"},
+                        {"label": "Rotor (GA Cl(2))", "value": "Rotor"},
                     ],
                     value=DEFAULTS["solver"],
                     className="radio-row",

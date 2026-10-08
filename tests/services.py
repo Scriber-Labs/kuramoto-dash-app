@@ -4,18 +4,21 @@ from __future__ import annotations
 
 import io
 import json
-
 import numpy as np
 import pytest
 
 from app.services.benchmark import export_dataset_npz, package_simulation_payload
+from app.services.cli_bridge import build_cli_config
+from app.services.diagnostics import DiagnosticRegistry, analyze_graph_topology, analyze_spectral_dynamics
+from app.services.distributions import DistributionRegistry
 from app.services.simulation import (
     build_adjacency,
     collect_config,
     generate_dataset,
     generate_frequencies,
-    parse_adjacency_text,
 )
+from app.services.solvers import SolverRegistry
+from app.services.topology import TopologyRegistry, parse_custom_adjacency
 from app.services.validation import validate_simulation_inputs
 
 
@@ -65,7 +68,7 @@ def test_generate_frequencies_distributions() -> None:
 
 def test_build_adjacency_topologies() -> None:
     n = 8
-    for net in ["All-to-All", "Ring", "Random"]:
+    for net in ["All-to-All", "Ring", "Random", "Small-World"]:
         adj = build_adjacency(net, n=n, seed=42)
         assert adj.shape == (n, n)
         assert np.all((adj == 0) | (adj == 1))
@@ -74,45 +77,71 @@ def test_build_adjacency_topologies() -> None:
         np.testing.assert_array_equal(np.diag(adj), np.zeros(n))
 
 
-def test_parse_adjacency_text() -> None:
+def test_tree_of_life_topology() -> None:
+    adj = build_adjacency("Tree of Life", n=10, seed=42)
+    assert adj.shape == (10, 10)
+    layout = TopologyRegistry.get_layout("tree_of_life", 10, adj)
+    assert len(layout) == 10
+    labels = TopologyRegistry.get_labels("tree_of_life", 10)
+    assert len(labels) == 10
+    assert labels[0] == "Keter"
+
+
+def test_custom_adjacency() -> None:
     text = "0 1 1\n1 0 1\n1 1 0"
-    parsed = parse_adjacency_text(text, 3)
+    parsed = parse_custom_adjacency(text, 3)
     assert parsed.shape == (3, 3)
-    assert np.all(parsed == np.array([[0, 1, 1], [1, 0, 1], [1, 1, 0]]))
+    np.testing.assert_array_equal(parsed, np.array([[0, 1, 1], [1, 0, 1], [1, 1, 0]]))
 
 
-def test_simulation_rk45_and_euler() -> None:
-    cfg_rk45 = collect_config(
-        n_oscillators=6,
-        coupling=2.0,
-        simulation_time=2.0,
-        dt=0.1,
+def test_simulation_solvers() -> None:
+    for solver_name in ["RK45", "Euler", "Rotor"]:
+        cfg = collect_config(
+            n_oscillators=6,
+            coupling=2.0,
+            simulation_time=1.0,
+            dt=0.1,
+            seed=42,
+            frequency_distribution="Normal",
+            network_type="All-to-All",
+            solver=solver_name,
+        )
+        ds = generate_dataset(**cfg)
+        assert "time" in ds
+        assert "theta" in ds
+        assert "order_parameter" in ds
+        assert ds["theta"].shape == (len(ds["time"]), 6)
+        assert len(ds["order_parameter"]) == len(ds["time"])
+        assert np.all((ds["order_parameter"] >= 0) & (ds["order_parameter"] <= 1.05))
+
+
+def test_diagnostics_and_graph_metrics() -> None:
+    adj = build_adjacency("Tree of Life", n=10)
+    topo = analyze_graph_topology(adj)
+    assert topo["n_nodes"] == 10
+    assert topo["is_connected"] is True
+    assert topo["density"] > 0
+
+    times = np.linspace(0, 10, 100)
+    order = np.cos(times) ** 2
+    spec = analyze_spectral_dynamics(times, order, dt=0.1)
+    assert "dt" in spec
+
+
+def test_cli_config_builder() -> None:
+    cfg = build_cli_config(
+        n_oscillators=10,
+        coupling_strength=1.5,
+        topology="small_world",
+        timesteps=200,
+        dt=0.05,
         seed=42,
-        frequency_distribution="Normal",
-        network_type="All-to-All",
-        solver="RK45",
+        solver="rotor",
     )
-    ds_rk45 = generate_dataset(**cfg_rk45)
-    assert "time" in ds_rk45
-    assert "theta" in ds_rk45
-    assert "order_parameter" in ds_rk45
-    assert ds_rk45["theta"].shape == (len(ds_rk45["time"]), 6)
-    assert len(ds_rk45["order_parameter"]) == len(ds_rk45["time"])
-    assert np.all((ds_rk45["order_parameter"] >= 0) & (ds_rk45["order_parameter"] <= 1.05))
-
-    cfg_euler = collect_config(
-        n_oscillators=6,
-        coupling=2.0,
-        simulation_time=2.0,
-        dt=0.1,
-        seed=42,
-        frequency_distribution="Normal",
-        network_type="All-to-All",
-        solver="Euler",
-    )
-    ds_euler = generate_dataset(**cfg_euler)
-    assert ds_euler["theta"].shape == (len(ds_euler["time"]), 6)
-    assert len(ds_euler["order_parameter"]) == len(ds_euler["time"])
+    assert cfg["n_oscillators"] == 10
+    assert cfg["coupling_strength"] == 1.5
+    assert cfg["solver"] == "rotor"
+    assert cfg["topology"] == "small_world"
 
 
 def test_benchmark_export() -> None:
@@ -140,6 +169,7 @@ def test_benchmark_export() -> None:
     assert "natural_frequencies" in loaded
     assert "adjacency" in loaded
     assert "metadata" in loaded
+    assert "graph_stats" in loaded
 
     meta = json.loads(str(loaded["metadata"]))
     assert meta["solver"] == "RK45"

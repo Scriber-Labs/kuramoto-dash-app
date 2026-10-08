@@ -46,7 +46,7 @@ def equation_card() -> html.Div:
         [
             html.Div("MODEL", className="eyebrow"),
             html.Div("dθᵢ/dt = ωᵢ + K/N Σ Aᵢⱼ sin(θⱼ − θᵢ)", className="equation"),
-            html.Div("Adaptive RK45 or fixed-step Euler", className="hero-footnote"),
+            html.Div("Adaptive RK45, fixed-step Euler, or GA Cl(2) Rotors", className="hero-footnote"),
         ],
         className="equation-card",
     )

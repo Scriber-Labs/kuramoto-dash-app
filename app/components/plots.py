@@ -8,6 +8,7 @@ import plotly.graph_objects as go
 from plotly.colors import sample_colorscale
 
 from app.config import NETWORK_COLORSCALE
+from app.services.topology import TopologyRegistry
 
 
 def empty_figure(title: str, message: str) -> go.Figure:
@@ -267,20 +268,35 @@ def phase_trajectories_figure(
     return figure
 
 
-def network_figure(adjacency: np.ndarray, frequencies: np.ndarray, seed: int) -> go.Figure:
+def network_figure(
+    adjacency: np.ndarray,
+    frequencies: np.ndarray,
+    seed: int,
+    network_type: str = "all_to_all",
+) -> go.Figure:
     """Render network coupling graph layout with nodes colored by intrinsic frequency."""
     graph = nx.from_numpy_array(adjacency)
-    if len(graph) <= 28:
+    n = len(graph)
+    net_key = (network_type or "all_to_all").strip().lower().replace(" ", "_").replace("-", "_")
+
+    if net_key in {"tree_of_life", "etz_hayim"}:
+        positions = TopologyRegistry.get_layout("tree_of_life", n, adjacency)
+        node_labels = TopologyRegistry.get_labels("tree_of_life", n)
+    elif n <= 28:
         positions = nx.spring_layout(graph, seed=seed, scale=1.0)
+        node_labels = {i: str(i + 1) for i in graph.nodes()}
     else:
         positions = nx.circular_layout(graph)
+        node_labels = {i: str(i + 1) for i in graph.nodes()}
 
     figure = base_figure("Coupling network")
     edge_x: list[float | None] = []
     edge_y: list[float | None] = []
     for left, right in graph.edges():
-        edge_x.extend([positions[left][0], positions[right][0], None])
-        edge_y.extend([positions[left][1], positions[right][1], None])
+        if left in positions and right in positions:
+            edge_x.extend([positions[left][0], positions[right][0], None])
+            edge_y.extend([positions[left][1], positions[right][1], None])
+
     figure.add_trace(
         go.Scatter(
             x=edge_x,
@@ -291,14 +307,16 @@ def network_figure(adjacency: np.ndarray, frequencies: np.ndarray, seed: int) ->
             showlegend=False,
         )
     )
-    node_x = [positions[i][0] for i in graph.nodes()]
-    node_y = [positions[i][1] for i in graph.nodes()]
+    node_x = [positions[i][0] for i in graph.nodes() if i in positions]
+    node_y = [positions[i][1] for i in graph.nodes() if i in positions]
+    display_texts = [str(node_labels.get(i, i + 1)) for i in graph.nodes() if i in positions]
+
     figure.add_trace(
         go.Scatter(
             x=node_x,
             y=node_y,
             mode="markers+text",
-            text=[str(i + 1) for i in graph.nodes()],
+            text=display_texts,
             textposition="middle center",
             textfont={"size": 9, "color": "#06101f"},
             marker={
@@ -311,7 +329,7 @@ def network_figure(adjacency: np.ndarray, frequencies: np.ndarray, seed: int) ->
                 "line": {"color": "rgba(255,255,255,.75)", "width": 1},
             },
             customdata=frequencies,
-            hovertemplate="oscillator %{text}<br>ω=%{customdata:.3f}<extra></extra>",
+            hovertemplate="Node: %{text}<br>ω=%{customdata:.3f}<extra></extra>",
             name="oscillators",
         )
     )
