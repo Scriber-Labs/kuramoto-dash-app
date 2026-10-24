@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from typing import Any, Callable, Dict, List, Optional, Tuple
+
 import numpy as np
 from scipy.integrate import solve_ivp
 
@@ -199,6 +200,12 @@ class SolverRegistry:
 
 
 # Register standard solvers
-SolverRegistry.register("rk45", SolverRegistry._solve_rk45, "RK45 (Adaptive Runge-Kutta)")
-SolverRegistry.register("euler", SolverRegistry._solve_euler, "Euler (Fixed-Step Explicit)")
-SolverRegistry.register("rotor", SolverRegistry._solve_rotor, "Rotor (Clifford Geometric Algebra Cl(2))")
+SolverRegistry.register(
+    "rk45", SolverRegistry._solve_rk45, "RK45 (Adaptive Runge-Kutta)"
+)
+SolverRegistry.register(
+    "euler", SolverRegistry._solve_euler, "Euler (Fixed-Step Explicit)"
+)
+SolverRegistry.register(
+    "rotor", SolverRegistry._solve_rotor, "Rotor (Clifford Geometric Algebra Cl(2))"
+)

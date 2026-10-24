@@ -3,11 +3,16 @@
 from __future__ import annotations
 
 import io
-import json
+
 import numpy as np
 
 from app.callbacks.visualization import handle_update_visuals
-from app.services import collect_config, export_dataset_npz, generate_dataset, package_simulation_payload
+from app.services import (
+    collect_config,
+    export_dataset_npz,
+    generate_dataset,
+    package_simulation_payload,
+)
 
 
 def test_end_to_end_simulation_and_export_pipeline() -> None:

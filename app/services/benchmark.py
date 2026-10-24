@@ -4,12 +4,15 @@ from __future__ import annotations
 
 import json
 from typing import Any, BinaryIO
+
 import numpy as np
 
 from app.services.diagnostics import analyze_graph_topology
 
 
-def package_simulation_payload(dataset: dict[str, Any], config: dict[str, Any]) -> dict[str, Any]:
+def package_simulation_payload(
+    dataset: dict[str, Any], config: dict[str, Any]
+) -> dict[str, Any]:
     """Package raw numpy dataset arrays and config into serializable JSON dictionary."""
     adj = np.asarray(dataset["adjacency"])
     graph_stats = analyze_graph_topology(adj)
@@ -27,9 +30,9 @@ def package_simulation_payload(dataset: dict[str, Any], config: dict[str, Any]) 
             "frequency_distribution": config.get("frequency_distribution", "normal"),
             "coupling": config.get("coupling", 2.0),
             "dt": config.get("dt", 0.05),
-            "seed": config.get("seed", 42),
+            "seed": config.get("seed", 27),
             "n_oscillators": config.get("n_oscillators", 24),
-            "simulation_time": config.get("simulation_time", 20.0),
+            "simulation_time": config.get("simulation_time", 50.0),
             "custom_adjacency": config.get("custom_adjacency", ""),
         },
     }

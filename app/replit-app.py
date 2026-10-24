@@ -8,16 +8,13 @@ from typing import Any
 import networkx as nx
 import numpy as np
 import plotly.graph_objects as go
-from dash import Dash, Input, Output, State, dcc, html, no_update
-from plotly.colors import sample_colorscale
-
 from benchmark_generator import (
     build_adjacency,
     generate_dataset,
     generate_frequencies,
-    parse_adjacency_text,
 )
-
+from dash import Dash, Input, Output, State, dcc, html, no_update
+from plotly.colors import sample_colorscale
 
 app = Dash(__name__, title="Kuramoto Lab")
 app.index_string = """<!DOCTYPE html>
@@ -168,7 +165,9 @@ def _unit_circle_figure(
                 hoverinfo="skip",
             )
         )
-    figure.update_xaxes(range=[-1.18, 1.18], visible=False, scaleanchor="y", scaleratio=1)
+    figure.update_xaxes(
+        range=[-1.18, 1.18], visible=False, scaleanchor="y", scaleratio=1
+    )
     figure.update_yaxes(range=[-1.18, 1.18], visible=False)
     figure.update_layout(showlegend=False, height=390)
     return figure
@@ -188,7 +187,12 @@ def _order_figure(time: np.ndarray, order: np.ndarray, frame: int) -> go.Figure:
                 x=time,
                 y=order,
                 mode="lines",
-                line={"color": color, "width": width, "shape": "spline", "smoothing": 0.55},
+                line={
+                    "color": color,
+                    "width": width,
+                    "shape": "spline",
+                    "smoothing": 0.55,
+                },
                 hoverinfo="skip",
                 showlegend=False,
             )
@@ -219,7 +223,9 @@ def _order_figure(time: np.ndarray, order: np.ndarray, frame: int) -> go.Figure:
             hovertemplate="t=%{x:.2f}<br>r=%{y:.3f}<extra></extra>",
         )
     )
-    figure.update_yaxes(title="order parameter r", range=[0, 1.02], gridcolor="rgba(160,180,220,.12)")
+    figure.update_yaxes(
+        title="order parameter r", range=[0, 1.02], gridcolor="rgba(160,180,220,.12)"
+    )
     figure.update_xaxes(title="time", gridcolor="rgba(160,180,220,.12)")
     figure.update_layout(
         height=300,
@@ -311,7 +317,9 @@ def _phase_trajectories_figure(
     return figure
 
 
-def _network_figure(adjacency: np.ndarray, frequencies: np.ndarray, seed: int) -> go.Figure:
+def _network_figure(
+    adjacency: np.ndarray, frequencies: np.ndarray, seed: int
+) -> go.Figure:
     graph = nx.from_numpy_array(adjacency)
     if len(graph) <= 28:
         positions = nx.spring_layout(graph, seed=seed, scale=1.0)
@@ -393,7 +401,10 @@ def _metrics(data: dict[str, Any], frame: int) -> html.Div:
     ]
     return html.Div(
         [
-            html.Div([html.Span(label, className="metric-label"), html.Strong(value)], className="metric-card")
+            html.Div(
+                [html.Span(label, className="metric-label"), html.Strong(value)],
+                className="metric-card",
+            )
             for label, value in cards
         ],
         className="metric-grid",
@@ -417,11 +428,11 @@ def _layout() -> html.Div:
                 [
                     html.Div(
                         [
-                             html.Img(
-                                 src="/assets/tse-logo.png",
-                                 alt="The Scriber Experience logo",
-                                 className="brand-mark",
-                             ),
+                            html.Img(
+                                src="/assets/tse-logo.png",
+                                alt="The Scriber Experience logo",
+                                className="brand-mark",
+                            ),
                             html.Div(
                                 [
                                     html.P("KURAMOTO LAB", className="eyebrow"),
@@ -447,7 +458,10 @@ def _layout() -> html.Div:
                         [
                             html.Div(
                                 [
-                                    html.P("Interactive Kuramoto model explorer", className="eyebrow"),
+                                    html.P(
+                                        "Interactive Kuramoto model explorer",
+                                        className="eyebrow",
+                                    ),
                                     html.H2("Tune a network. Watch coherence emerge."),
                                     html.P(
                                         "Use the controls to compare coupling regimes, inspect oscillator phases, "
@@ -460,8 +474,14 @@ def _layout() -> html.Div:
                             html.Div(
                                 [
                                     html.Div("MODEL", className="eyebrow"),
-                                    html.Div("dθᵢ/dt = ωᵢ + K/N Σ Aᵢⱼ sin(θⱼ − θᵢ)", className="equation"),
-                                    html.Div("Adaptive RK45 or fixed-step Euler", className="hero-footnote"),
+                                    html.Div(
+                                        "dθᵢ/dt = ωᵢ + K/N Σ Aᵢⱼ sin(θⱼ − θᵢ)",
+                                        className="equation",
+                                    ),
+                                    html.Div(
+                                        "Adaptive RK45 or fixed-step Euler",
+                                        className="hero-footnote",
+                                    ),
                                 ],
                                 className="equation-card",
                             ),
@@ -474,7 +494,10 @@ def _layout() -> html.Div:
                                 [
                                     html.Div(
                                         [
-                                            html.P("Simulation parameters", className="eyebrow"),
+                                            html.P(
+                                                "Simulation parameters",
+                                                className="eyebrow",
+                                            ),
                                             html.H3("Configure a run"),
                                         ],
                                         className="panel-heading",
@@ -485,9 +508,18 @@ def _layout() -> html.Div:
                                             id="network-type",
                                             className="dash-dropdown",
                                             options=[
-                                                {"label": "All-to-all", "value": "All-to-All"},
-                                                {"label": "Ring / nearest neighbor", "value": "Ring"},
-                                                {"label": "Random sparse", "value": "Random"},
+                                                {
+                                                    "label": "All-to-all",
+                                                    "value": "All-to-All",
+                                                },
+                                                {
+                                                    "label": "Ring / nearest neighbor",
+                                                    "value": "Ring",
+                                                },
+                                                {
+                                                    "label": "Random sparse",
+                                                    "value": "Random",
+                                                },
                                             ],
                                             value=DEFAULTS["network_type"],
                                             clearable=False,
@@ -567,10 +599,22 @@ def _layout() -> html.Div:
                                             className="dash-dropdown",
                                             options=[
                                                 {"label": "Normal", "value": "Normal"},
-                                                {"label": "Uniform", "value": "Uniform"},
-                                                {"label": "Bimodal", "value": "Bimodal"},
-                                                {"label": "Golden ratio sequence", "value": "Golden Ratio"},
-                                                {"label": "Custom values", "value": "Custom"},
+                                                {
+                                                    "label": "Uniform",
+                                                    "value": "Uniform",
+                                                },
+                                                {
+                                                    "label": "Bimodal",
+                                                    "value": "Bimodal",
+                                                },
+                                                {
+                                                    "label": "Golden ratio sequence",
+                                                    "value": "Golden Ratio",
+                                                },
+                                                {
+                                                    "label": "Custom values",
+                                                    "value": "Custom",
+                                                },
                                             ],
                                             value=DEFAULTS["frequency_distribution"],
                                             clearable=False,
@@ -580,11 +624,22 @@ def _layout() -> html.Div:
                                         [
                                             _control_group(
                                                 "Mean",
-                                                dcc.Input(id="frequency-mean", type="number", step=0.1, value=0.0),
+                                                dcc.Input(
+                                                    id="frequency-mean",
+                                                    type="number",
+                                                    step=0.1,
+                                                    value=0.0,
+                                                ),
                                             ),
                                             _control_group(
                                                 "Std. dev.",
-                                                dcc.Input(id="frequency-std", type="number", min=0.01, step=0.1, value=1.0),
+                                                dcc.Input(
+                                                    id="frequency-std",
+                                                    type="number",
+                                                    min=0.01,
+                                                    step=0.1,
+                                                    value=1.0,
+                                                ),
                                             ),
                                         ],
                                         className="field-row",
@@ -612,21 +667,35 @@ def _layout() -> html.Div:
                                     ),
                                     html.Div(
                                         [
-                                            html.Button("Run simulation", id="run-btn", className="button button-primary"),
-                                            html.Button("Reset", id="reset-btn", className="button button-quiet"),
+                                            html.Button(
+                                                "Run simulation",
+                                                id="run-btn",
+                                                className="button button-primary",
+                                            ),
+                                            html.Button(
+                                                "Reset",
+                                                id="reset-btn",
+                                                className="button button-quiet",
+                                            ),
                                         ],
                                         className="button-row",
                                     ),
                                     html.Div(id="run-status", className="run-status"),
                                     html.Div(
                                         [
-                                            html.P("Benchmark export", className="eyebrow"),
+                                            html.P(
+                                                "Benchmark export", className="eyebrow"
+                                            ),
                                             html.P(
                                                 "The current run uses the benchmark-suite schema and can be downloaded "
                                                 "as a compressed NumPy archive.",
                                                 className="panel-note",
                                             ),
-                                            html.Button("Download .npz dataset", id="download-btn", className="button button-secondary"),
+                                            html.Button(
+                                                "Download .npz dataset",
+                                                id="download-btn",
+                                                className="button button-secondary",
+                                            ),
                                         ],
                                         className="export-card",
                                     ),
@@ -635,13 +704,18 @@ def _layout() -> html.Div:
                             ),
                             html.Section(
                                 [
-                                    html.Div(id="metric-cards", className="metric-grid"),
+                                    html.Div(
+                                        id="metric-cards", className="metric-grid"
+                                    ),
                                     html.Div(
                                         [
                                             html.Div(
                                                 dcc.Graph(
                                                     id="unit-circle",
-                                                    figure=_empty_figure("Phase field", "Run a simulation to render oscillator phases."),
+                                                    figure=_empty_figure(
+                                                        "Phase field",
+                                                        "Run a simulation to render oscillator phases.",
+                                                    ),
                                                     config={"displayModeBar": False},
                                                 ),
                                                 className="chart-card chart-large",
@@ -649,7 +723,10 @@ def _layout() -> html.Div:
                                             html.Div(
                                                 dcc.Graph(
                                                     id="network-graph",
-                                                    figure=_empty_figure("Coupling network", "Network structure appears after a run."),
+                                                    figure=_empty_figure(
+                                                        "Coupling network",
+                                                        "Network structure appears after a run.",
+                                                    ),
                                                     config={"displayModeBar": False},
                                                 ),
                                                 className="chart-card",
@@ -662,7 +739,10 @@ def _layout() -> html.Div:
                                             html.Div(
                                                 dcc.Graph(
                                                     id="order-plot",
-                                                    figure=_empty_figure("Synchronization strength", "Run a simulation to chart r(t)."),
+                                                    figure=_empty_figure(
+                                                        "Synchronization strength",
+                                                        "Run a simulation to chart r(t).",
+                                                    ),
                                                     config={"displayModeBar": False},
                                                 ),
                                                 className="chart-card",
@@ -670,7 +750,10 @@ def _layout() -> html.Div:
                                             html.Div(
                                                 dcc.Graph(
                                                     id="frequency-plot",
-                                                    figure=_empty_figure("Natural frequency distribution", "The sampled ω values appear here."),
+                                                    figure=_empty_figure(
+                                                        "Natural frequency distribution",
+                                                        "The sampled ω values appear here.",
+                                                    ),
                                                     config={"displayModeBar": False},
                                                 ),
                                                 className="chart-card",
@@ -681,7 +764,10 @@ def _layout() -> html.Div:
                                     html.Div(
                                         dcc.Graph(
                                             id="phase-history",
-                                            figure=_empty_figure("Oscillator phase history", "The phase heatmap appears after a run."),
+                                            figure=_empty_figure(
+                                                "Oscillator phase history",
+                                                "The phase heatmap appears after a run.",
+                                            ),
                                             config={"displayModeBar": False},
                                         ),
                                         className="chart-card",
@@ -699,7 +785,10 @@ def _layout() -> html.Div:
                                     ),
                                     html.Div(
                                         [
-                                            html.Label("Inspect time slice", className="field-label"),
+                                            html.Label(
+                                                "Inspect time slice",
+                                                className="field-label",
+                                            ),
                                             html.Div(
                                                 [
                                                     dcc.Slider(
@@ -709,7 +798,10 @@ def _layout() -> html.Div:
                                                         value=0,
                                                         step=1,
                                                         updatemode="drag",
-                                                        tooltip={"placement": "bottom", "always_visible": False},
+                                                        tooltip={
+                                                            "placement": "bottom",
+                                                            "always_visible": False,
+                                                        },
                                                     ),
                                                     html.Button(
                                                         "Play animation",
@@ -731,7 +823,10 @@ def _layout() -> html.Div:
                 ],
                 className="page-shell",
             ),
-            html.Footer("Kuramoto Lab · Dash interface · reproducible simulation exports", className="footer"),
+            html.Footer(
+                "Kuramoto Lab · Dash interface · reproducible simulation exports",
+                className="footer",
+            ),
         ],
         className="app-shell",
     )
@@ -855,7 +950,12 @@ def run_or_reset(
             },
         }
         n_frames = len(dataset["time"])
-        return payload, n_frames - 1, 0, f"Generated {n_frames} frames · {config['solver']} · seed {config['seed']}"
+        return (
+            payload,
+            n_frames - 1,
+            0,
+            f"Generated {n_frames} frames · {config['solver']} · seed {config['seed']}",
+        )
     except (TypeError, ValueError) as error:
         return None, 1, 0, f"Could not run: {error}"
 
@@ -918,15 +1018,23 @@ def toggle_animation(
 def update_visuals(data: dict[str, Any] | None, frame: int | None):
     if not data:
         return (
-            _empty_figure("Phase field", "Run a simulation to explore oscillator phases."),
-            _empty_figure("Synchronization strength", "Run a simulation to chart r(t)."),
-            _empty_figure("Oscillator phase history", "The phase heatmap appears after a run."),
+            _empty_figure(
+                "Phase field", "Run a simulation to explore oscillator phases."
+            ),
+            _empty_figure(
+                "Synchronization strength", "Run a simulation to chart r(t)."
+            ),
+            _empty_figure(
+                "Oscillator phase history", "The phase heatmap appears after a run."
+            ),
             _empty_figure(
                 "Individual phase trajectories",
                 "Each oscillator gets a color-matched phase trace after a run.",
             ),
             _empty_figure("Coupling network", "Network structure appears after a run."),
-            _empty_figure("Natural frequency distribution", "The sampled ω values appear here."),
+            _empty_figure(
+                "Natural frequency distribution", "The sampled ω values appear here."
+            ),
             [],
         )
     time = np.asarray(data["time"], dtype=float)

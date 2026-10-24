@@ -10,15 +10,31 @@ from plotly.colors import sample_colorscale
 from app.config import NETWORK_COLORSCALE
 from app.services.topology import TopologyRegistry
 
+# High-contrast ADHD semantic palette for individual oscillators and multi-trace plots
+OSCILLATOR_PALETTE = [
+    "#00e8ff",  # Bright Cyan
+    "#22f792",  # Neon Emerald Green
+    "#9b7dff",  # Cosmic Violet
+    "#f78166",  # Coral Orange
+    "#ec4899",  # Hot Pink / Magenta
+    "#f5ce62",  # Warm Gold / Amber
+    "#14b5ff",  # Electric Blue
+    "#a78bfa",  # Light Lavender Purple
+    "#34d399",  # Emerald Mint
+    "#fb923c",  # Vivid Orange
+    "#f472b6",  # Rose Pink
+    "#38bdf8",  # Sky Blue
+]
+
 
 def empty_figure(title: str, message: str) -> go.Figure:
     """Return an empty placeholder figure styled with a diagnostic message."""
     figure = go.Figure()
     figure.update_layout(
-        title={"text": title, "font": {"size": 16, "color": "#14b5ff"}},
+        title={"text": title, "font": {"size": 16, "color": "#00e8ff"}},
         template="plotly_dark",
         paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(20,16,43,.22)",
+        plot_bgcolor="rgba(15, 12, 35, 0.45)",
         font={"family": "Aclonica, sans-serif", "color": "#8b949e"},
         annotations=[
             {
@@ -28,7 +44,7 @@ def empty_figure(title: str, message: str) -> go.Figure:
                 "x": 0.5,
                 "y": 0.5,
                 "showarrow": False,
-                "font": {"size": 14, "color": "#91a4c4"},
+                "font": {"size": 14, "color": "#c5f8ff"},
             }
         ],
         margin={"l": 28, "r": 18, "t": 54, "b": 28},
@@ -40,14 +56,14 @@ def base_figure(title: str) -> go.Figure:
     """Return a base figure configured with theme typography and styling."""
     figure = go.Figure()
     figure.update_layout(
-        title={"text": title, "x": 0.02, "font": {"size": 16, "color": "#14b5ff"}},
+        title={"text": title, "x": 0.02, "font": {"size": 16, "color": "#00e8ff"}},
         template="plotly_dark",
         paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(20, 16, 43, .76)",
+        plot_bgcolor="rgba(13, 17, 28, 0.65)",
         font={"family": "Aclonica, sans-serif", "color": "#8b949e"},
         margin={"l": 48, "r": 18, "t": 54, "b": 42},
         legend={"orientation": "h", "y": 1.02, "x": 0},
-        hoverlabel={"bgcolor": "#2a2050", "font": {"family": "Aclonica"}},
+        hoverlabel={"bgcolor": "#1e1642", "font": {"family": "Aclonica", "color": "#f0f6fc"}},
     )
     return figure
 
@@ -80,7 +96,7 @@ def unit_circle_figure(
             x=np.cos(circle),
             y=np.sin(circle),
             mode="lines",
-            line={"color": "rgba(20, 181, 255, .72)", "width": 2},
+            line={"color": "rgba(0, 232, 255, 0.75)", "width": 2.5},
             name="unit circle",
             hoverinfo="skip",
         )
@@ -90,7 +106,7 @@ def unit_circle_figure(
             x=[-1, 1, None, 0, 0],
             y=[0, 0, None, -1, 1],
             mode="lines",
-            line={"color": "rgba(158, 178, 215, .25)", "width": 1},
+            line={"color": "rgba(158, 178, 215, 0.3)", "width": 1},
             name="axes",
             hoverinfo="skip",
             showlegend=False,
@@ -98,7 +114,7 @@ def unit_circle_figure(
     )
     if len(theta):
         oscillator_colors = oscillator_colors or [
-            f"hsl({int(i * 300 / max(len(theta), 1))}, 88%, 66%)"
+            f"hsl({int(i * 360 / max(len(theta), 1))}, 92%, 65%)"
             for i in range(len(theta))
         ]
         figure.add_trace(
@@ -107,9 +123,9 @@ def unit_circle_figure(
                 y=np.sin(theta),
                 mode="markers",
                 marker={
-                    "size": 11,
+                    "size": 12,
                     "color": oscillator_colors,
-                    "line": {"color": "rgba(255,255,255,.65)", "width": 1},
+                    "line": {"color": "#ffffff", "width": 1.5},
                 },
                 text=[f"Oscillator {i + 1}" for i in range(len(theta))],
                 hovertemplate="%{text}<br>phase: %{customdata:.3f} rad<extra></extra>",
@@ -123,13 +139,15 @@ def unit_circle_figure(
                 x=[0, order * np.cos(order_phase)],
                 y=[0, order * np.sin(order_phase)],
                 mode="lines+markers",
-                line={"color": "#00f5db", "width": 4},
-                marker={"size": [2, 10], "color": "#00f5db"},
+                line={"color": "#22f792", "width": 4},
+                marker={"size": [3, 12], "color": "#22f792"},
                 name=f"mean field r={order:.3f}",
                 hoverinfo="skip",
             )
         )
-    figure.update_xaxes(range=[-1.18, 1.18], visible=False, scaleanchor="y", scaleratio=1)
+    figure.update_xaxes(
+        range=[-1.18, 1.18], visible=False, scaleanchor="y", scaleratio=1
+    )
     figure.update_yaxes(range=[-1.18, 1.18], visible=False)
     figure.update_layout(showlegend=False, height=390)
     return figure
@@ -142,9 +160,9 @@ def order_figure(time: np.ndarray, order: np.ndarray, frame: int) -> go.Figure:
         return figure
     frame = max(0, min(int(frame), len(order) - 1))
     glow_layers = [
-        ("rgba(118, 82, 245, .12)", 18),
-        ("rgba(0, 232, 255, .14)", 12),
-        ("rgba(0, 245, 219, .2)", 7),
+        ("rgba(121, 82, 245, 0.18)", 18),
+        ("rgba(0, 232, 255, 0.22)", 12),
+        ("rgba(34, 247, 146, 0.28)", 7),
     ]
     for color, width in glow_layers:
         figure.add_trace(
@@ -152,7 +170,12 @@ def order_figure(time: np.ndarray, order: np.ndarray, frame: int) -> go.Figure:
                 x=time,
                 y=order,
                 mode="lines",
-                line={"color": color, "width": width, "shape": "spline", "smoothing": 0.55},
+                line={
+                    "color": color,
+                    "width": width,
+                    "shape": "spline",
+                    "smoothing": 0.55,
+                },
                 hoverinfo="skip",
                 showlegend=False,
             )
@@ -162,9 +185,9 @@ def order_figure(time: np.ndarray, order: np.ndarray, frame: int) -> go.Figure:
             x=time,
             y=order,
             mode="lines",
-            line={"color": "#00f5db", "width": 3, "shape": "spline", "smoothing": 0.55},
+            line={"color": "#22f792", "width": 3, "shape": "spline", "smoothing": 0.55},
             fill="tozeroy",
-            fillcolor="rgba(0,245,219,.09)",
+            fillcolor="rgba(34, 247, 146, 0.12)",
             name="r(t)",
             hovertemplate="t=%{x:.2f}<br>r=%{y:.3f}<extra></extra>",
         )
@@ -175,18 +198,20 @@ def order_figure(time: np.ndarray, order: np.ndarray, frame: int) -> go.Figure:
             y=[order[frame]],
             mode="markers",
             marker={
-                "size": 11,
-                "color": "#00f5db",
-                "line": {"color": "#f5f3ff", "width": 2},
+                "size": 12,
+                "color": "#f78166",
+                "line": {"color": "#ffffff", "width": 2},
             },
             name="current frame",
             hovertemplate="t=%{x:.2f}<br>r=%{y:.3f}<extra></extra>",
         )
     )
-    figure.update_yaxes(title="order parameter r", range=[0, 1.02], gridcolor="rgba(160,180,220,.12)")
+    figure.update_yaxes(
+        title="order parameter r", range=[0, 1.02], gridcolor="rgba(160,180,220,.12)"
+    )
     figure.update_xaxes(title="time", gridcolor="rgba(160,180,220,.12)")
     figure.update_layout(
-        height=300,
+        height=390,
         shapes=[
             {
                 "type": "line",
@@ -194,7 +219,7 @@ def order_figure(time: np.ndarray, order: np.ndarray, frame: int) -> go.Figure:
                 "x1": time[frame],
                 "y0": 0,
                 "y1": 1,
-                "line": {"color": "rgba(0,245,219,.28)", "width": 1, "dash": "dot"},
+                "line": {"color": "rgba(247, 129, 102, 0.8)", "width": 2, "dash": "dot"},
             }
         ],
     )
@@ -202,23 +227,36 @@ def order_figure(time: np.ndarray, order: np.ndarray, frame: int) -> go.Figure:
 
 
 def phase_heatmap_figure(time: np.ndarray, theta: np.ndarray) -> go.Figure:
-    """Render phase heatmap across all oscillators and time steps."""
+    """Render phase heatmap across all oscillators and time steps with cyclic colormap."""
     figure = base_figure("Oscillator phase history")
     if not len(theta):
         return figure
+
+    # High-contrast cyclic colormap (no green, yellow, or orange)
+    # Seamlessly continuous from magenta at 0 rad through cosmic violet, deep blue, electric cyan (at π), and back to magenta (at 2π)
+    cyclic_phase_colorscale = [
+        [0.0, "#ec4899"],    # Magenta / Hot Pink (0 rad)
+        [0.2, "#8b5cf6"],    # Cosmic Violet
+        [0.35, "#1d4ed8"],   # Deep Royal Blue
+        [0.5, "#00f0ff"],    # High-contrast Electric Cyan (π rad)
+        [0.65, "#1d4ed8"],   # Deep Royal Blue
+        [0.8, "#8b5cf6"],    # Cosmic Violet
+        [1.0, "#ec4899"],    # Magenta / Hot Pink (2π rad - seamless loop to 0)
+    ]
+
     figure.add_trace(
         go.Heatmap(
             x=time,
             y=np.arange(1, theta.shape[1] + 1),
             z=np.mod(theta.T, 2 * np.pi),
-            colorscale=[
-                [0.0, "#161b22"],
-                [0.25, "#7652f5"],
-                [0.55, "#14b5ff"],
-                [0.8, "#00e8ff"],
-                [1.0, "#00f5db"],
-            ],
-            colorbar={"title": "phase", "tickvals": [0, np.pi, 2 * np.pi]},
+            zmin=0.0,
+            zmax=2 * np.pi,
+            colorscale=cyclic_phase_colorscale,
+            colorbar={
+                "title": "phase",
+                "tickvals": [0, np.pi, 2 * np.pi],
+                "ticktext": ["0", "π", "2π"],
+            },
             hovertemplate="t=%{x:.2f}<br>oscillator=%{y}<br>phase=%{z:.2f} rad<extra></extra>",
         )
     )
@@ -237,15 +275,24 @@ def phase_trajectories_figure(
     figure = base_figure("Individual phase trajectories")
     if not len(theta):
         return figure
-    colors = network_colors(frequencies)
+    n_oscillators = theta.shape[1]
+    if len(frequencies) == n_oscillators:
+        colors = network_colors(frequencies)
+    else:
+        colors = [OSCILLATOR_PALETTE[i % len(OSCILLATOR_PALETTE)] for i in range(n_oscillators)]
+
     unwrapped = np.unwrap(theta, axis=0)
-    for index in range(theta.shape[1]):
+    for index in range(n_oscillators):
+        osc_color = colors[index] if index < len(colors) else OSCILLATOR_PALETTE[index % len(OSCILLATOR_PALETTE)]
         figure.add_trace(
             go.Scatter(
                 x=time,
                 y=unwrapped[:, index],
                 mode="lines",
-                line={"color": colors[index] if index < len(colors) else "#14b5ff", "width": 2},
+                line={
+                    "color": osc_color,
+                    "width": 2.2,
+                },
                 name=f"Oscillator {index + 1}",
                 hovertemplate=(
                     f"Oscillator {index + 1}<br>"
@@ -277,7 +324,13 @@ def network_figure(
     """Render network coupling graph layout with nodes colored by intrinsic frequency."""
     graph = nx.from_numpy_array(adjacency)
     n = len(graph)
-    net_key = (network_type or "all_to_all").strip().lower().replace(" ", "_").replace("-", "_")
+    net_key = (
+        (network_type or "all_to_all")
+        .strip()
+        .lower()
+        .replace(" ", "_")
+        .replace("-", "_")
+    )
 
     if net_key in {"tree_of_life", "etz_hayim"}:
         positions = TopologyRegistry.get_layout("tree_of_life", n, adjacency)
@@ -302,14 +355,16 @@ def network_figure(
             x=edge_x,
             y=edge_y,
             mode="lines",
-            line={"color": "rgba(95, 132, 189, .35)", "width": 1},
+            line={"color": "rgba(0, 232, 255, 0.28)", "width": 1.2},
             hoverinfo="skip",
             showlegend=False,
         )
     )
     node_x = [positions[i][0] for i in graph.nodes() if i in positions]
     node_y = [positions[i][1] for i in graph.nodes() if i in positions]
-    display_texts = [str(node_labels.get(i, i + 1)) for i in graph.nodes() if i in positions]
+    display_texts = [
+        str(node_labels.get(i, i + 1)) for i in graph.nodes() if i in positions
+    ]
 
     figure.add_trace(
         go.Scatter(
@@ -326,7 +381,7 @@ def network_figure(
                 "cmax": float(np.max(frequencies)) if len(frequencies) else 1,
                 "colorscale": NETWORK_COLORSCALE,
                 "colorbar": {"title": "ω"},
-                "line": {"color": "rgba(255,255,255,.75)", "width": 1},
+                "line": {"color": "rgba(255,255,255,.85)", "width": 1.5},
             },
             customdata=frequencies,
             hovertemplate="Node: %{text}<br>ω=%{customdata:.3f}<extra></extra>",
@@ -348,7 +403,10 @@ def frequency_distribution_figure(frequencies: np.ndarray) -> go.Figure:
         go.Histogram(
             x=frequencies,
             nbinsx=min(18, max(6, len(frequencies) // 2)),
-            marker={"color": "#7652f5", "line": {"color": "#00e8ff", "width": 1}},
+            marker={
+                "color": "rgba(118, 82, 245, 0.75)",
+                "line": {"color": "#00e8ff", "width": 1.5},
+            },
             hovertemplate="ω range: %{x}<br>count: %{y}<extra></extra>",
             name="frequency",
         )

@@ -8,9 +8,9 @@ from typing import Any
 DEFAULTS: dict[str, Any] = {
     "n_oscillators": 24,
     "coupling": 2.0,
-    "simulation_time": 20.0,
+    "simulation_time": 50.0,
     "dt": 0.05,
-    "seed": 42,
+    "seed": 27,
     "frequency_distribution": "Normal",
     "network_type": "All-to-All",
     "solver": "RK45",
@@ -24,12 +24,14 @@ DEFAULTS: dict[str, Any] = {
     "custom_adjacency": "",
 }
 
-# Network and oscillator visual colorscale
+# Network and oscillator visual colorscale (ADHD high-contrast multi-color spectrum)
 NETWORK_COLORSCALE = [
-    [0.0, "#7652f5"],
-    [0.35, "#5280ff"],
-    [0.7, "#14b5ff"],
-    [1.0, "#22f792"],
+    [0.0, "#7652f5"],    # Cosmic Violet
+    [0.2, "#14b5ff"],    # Electric Blue
+    [0.4, "#00e8ff"],    # Bright Cyan
+    [0.6, "#22f792"],    # Neon Emerald Green
+    [0.8, "#f5ce62"],    # Warm Gold / Amber
+    [1.0, "#f78166"],    # Coral / Orange
 ]
 
 # Validation boundaries

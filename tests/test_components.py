@@ -6,7 +6,6 @@ import numpy as np
 import plotly.graph_objects as go
 
 from app.components import (
-    control_group,
     empty_figure,
     equation_card,
     footer_section,
@@ -65,6 +64,13 @@ def test_phase_heatmap_figure() -> None:
     assert isinstance(fig, go.Figure)
     assert len(fig.data) == 1
     assert isinstance(fig.data[0], go.Heatmap)
+    heatmap = fig.data[0]
+    # Verify cyclic colorscale continuous endpoints
+    colorscale = heatmap.colorscale
+    assert colorscale[0][1] == colorscale[-1][1]  # 0 and 2π map to identical color
+    # Verify tick marks and labels
+    assert list(heatmap.colorbar.tickvals) == [0, np.pi, 2 * np.pi]
+    assert list(heatmap.colorbar.ticktext) == ["0", "π", "2π"]
 
 
 def test_phase_trajectories_figure() -> None:
@@ -106,7 +112,9 @@ def test_cards_and_controls() -> None:
 
     assert equation_card() is not None
     assert hero_section() is not None
-    assert header_section() is not None
-    assert footer_section() is not None
+    header = header_section()
+    assert header is not None
+    footer = footer_section()
+    assert footer is not None
     assert sidebar_controls() is not None
     assert timeline_controls() is not None

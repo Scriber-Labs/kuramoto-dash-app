@@ -4,12 +4,13 @@ from __future__ import annotations
 
 import json
 from typing import Any, Optional
-import numpy as np
 
+import numpy as np
 from kuramoto.model import order_parameter
-from app.services.topology import TopologyRegistry, parse_custom_adjacency
-from app.services.solvers import SolverRegistry
+
 from app.services.distributions import DistributionRegistry
+from app.services.solvers import SolverRegistry
+from app.services.topology import TopologyRegistry, parse_custom_adjacency
 from app.services.validation import validate_simulation_inputs
 
 
@@ -30,13 +31,25 @@ def build_cli_simulation_json(
     timesteps = max(2, int(np.round(simulation_time / dt)))
     dist_type = frequency_distribution.strip().lower()
 
-    freq_dict: dict[str, Any] = {"type": "normal", "mean": frequency_mean, "std": frequency_std}
+    freq_dict: dict[str, Any] = {
+        "type": "normal",
+        "mean": frequency_mean,
+        "std": frequency_std,
+    }
     if dist_type in {"uniform", "flat"}:
         half_width = frequency_std * np.sqrt(3)
-        freq_dict = {"type": "uniform", "low": frequency_mean - half_width, "high": frequency_mean + half_width}
+        freq_dict = {
+            "type": "uniform",
+            "low": frequency_mean - half_width,
+            "high": frequency_mean + half_width,
+        }
     elif dist_type in {"custom"}:
         try:
-            tokens = [float(item.strip()) for item in custom_frequencies.split(",") if item.strip()]
+            tokens = [
+                float(item.strip())
+                for item in custom_frequencies.split(",")
+                if item.strip()
+            ]
             freq_dict = {"type": "custom", "values": tokens}
         except Exception:
             freq_dict = {"type": "normal", "mean": frequency_mean, "std": frequency_std}
@@ -67,7 +80,9 @@ def generate_frequencies(
     parsed_custom: Optional[list[float]] = None
     if custom_values:
         try:
-            parsed_custom = [float(item.strip()) for item in custom_values.split(",") if item.strip()]
+            parsed_custom = [
+                float(item.strip()) for item in custom_values.split(",") if item.strip()
+            ]
         except Exception:
             parsed_custom = None
 
@@ -88,7 +103,13 @@ def build_adjacency(
     custom_text: str = "",
 ) -> np.ndarray:
     """Build adjacency matrix for the specified network topology using TopologyRegistry."""
-    net = (network_type or "all_to_all").strip().lower().replace(" ", "_").replace("-", "_")
+    net = (
+        (network_type or "all_to_all")
+        .strip()
+        .lower()
+        .replace(" ", "_")
+        .replace("-", "_")
+    )
 
     if net in {"custom", "custom_matrix", "custom_adjacency"}:
         return parse_custom_adjacency(custom_text, n_expected=n)

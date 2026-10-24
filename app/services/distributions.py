@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from typing import Any, Callable, Dict, List, Optional
+
 import numpy as np
 
 
@@ -49,29 +50,52 @@ class DistributionRegistry:
         return dist_fn(n=n, seed=seed, custom_values=custom_values, **kwargs)
 
     @staticmethod
-    def _sample_normal(n: int, mean: float = 0.0, std: float = 1.0, seed: Optional[int] = None, **kwargs: Any) -> np.ndarray:
+    def _sample_normal(
+        n: int,
+        mean: float = 0.0,
+        std: float = 1.0,
+        seed: Optional[int] = None,
+        **kwargs: Any,
+    ) -> np.ndarray:
         rng = np.random.default_rng(seed)
         return rng.normal(loc=mean, scale=std, size=n)
 
     @staticmethod
-    def _sample_uniform(n: int, low: float = -1.0, high: float = 1.0, seed: Optional[int] = None, **kwargs: Any) -> np.ndarray:
+    def _sample_uniform(
+        n: int,
+        low: float = -1.0,
+        high: float = 1.0,
+        seed: Optional[int] = None,
+        **kwargs: Any,
+    ) -> np.ndarray:
         rng = np.random.default_rng(seed)
         return rng.uniform(low=low, high=high, size=n)
 
     @staticmethod
-    def _sample_bimodal(n: int, mean1: float = -1.0, mean2: float = 1.0, std: float = 0.3, seed: Optional[int] = None, **kwargs: Any) -> np.ndarray:
+    def _sample_bimodal(
+        n: int,
+        mean1: float = -1.0,
+        mean2: float = 1.0,
+        std: float = 0.3,
+        seed: Optional[int] = None,
+        **kwargs: Any,
+    ) -> np.ndarray:
         rng = np.random.default_rng(seed)
         n1 = n // 2
         n2 = n - n1
-        samples = np.concatenate([
-            rng.normal(loc=mean1, scale=std, size=n1),
-            rng.normal(loc=mean2, scale=std, size=n2),
-        ])
+        samples = np.concatenate(
+            [
+                rng.normal(loc=mean1, scale=std, size=n1),
+                rng.normal(loc=mean2, scale=std, size=n2),
+            ]
+        )
         rng.shuffle(samples)
         return samples
 
     @staticmethod
-    def _sample_golden_ratio(n: int, base: float = 1.0, seed: Optional[int] = None, **kwargs: Any) -> np.ndarray:
+    def _sample_golden_ratio(
+        n: int, base: float = 1.0, seed: Optional[int] = None, **kwargs: Any
+    ) -> np.ndarray:
         phi = (1 + np.sqrt(5)) / 2
         # Deterministic golden ratio sequence centered around 0
         indices = np.arange(1, n + 1)
@@ -79,7 +103,12 @@ class DistributionRegistry:
         return (samples - 0.5) * base * 2.0
 
     @staticmethod
-    def _sample_custom(n: int, custom_values: Optional[List[float]] = None, seed: Optional[int] = None, **kwargs: Any) -> np.ndarray:
+    def _sample_custom(
+        n: int,
+        custom_values: Optional[List[float]] = None,
+        seed: Optional[int] = None,
+        **kwargs: Any,
+    ) -> np.ndarray:
         if custom_values is not None and len(custom_values) > 0:
             arr = np.array(custom_values, dtype=float)
             if len(arr) == n:
@@ -93,8 +122,18 @@ class DistributionRegistry:
 
 
 # Register standard distributions
-DistributionRegistry.register("normal", DistributionRegistry._sample_normal, "Normal (Gaussian)")
-DistributionRegistry.register("uniform", DistributionRegistry._sample_uniform, "Uniform [-1, 1]")
-DistributionRegistry.register("bimodal", DistributionRegistry._sample_bimodal, "Bimodal")
-DistributionRegistry.register("golden_ratio", DistributionRegistry._sample_golden_ratio, "Golden Ratio")
-DistributionRegistry.register("custom", DistributionRegistry._sample_custom, "Custom List")
+DistributionRegistry.register(
+    "normal", DistributionRegistry._sample_normal, "Normal (Gaussian)"
+)
+DistributionRegistry.register(
+    "uniform", DistributionRegistry._sample_uniform, "Uniform [-1, 1]"
+)
+DistributionRegistry.register(
+    "bimodal", DistributionRegistry._sample_bimodal, "Bimodal"
+)
+DistributionRegistry.register(
+    "golden_ratio", DistributionRegistry._sample_golden_ratio, "Golden Ratio"
+)
+DistributionRegistry.register(
+    "custom", DistributionRegistry._sample_custom, "Custom List"
+)

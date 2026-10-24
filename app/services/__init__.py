@@ -2,7 +2,11 @@
 
 from app.services.benchmark import export_dataset_npz, package_simulation_payload
 from app.services.cli_bridge import build_cli_config, run_cli_command
-from app.services.diagnostics import DiagnosticRegistry, analyze_graph_topology, analyze_spectral_dynamics
+from app.services.diagnostics import (
+    DiagnosticRegistry,
+    analyze_graph_topology,
+    analyze_spectral_dynamics,
+)
 from app.services.distributions import DistributionRegistry
 from app.services.simulation import (
     build_adjacency,

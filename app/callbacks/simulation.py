@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 from typing import Any
+
 from dash import Dash, Input, Output, State, ctx
+
 from app.services import collect_config, generate_dataset, package_simulation_payload
 
 
@@ -44,7 +46,9 @@ def handle_run_or_reset(
         dataset = generate_dataset(**config)
         payload = package_simulation_payload(dataset, config)
         n_frames = len(payload["time"])
-        status_msg = f"Generated {n_frames} frames · {config['solver']} · seed {config['seed']}"
+        status_msg = (
+            f"Generated {n_frames} frames · {config['solver']} · seed {config['seed']}"
+        )
         return payload, n_frames - 1, 0, status_msg
     except (TypeError, ValueError) as error:
         return None, 1, 0, f"Could not run: {error}"
@@ -56,7 +60,7 @@ def register_simulation_callbacks(app: Dash) -> None:
     @app.callback(
         Output("simulation-store", "data"),
         Output("time-slider", "max"),
-        Output("time-slider", "value"),
+        Output("time-slider", "value", allow_duplicate=True),
         Output("run-status", "children"),
         Input("run-btn", "n_clicks"),
         Input("reset-btn", "n_clicks"),
@@ -72,7 +76,7 @@ def register_simulation_callbacks(app: Dash) -> None:
         State("frequency-std", "value"),
         State("custom-frequencies", "value"),
         State("custom-adjacency", "value"),
-        prevent_initial_call=True,
+        prevent_initial_call="initial_duplicate",
     )
     def run_or_reset(
         run_clicks: int | None,

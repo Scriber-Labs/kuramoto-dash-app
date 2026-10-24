@@ -51,6 +51,9 @@ An interactive web dashboard for simulating, analyzing, and visualizing Kuramoto
 
 ```text
 kuramoto-dash-app/
+├── .junie/                   # Autonomous agent & developer guidelines
+│   └── AGENTS.md             # Canonical project directives & reference bridges
+├── .scriber-core/            # Eigenscribe / Scriber Labs house rules & boilerplates (Submodule)
 ├── app/
 │   ├── callbacks/            # Reactive Dash callbacks
 │   │   ├── dataset.py        # Animation timers and .npz dataset export
@@ -138,7 +141,7 @@ uv run python -m app.app
 python -m app.app
 ```
 
-Once running, navigate to `http://localhost:5000` (or `http://127.0.0.1:5000`) in your web browser.
+Once running, navigate to `http://localhost:8050` (or `http://127.0.0.1:8050`) in your web browser.
 
 ---
 

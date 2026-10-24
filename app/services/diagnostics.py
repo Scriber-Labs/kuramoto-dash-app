@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, Optional
+
 import networkx as nx
 import numpy as np
 
@@ -99,7 +100,9 @@ def analyze_graph_topology(adj_matrix: np.ndarray) -> Dict[str, Any]:
     }
 
 
-def analyze_spectral_dynamics(times: np.ndarray, order_param: np.ndarray, dt: Optional[float] = None) -> Dict[str, Any]:
+def analyze_spectral_dynamics(
+    times: np.ndarray, order_param: np.ndarray, dt: Optional[float] = None
+) -> Dict[str, Any]:
     """Compute PSD and harmonic decomposition of order parameter time-series."""
     if len(times) < 2:
         return {}
@@ -128,5 +131,10 @@ def analyze_spectral_dynamics(times: np.ndarray, order_param: np.ndarray, dt: Op
 
 
 # Register default diagnostics
-DiagnosticRegistry.register("graph_topology", lambda **kw: analyze_graph_topology(kw["adj_matrix"]))
-DiagnosticRegistry.register("spectral_dynamics", lambda **kw: analyze_spectral_dynamics(kw["times"], kw["order_param"]))
+DiagnosticRegistry.register(
+    "graph_topology", lambda **kw: analyze_graph_topology(kw["adj_matrix"])
+)
+DiagnosticRegistry.register(
+    "spectral_dynamics",
+    lambda **kw: analyze_spectral_dynamics(kw["times"], kw["order_param"]),
+)

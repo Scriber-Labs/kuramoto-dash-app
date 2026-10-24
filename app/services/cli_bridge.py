@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 import shutil
 import subprocess
 from typing import Any, Dict, List, Optional
@@ -35,13 +34,15 @@ def build_cli_config(
         "topology": str(topology),
         "timesteps": int(timesteps),
         "dt": float(dt),
-        "seed": seed if seed is not None else 42,
+        "seed": seed if seed is not None else 27,
         "solver": str(solver),
         "frequency_distribution": dist_config,
     }
 
 
-def run_cli_command(args: List[str], timeout: int = 30) -> subprocess.CompletedProcess[str]:
+def run_cli_command(
+    args: List[str], timeout: int = 30
+) -> subprocess.CompletedProcess[str]:
     """Execute a kuramoto CLI command using subprocess if CLI is installed."""
     exe = shutil.which("kuramoto")
     if not exe:

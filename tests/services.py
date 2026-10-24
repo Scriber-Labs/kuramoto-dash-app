@@ -4,20 +4,22 @@ from __future__ import annotations
 
 import io
 import json
+
 import numpy as np
 import pytest
 
 from app.services.benchmark import export_dataset_npz, package_simulation_payload
 from app.services.cli_bridge import build_cli_config
-from app.services.diagnostics import DiagnosticRegistry, analyze_graph_topology, analyze_spectral_dynamics
-from app.services.distributions import DistributionRegistry
+from app.services.diagnostics import (
+    analyze_graph_topology,
+    analyze_spectral_dynamics,
+)
 from app.services.simulation import (
     build_adjacency,
     collect_config,
     generate_dataset,
     generate_frequencies,
 )
-from app.services.solvers import SolverRegistry
 from app.services.topology import TopologyRegistry, parse_custom_adjacency
 from app.services.validation import validate_simulation_inputs
 
@@ -35,9 +37,9 @@ def test_validation_defaults() -> None:
     )
     assert res["n_oscillators"] == 24
     assert res["coupling"] == 2.0
-    assert res["simulation_time"] == 20.0
+    assert res["simulation_time"] == 50.0
     assert res["dt"] == 0.05
-    assert res["seed"] == 42
+    assert res["seed"] == 27
     assert res["frequency_distribution"] == "Normal"
 
 
@@ -51,7 +53,9 @@ def test_validation_errors() -> None:
     with pytest.raises(ValueError, match="positive"):
         validate_simulation_inputs(10, 2.0, -5.0, 0.05, 42, "Normal", "Ring", "RK45")
 
-    with pytest.raises(ValueError, match="Frequency standard deviation must be positive"):
+    with pytest.raises(
+        ValueError, match="Frequency standard deviation must be positive"
+    ):
         validate_simulation_inputs(
             10, 2.0, 10.0, 0.05, 42, "Normal", "Ring", "RK45", frequency_std=-1.0
         )
@@ -60,7 +64,9 @@ def test_validation_errors() -> None:
 def test_generate_frequencies_distributions() -> None:
     n = 16
     for dist in ["Normal", "Uniform", "Bimodal", "Golden Ratio", "Custom"]:
-        freqs = generate_frequencies(n=n, distribution=dist, seed=42, custom_values="-1, 0, 1")
+        freqs = generate_frequencies(
+            n=n, distribution=dist, seed=42, custom_values="-1, 0, 1"
+        )
         assert isinstance(freqs, np.ndarray)
         assert len(freqs) == n
         assert np.all(np.isfinite(freqs))

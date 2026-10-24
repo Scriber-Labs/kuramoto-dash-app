@@ -15,7 +15,7 @@ def create_layout() -> html.Div:
         [
             dcc.Store(id="simulation-store"),
             dcc.Download(id="dataset-download"),
-            dcc.Interval(id="heartbeat", interval=160, n_intervals=0, disabled=True),
+            dcc.Interval(id="heartbeat", interval=120, n_intervals=0, disabled=False),
             header_section(),
             html.Main(
                 [
@@ -25,7 +25,9 @@ def create_layout() -> html.Div:
                             sidebar_controls(),
                             html.Section(
                                 [
-                                    html.Div(id="metric-cards", className="metric-grid"),
+                                    html.Div(
+                                        id="metric-cards", className="metric-grid"
+                                    ),
                                     html.Div(
                                         [
                                             html.Div(
@@ -37,14 +39,14 @@ def create_layout() -> html.Div:
                                                     ),
                                                     config={"displayModeBar": False},
                                                 ),
-                                                className="chart-card chart-large",
+                                                className="chart-card",
                                             ),
                                             html.Div(
                                                 dcc.Graph(
-                                                    id="network-graph",
+                                                    id="order-plot",
                                                     figure=empty_figure(
-                                                        "Coupling network",
-                                                        "Network structure appears after a run.",
+                                                        "Synchronization strength",
+                                                        "Run a simulation to chart r(t).",
                                                     ),
                                                     config={"displayModeBar": False},
                                                 ),
@@ -53,14 +55,15 @@ def create_layout() -> html.Div:
                                         ],
                                         className="chart-grid chart-grid-top",
                                     ),
+                                    timeline_controls(),
                                     html.Div(
                                         [
                                             html.Div(
                                                 dcc.Graph(
-                                                    id="order-plot",
+                                                    id="network-graph",
                                                     figure=empty_figure(
-                                                        "Synchronization strength",
-                                                        "Run a simulation to chart r(t).",
+                                                        "Coupling network",
+                                                        "Network structure appears after a run.",
                                                     ),
                                                     config={"displayModeBar": False},
                                                 ),
@@ -102,7 +105,6 @@ def create_layout() -> html.Div:
                                         ),
                                         className="chart-card",
                                     ),
-                                    timeline_controls(),
                                 ],
                                 className="visual-panel",
                             ),

@@ -3,19 +3,20 @@
 from __future__ import annotations
 
 from typing import Any, Callable, Dict, List, Optional
+
 import networkx as nx
 import numpy as np
 
 try:
+    from kuramoto.topologies.analysis import (
+        compute_chromatic_polynomial,
+        get_graph_metadata,
+    )
     from kuramoto.topologies.loader import load_topology
     from kuramoto.topologies.tree_of_life import (
         SEFIROT_NAMES,
         SEFIROT_POSITIONS,
         TreeOfLifeTopology,
-    )
-    from kuramoto.topologies.analysis import (
-        compute_chromatic_polynomial,
-        get_graph_metadata,
     )
 except ImportError:
     load_topology = None
@@ -30,7 +31,9 @@ class TopologyRegistry:
     """Extensible registry for network topologies and adjacency matrix generation."""
 
     _generators: Dict[str, Callable[..., np.ndarray]] = {}
-    _layouts: Dict[str, Callable[[int, Optional[np.ndarray]], Dict[int, tuple[float, float]]]] = {}
+    _layouts: Dict[
+        str, Callable[[int, Optional[np.ndarray]], Dict[int, tuple[float, float]]]
+    ] = {}
     _labels: Dict[str, Callable[[int], Dict[int, str]]] = {}
     _descriptions: Dict[str, str] = {}
 
@@ -40,7 +43,9 @@ class TopologyRegistry:
         name: str,
         generator: Callable[..., np.ndarray],
         description: str = "",
-        layout_fn: Optional[Callable[[int, Optional[np.ndarray]], Dict[int, tuple[float, float]]]] = None,
+        layout_fn: Optional[
+            Callable[[int, Optional[np.ndarray]], Dict[int, tuple[float, float]]]
+        ] = None,
         label_fn: Optional[Callable[[int], Dict[int, str]]] = None,
     ) -> None:
         """Register a new topology generator."""
@@ -56,7 +61,9 @@ class TopologyRegistry:
         """Return list of available topologies with labels and values for UI."""
         options = []
         for key, desc in cls._descriptions.items():
-            options.append({"label": desc or key.replace("_", " ").title(), "value": key})
+            options.append(
+                {"label": desc or key.replace("_", " ").title(), "value": key}
+            )
         return options
 
     @classmethod
@@ -75,7 +82,9 @@ class TopologyRegistry:
         return cls._generators[name](n, **kwargs)
 
     @classmethod
-    def get_layout(cls, name: str, n: int, adjacency: Optional[np.ndarray] = None) -> Dict[int, tuple[float, float]]:
+    def get_layout(
+        cls, name: str, n: int, adjacency: Optional[np.ndarray] = None
+    ) -> Dict[int, tuple[float, float]]:
         """Get 2D node coordinates for plotting."""
         if name in cls._layouts:
             return cls._layouts[name](n, adjacency)
@@ -107,7 +116,9 @@ class TopologyRegistry:
         return adj
 
     @staticmethod
-    def _generate_random(n: int, p: float = 0.2, seed: Optional[int] = None, **kwargs: Any) -> np.ndarray:
+    def _generate_random(
+        n: int, p: float = 0.2, seed: Optional[int] = None, **kwargs: Any
+    ) -> np.ndarray:
         rng = np.random.default_rng(seed)
         rand_mat = rng.random((n, n))
         adj = (rand_mat < p).astype(float)
@@ -117,13 +128,17 @@ class TopologyRegistry:
         return adj
 
     @staticmethod
-    def _generate_small_world(n: int, k: int = 4, p: float = 0.1, seed: Optional[int] = None, **kwargs: Any) -> np.ndarray:
+    def _generate_small_world(
+        n: int, k: int = 4, p: float = 0.1, seed: Optional[int] = None, **kwargs: Any
+    ) -> np.ndarray:
         if load_topology is not None:
             try:
                 return load_topology("small_world", n=n, k=k, p=p, seed=seed)
             except Exception:
                 pass
-        g = nx.watts_strogatz_graph(n=n, k=k if k < n else max(2, n - 1), p=p, seed=seed)
+        g = nx.watts_strogatz_graph(
+            n=n, k=k if k < n else max(2, n - 1), p=p, seed=seed
+        )
         return nx.to_numpy_array(g, dtype=float)
 
     @staticmethod
@@ -138,9 +153,28 @@ class TopologyRegistry:
             return tol.adjacency_matrix
         # Fallback 10-node Tree of Life adjacency
         edges = [
-            (0, 1), (0, 2), (0, 5), (1, 2), (1, 3), (1, 5), (2, 4), (2, 5),
-            (3, 4), (3, 5), (3, 6), (4, 5), (4, 7), (5, 6), (5, 7), (5, 8),
-            (6, 7), (6, 8), (7, 8), (6, 9), (7, 9), (8, 9)
+            (0, 1),
+            (0, 2),
+            (0, 5),
+            (1, 2),
+            (1, 3),
+            (1, 5),
+            (2, 4),
+            (2, 5),
+            (3, 4),
+            (3, 5),
+            (3, 6),
+            (4, 5),
+            (4, 7),
+            (5, 6),
+            (5, 7),
+            (5, 8),
+            (6, 7),
+            (6, 8),
+            (7, 8),
+            (6, 9),
+            (7, 9),
+            (8, 9),
         ]
         adj = np.zeros((10, 10), dtype=float)
         for u, v in edges:
@@ -149,7 +183,9 @@ class TopologyRegistry:
         return adj
 
     @staticmethod
-    def _generate_custom(n: int, adjacency_matrix: Optional[np.ndarray] = None, **kwargs: Any) -> np.ndarray:
+    def _generate_custom(
+        n: int, adjacency_matrix: Optional[np.ndarray] = None, **kwargs: Any
+    ) -> np.ndarray:
         if adjacency_matrix is not None:
             adj = np.asarray(adjacency_matrix, dtype=float)
             if adj.shape == (n, n):
@@ -182,7 +218,9 @@ TopologyRegistry.register(
 )
 
 
-def _tree_of_life_layout(n: int, adjacency: Optional[np.ndarray] = None) -> Dict[int, tuple[float, float]]:
+def _tree_of_life_layout(
+    n: int, adjacency: Optional[np.ndarray] = None
+) -> Dict[int, tuple[float, float]]:
     if SEFIROT_POSITIONS is not None:
         return {i: SEFIROT_POSITIONS.get(i, (0.0, 0.0)) for i in range(10)}
     # Default 10-node layout
@@ -204,8 +242,16 @@ def _tree_of_life_labels(n: int) -> Dict[int, str]:
     if SEFIROT_NAMES is not None:
         return {i: SEFIROT_NAMES[i] for i in range(min(n, len(SEFIROT_NAMES)))}
     default_names = [
-        "Keter", "Chokhmah", "Binah", "Chesed", "Gevurah",
-        "Tiferet", "Netzach", "Hod", "Yesod", "Malkhut"
+        "Keter",
+        "Chokhmah",
+        "Binah",
+        "Chesed",
+        "Gevurah",
+        "Tiferet",
+        "Netzach",
+        "Hod",
+        "Yesod",
+        "Malkhut",
     ]
     return {i: default_names[i] for i in range(min(n, len(default_names)))}
 
@@ -235,6 +281,7 @@ def parse_custom_adjacency(text: str, n_expected: Optional[int] = None) -> np.nd
         # Check if python/json list format
         if clean.startswith("[") and clean.endswith("]"):
             import ast
+
             parsed = ast.literal_eval(clean)
             mat = np.array(parsed, dtype=float)
             if mat.ndim == 2 and mat.shape[0] == mat.shape[1]:

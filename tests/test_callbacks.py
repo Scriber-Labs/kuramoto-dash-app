@@ -6,13 +6,14 @@ from dash import Dash
 
 from app.callbacks import (
     register_callbacks,
-    register_dataset_callbacks,
-    register_simulation_callbacks,
-    register_visualization_callbacks,
 )
 from app.callbacks.dataset import handle_advance_animation, handle_toggle_animation
 from app.callbacks.simulation import handle_run_or_reset
-from app.callbacks.visualization import handle_update_visuals
+from app.callbacks.visualization import (
+    handle_update_animation_visuals,
+    handle_update_static_visuals,
+    handle_update_visuals,
+)
 from app.services import collect_config, generate_dataset, package_simulation_payload
 
 
@@ -78,6 +79,17 @@ def test_visualization_callback_execution() -> None:
     assert len(res_populated) == 7
     # Verify all figure outputs are valid Plotly figures
     for fig in res_populated[:6]:
+        assert hasattr(fig, "to_plotly_json")
+
+    # Test separated animation and static visual handlers
+    anim_res = handle_update_animation_visuals(payload, frame=2)
+    assert len(anim_res) == 3
+    assert hasattr(anim_res[0], "to_plotly_json")  # Unit circle
+    assert hasattr(anim_res[1], "to_plotly_json")  # Order plot
+
+    static_res = handle_update_static_visuals(payload)
+    assert len(static_res) == 4
+    for fig in static_res:
         assert hasattr(fig, "to_plotly_json")
 
 

@@ -5,7 +5,13 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "kuramoto-dash-app"
 version = "0.1.0"
+description = "Interactive web dashboard for simulating and visualizing Kuramoto oscillator dynamics on complex networks"
+readme = "README.md"
 requires-python = ">=3.12"
+license = { file = "LICENSE" }
+authors = [
+    { name = "eigenscribe" }
+]
 dependencies = [
     "black>=26.5.1",
     "dash>=4.4.1",
@@ -35,3 +41,45 @@ dev = [
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py", "*_test.py", "services.py", "integration.py"]
+
+[tool.black]
+line-length = 88
+target-version = ['py312']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+    \.git
+    | \.venv
+    | \.scriber-core
+    | build
+    | dist
+)/
+'''
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+extend-exclude = [
+    ".git",
+    ".venv",
+    ".scriber-core",
+    "build",
+    "dist",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings
+    "F",      # pyflakes
+    "I",      # isort
+    "B",      # flake8-bugbear
+    "C4",     # flake8-comprehensions
+]
+ignore = [
+    "E501",   # line too long (handled by black)
+    "B008",   # do not perform function calls in argument defaults
+]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]  # Allow unused imports in init files

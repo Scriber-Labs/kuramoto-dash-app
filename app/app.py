@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 from dash import Dash
@@ -10,7 +11,7 @@ from app.callbacks import register_callbacks
 from app.layout import create_layout
 
 INDEX_STRING = """<!DOCTYPE html>
-<html>
+<html data-theme="night" class="dark night-theme" style="color-scheme: dark;">
     <head>
         {%metas%}
         <title>{%title%}</title>
@@ -18,7 +19,7 @@ INDEX_STRING = """<!DOCTYPE html>
         <link rel="icon" type="image/png" href="/assets/images/favicon.png">
         {%css%}
     </head>
-    <body>
+    <body class="night-theme">
         {%app_entry%}
         <footer>
             {%config%}
@@ -42,4 +43,6 @@ register_callbacks(app)
 server = app.server
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8050, debug=True)
+    host = os.environ.get("HOST", "127.0.0.1")
+    port = int(os.environ.get("PORT", "8050"))
+    app.run(host=host, port=port, debug=True)
