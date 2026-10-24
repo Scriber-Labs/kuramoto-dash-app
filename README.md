@@ -10,7 +10,7 @@ An interactive web dashboard for simulating, analyzing, and visualizing Kuramoto
   - Pluggable `TopologyRegistry`, `SolverRegistry`, `DistributionRegistry`, and `DiagnosticRegistry` allowing modular extension with new graph topologies, numerical solvers, probability distributions, and spectral metrics.
 
 - **Interactive Parameter Exploration**:
-  - **Oscillator Population**: Configurable count $N \in [2, 100]$ (automatically matched for fixed-size topologies like Tree of Life).
+  - **Oscillator Population**: Configurable count $N \in [2, 500]$ (automatically matched for fixed-size topologies like Tree of Life).
   - **Coupling Strength**: Adjustable global coupling $K \in [0.0, 20.0]$.
   - **Temporal Controls**: Configurable simulation duration $t$, step size $dt$, and random seed for deterministic runs.
   - **Network Topologies**:

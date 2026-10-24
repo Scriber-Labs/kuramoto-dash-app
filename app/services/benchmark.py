@@ -8,22 +8,62 @@ from typing import Any, BinaryIO
 import numpy as np
 
 from app.services.diagnostics import analyze_graph_topology
+from app.services.validation import check_nyquist_sampling
+
+MAX_PAYLOAD_FRAMES: int = 1000
 
 
 def package_simulation_payload(
-    dataset: dict[str, Any], config: dict[str, Any]
+    dataset: dict[str, Any], config: dict[str, Any], max_frames: int = MAX_PAYLOAD_FRAMES
 ) -> dict[str, Any]:
-    """Package raw numpy dataset arrays and config into serializable JSON dictionary."""
+    """Package raw numpy dataset arrays and config into serializable JSON dictionary.
+
+    Includes smart decimation for long horizons to prevent browser memory exhaustion
+    and UI freezing while preserving initial and final boundary points.
+    """
     adj = np.asarray(dataset["adjacency"])
     graph_stats = analyze_graph_topology(adj)
 
+    time_arr = np.asarray(dataset["time"], dtype=float)
+    theta_arr = np.asarray(dataset["theta"], dtype=float)
+    r_arr = np.asarray(dataset["order_parameter"], dtype=float)
+    freqs_arr = np.asarray(dataset["frequencies"], dtype=float)
+
+    total_steps = len(time_arr)
+    # Apply downsampling stride if steps exceed max_frames to guarantee UI responsiveness
+    if total_steps > max_frames:
+        stride = int(np.ceil(total_steps / max_frames))
+        indices = np.arange(0, total_steps, stride)
+        if indices[-1] != total_steps - 1:
+            indices = np.append(indices, total_steps - 1)
+        
+        time_downsampled = time_arr[indices]
+        theta_downsampled = theta_arr[indices]
+        r_downsampled = r_arr[indices]
+    else:
+        stride = 1
+        time_downsampled = time_arr
+        theta_downsampled = theta_arr
+        r_downsampled = r_arr
+
+    nyquist_info = check_nyquist_sampling(
+        dt=float(config.get("dt", 0.05)),
+        frequencies=freqs_arr,
+        coupling=float(config.get("coupling", 2.0)),
+        mean_freq=float(config.get("frequency_mean", 0.0)),
+        std_freq=float(config.get("frequency_std", 1.0)),
+    )
+
     return {
-        "time": np.asarray(dataset["time"]).tolist(),
-        "theta": np.asarray(dataset["theta"]).tolist(),
-        "order_parameter": np.asarray(dataset["order_parameter"]).tolist(),
-        "frequencies": np.asarray(dataset["frequencies"]).tolist(),
+        "time": time_downsampled.tolist(),
+        "theta": theta_downsampled.tolist(),
+        "order_parameter": r_downsampled.tolist(),
+        "frequencies": freqs_arr.tolist(),
         "adjacency": adj.tolist(),
         "graph_stats": graph_stats,
+        "nyquist": nyquist_info,
+        "stride": stride,
+        "raw_frame_count": total_steps,
         "config": {
             "solver": config.get("solver", "rk45"),
             "network_type": config.get("network_type", "all_to_all"),

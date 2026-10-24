@@ -315,6 +315,10 @@ def phase_trajectories_figure(
     return figure
 
 
+# Threshold above which node index labels are hidden to avoid unreadable clutter
+NODE_LABEL_CUTOFF: int = 35
+
+
 def network_figure(
     adjacency: np.ndarray,
     frequencies: np.ndarray,
@@ -350,18 +354,47 @@ def network_figure(
             edge_x.extend([positions[left][0], positions[right][0], None])
             edge_y.extend([positions[left][1], positions[right][1], None])
 
+    # Dynamically scale edge width and opacity with number of nodes
+    if n <= 30:
+        edge_width = 1.2
+        edge_color = "rgba(0, 232, 255, 0.28)"
+    elif n <= 100:
+        edge_width = 0.8
+        edge_color = "rgba(0, 232, 255, 0.20)"
+    else:
+        edge_width = 0.4
+        edge_color = "rgba(0, 232, 255, 0.12)"
+
     figure.add_trace(
         go.Scatter(
             x=edge_x,
             y=edge_y,
             mode="lines",
-            line={"color": "rgba(0, 232, 255, 0.28)", "width": 1.2},
+            line={"color": edge_color, "width": edge_width},
             hoverinfo="skip",
             showlegend=False,
         )
     )
     node_x = [positions[i][0] for i in graph.nodes() if i in positions]
     node_y = [positions[i][1] for i in graph.nodes() if i in positions]
+
+    # Dynamically scale node size with population count N (between 4 and 22 px)
+    if n <= 10:
+        node_size = 22.0
+        border_width = 1.5
+    elif n <= 30:
+        node_size = max(14.0, 22.0 - (n - 10) * 0.4)
+        border_width = 1.2
+    elif n <= 100:
+        node_size = max(8.0, 14.0 - (n - 30) * 0.085)
+        border_width = 0.8
+    else:
+        node_size = max(4.0, 8.0 - (n - 100) * 0.01)
+        border_width = 0.5
+
+    # Determine whether node numbers / labels should be displayed
+    show_labels = n <= NODE_LABEL_CUTOFF or net_key in {"tree_of_life", "etz_hayim"}
+
     display_texts = [
         str(node_labels.get(i, i + 1)) for i in graph.nodes() if i in positions
     ]
@@ -370,21 +403,25 @@ def network_figure(
         go.Scatter(
             x=node_x,
             y=node_y,
-            mode="markers+text",
-            text=display_texts,
+            mode="markers+text" if show_labels else "markers",
+            text=display_texts if show_labels else None,
             textposition="middle center",
-            textfont={"size": 9, "color": "#06101f"},
+            textfont={"size": max(7, min(9, int(node_size * 0.45))), "color": "#06101f"},
             marker={
-                "size": 22,
+                "size": node_size,
                 "color": frequencies,
                 "cmin": float(np.min(frequencies)) if len(frequencies) else 0,
                 "cmax": float(np.max(frequencies)) if len(frequencies) else 1,
                 "colorscale": NETWORK_COLORSCALE,
                 "colorbar": {"title": "ω"},
-                "line": {"color": "rgba(255,255,255,.85)", "width": 1.5},
+                "line": {"color": "rgba(255,255,255,.85)", "width": border_width},
             },
             customdata=frequencies,
-            hovertemplate="Node: %{text}<br>ω=%{customdata:.3f}<extra></extra>",
+            hovertemplate=(
+                "Node: %{text}<br>ω=%{customdata:.3f}<extra></extra>"
+                if show_labels
+                else "Node %{pointIndex}<br>ω=%{customdata:.3f}<extra></extra>"
+            ),
             name="oscillators",
         )
     )

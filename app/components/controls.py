@@ -6,7 +6,7 @@ from typing import Any
 
 from dash import dcc, html
 
-from app.config import DEFAULTS
+from app.config import DEFAULTS, MAX_OSCILLATORS, MIN_OSCILLATORS
 
 
 def control_group(label: str, component: Any, hint: str | None = None) -> html.Div:
@@ -68,8 +68,8 @@ def sidebar_controls() -> html.Aside:
                         dcc.Input(
                             id="n-oscillators",
                             type="number",
-                            min=2,
-                            max=100,
+                            min=MIN_OSCILLATORS,
+                            max=MAX_OSCILLATORS,
                             step=1,
                             value=DEFAULTS["n_oscillators"],
                         ),
@@ -106,14 +106,18 @@ def sidebar_controls() -> html.Aside:
                         dcc.Input(
                             id="dt",
                             type="number",
-                            min=0.005,
-                            max=0.2,
+                            min=0.001,
+                            max=1.0,
                             step=0.005,
                             value=DEFAULTS["dt"],
                         ),
                     ),
                 ],
                 className="field-row",
+            ),
+            html.Div(
+                id="nyquist-warning-banner",
+                className="nyquist-banner nyquist-optimal",
             ),
             control_group(
                 "Solver",

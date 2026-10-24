@@ -21,7 +21,57 @@ from app.services.simulation import (
     generate_frequencies,
 )
 from app.services.topology import TopologyRegistry, parse_custom_adjacency
-from app.services.validation import validate_simulation_inputs
+from app.services.validation import check_nyquist_sampling, validate_simulation_inputs
+
+
+def test_nyquist_sampling_evaluation() -> None:
+    # High frequency / large dt -> undersampled warning
+    res_under = check_nyquist_sampling(dt=0.8, frequencies=[10.0, -10.0], coupling=2.0)
+    assert res_under["status"] == "undersampled"
+    assert res_under["level"] == "warning"
+    assert "Undersampling" in res_under["message"]
+    assert res_under["sampling_ratio"] < 1.0
+
+    # Very small dt -> oversampled info
+    res_over = check_nyquist_sampling(dt=0.0005, frequencies=[0.5, -0.5], coupling=0.2)
+    assert res_over["status"] == "oversampled"
+    assert res_over["level"] == "info"
+    assert res_over["sampling_ratio"] > 40.0
+
+    # Normal dt -> optimal success
+    res_opt = check_nyquist_sampling(dt=0.05, frequencies=[1.0, -1.0], coupling=1.0)
+    assert res_opt["status"] == "optimal"
+    assert res_opt["level"] == "success"
+    assert "Satisfied" in res_opt["message"]
+
+
+def test_long_horizon_payload_decimation() -> None:
+    # Create dataset with 2500 steps
+    time_long = np.linspace(0, 125, 2500)
+    theta_long = np.zeros((2500, 4))
+    r_long = np.ones(2500)
+    freqs = np.array([0.1, 0.2, -0.1, -0.2])
+    adj = np.ones((4, 4)) - np.eye(4)
+
+    dataset = {
+        "time": time_long,
+        "theta": theta_long,
+        "order_parameter": r_long,
+        "frequencies": freqs,
+        "adjacency": adj,
+    }
+    config = {
+        "dt": 0.05,
+        "coupling": 1.0,
+        "seed": 27,
+    }
+
+    payload = package_simulation_payload(dataset, config, max_frames=500)
+    assert len(payload["time"]) <= 501
+    assert payload["raw_frame_count"] == 2500
+    assert payload["stride"] > 1
+    assert "nyquist" in payload
+    assert payload["nyquist"]["status"] in {"optimal", "oversampled", "undersampled"}
 
 
 def test_validation_defaults() -> None:
@@ -47,8 +97,8 @@ def test_validation_errors() -> None:
     with pytest.raises(ValueError, match="at least 2 oscillators"):
         validate_simulation_inputs(1, 2.0, 10.0, 0.05, 42, "Normal", "Ring", "RK45")
 
-    with pytest.raises(ValueError, match="supports at most 100"):
-        validate_simulation_inputs(101, 2.0, 10.0, 0.05, 42, "Normal", "Ring", "RK45")
+    with pytest.raises(ValueError, match="supports at most 500"):
+        validate_simulation_inputs(501, 2.0, 10.0, 0.05, 42, "Normal", "Ring", "RK45")
 
     with pytest.raises(ValueError, match="positive"):
         validate_simulation_inputs(10, 2.0, -5.0, 0.05, 42, "Normal", "Ring", "RK45")

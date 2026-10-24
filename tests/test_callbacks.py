@@ -8,13 +8,43 @@ from app.callbacks import (
     register_callbacks,
 )
 from app.callbacks.dataset import handle_advance_animation, handle_toggle_animation
-from app.callbacks.simulation import handle_run_or_reset
+from app.callbacks.simulation import handle_run_or_reset, render_nyquist_banner
 from app.callbacks.visualization import (
     handle_update_animation_visuals,
     handle_update_static_visuals,
     handle_update_visuals,
 )
 from app.services import collect_config, generate_dataset, package_simulation_payload
+
+
+def test_nyquist_banner_callback_rendering() -> None:
+    # Test undersampled rendering
+    banner_under = render_nyquist_banner(
+        dt=0.8,
+        coupling=2.0,
+        frequency_distribution="Normal",
+        frequency_mean=0.0,
+        frequency_std=2.0,
+        custom_frequencies="",
+        n_oscillators=24,
+        seed=27,
+    )
+    assert banner_under is not None
+    assert "nyquist-warning" in banner_under.className
+
+    # Test optimal rendering
+    banner_opt = render_nyquist_banner(
+        dt=0.05,
+        coupling=2.0,
+        frequency_distribution="Normal",
+        frequency_mean=0.0,
+        frequency_std=1.0,
+        custom_frequencies="",
+        n_oscillators=24,
+        seed=27,
+    )
+    assert banner_opt is not None
+    assert "nyquist-success" in banner_opt.className
 
 
 def test_register_callbacks() -> None:

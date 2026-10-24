@@ -7,34 +7,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="036a4c8f-8947-4828-9ec4-48c52b6531ba" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitmodules" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.scriber-core" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+    <list default="true" id="036a4c8f-8947-4828-9ec4-48c52b6531ba" name="Changes" comment="Add project setup files, design tokens, and developer guidelines.">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/app.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/callbacks/simulation.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/callbacks/simulation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/callbacks/visualization.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/callbacks/visualization.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/components/cards.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/components/cards.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/components/controls.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/components/controls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/components/plots.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/components/plots.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/layout.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/layout.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/replit-app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/replit-app.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/services/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/services/benchmark.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/benchmark.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/cli_bridge.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/cli_bridge.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/diagnostics.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/diagnostics.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/distributions.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/distributions.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/simulation.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/simulation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/solvers.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/solvers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/topology.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/topology.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/services/validation.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/validation.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/assets/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/css/style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pyproject.toml" beforeDir="false" afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/integration.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/integration.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/services.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/services.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/test_callbacks.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_callbacks.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/test_components.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_components.py" afterDir="false" />
@@ -113,6 +96,9 @@
       <entry key="D1" value="23.998314724945573" />
       <entry key="W1" value="23.999759236204447" />
     </decayedShown>
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="AISelfReview" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 5,
@@ -288,9 +274,22 @@
       <option name="presentableId" value="Default" />
       <updated>1791510221867</updated>
     </task>
+    <task id="LOCAL-00001" summary="Add project setup files, design tokens, and developer guidelines.">
+      <option name="closed" value="true" />
+      <created>1792849701272</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1792849701272</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Add project setup files, design tokens, and developer guidelines." />
+    <option name="LAST_COMMIT_MESSAGE" value="Add project setup files, design tokens, and developer guidelines." />
   </component>
 </project>

@@ -17,7 +17,10 @@ from app.services.simulation import (
 )
 from app.services.solvers import SolverRegistry
 from app.services.topology import TopologyRegistry, parse_custom_adjacency
-from app.services.validation import validate_simulation_inputs
+from app.services.validation import (
+    check_nyquist_sampling,
+    validate_simulation_inputs,
+)
 
 __all__ = [
     "TopologyRegistry",
@@ -27,6 +30,7 @@ __all__ = [
     "parse_custom_adjacency",
     "analyze_graph_topology",
     "analyze_spectral_dynamics",
+    "check_nyquist_sampling",
     "build_cli_config",
     "run_cli_command",
     "export_dataset_npz",

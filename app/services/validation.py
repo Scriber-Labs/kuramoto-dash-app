@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from typing import Any
 
+import numpy as np
+
 from app.config import (
     DEFAULTS,
     MAX_COUPLING,
@@ -15,6 +17,108 @@ from app.config import (
     MIN_OSCILLATORS,
     MIN_SIMULATION_TIME,
 )
+
+
+def check_nyquist_sampling(
+    dt: float,
+    frequencies: np.ndarray | list[float] | None = None,
+    coupling: float = 0.0,
+    mean_freq: float = 0.0,
+    std_freq: float = 1.0,
+) -> dict[str, Any]:
+    """Evaluate whether the time step dt satisfies Nyquist-Shannon sampling criterion.
+
+    Parameters
+    ----------
+    dt : float
+        Integration time step in seconds.
+    frequencies : np.ndarray | list[float] | None
+        Sampled natural frequencies of oscillators (in rad/s).
+    coupling : float
+        Global coupling constant K.
+    mean_freq : float
+        Mean natural frequency if frequencies array is not yet generated.
+    std_freq : float
+        Standard deviation of natural frequency.
+
+    Returns
+    -------
+    dict[str, Any]
+        Dictionary containing:
+        - 'status': 'undersampled' | 'oversampled' | 'optimal'
+        - 'level': 'warning' | 'info' | 'success'
+        - 'sampling_rate': Sampling frequency f_s in Hz (1 / dt)
+        - 'max_frequency': Max dynamic frequency f_max in Hz
+        - 'nyquist_rate': Minimum required sampling rate 2 * f_max
+        - 'nyquist_dt': Maximum dt to avoid aliasing (1 / (2 * f_max))
+        - 'sampling_ratio': Ratio of f_s to Nyquist rate (f_s / (2 * f_max))
+        - 'message': Human-readable explanation and warning banner text.
+    """
+    if dt <= 0:
+        return {
+            "status": "undersampled",
+            "level": "critical",
+            "sampling_rate": 0.0,
+            "max_frequency": 0.0,
+            "nyquist_rate": 0.0,
+            "nyquist_dt": 0.0,
+            "sampling_ratio": 0.0,
+            "message": "⚠️ Time step dt must be strictly positive.",
+        }
+
+    # Determine maximum angular frequency omega_max
+    if frequencies is not None and len(frequencies) > 0:
+        freq_arr = np.asarray(frequencies, dtype=float)
+        omega_max = float(np.max(np.abs(freq_arr)))
+    else:
+        # Statistical estimate based on 3-sigma bound
+        omega_max = float(abs(mean_freq) + 3.0 * abs(std_freq))
+
+    # Incorporate coupling interaction contribution to peak phase velocity d(theta)/dt
+    # In Kuramoto model, |d(theta)/dt| <= |omega_i| + K * sum(A_ij) / N <= |omega_i| + K
+    effective_omega_max = max(omega_max + max(0.0, float(coupling)), 0.1)
+
+    # Convert angular frequency (rad/s) to cyclic frequency (Hz)
+    f_max = effective_omega_max / (2.0 * np.pi)
+    nyquist_rate = 2.0 * f_max
+    nyquist_dt = 1.0 / nyquist_rate if nyquist_rate > 0 else 1.0
+
+    sampling_rate = 1.0 / dt
+    sampling_ratio = sampling_rate / nyquist_rate if nyquist_rate > 0 else 1.0
+
+    if dt > nyquist_dt:
+        status = "undersampled"
+        level = "warning"
+        message = (
+            f"⚠️ Undersampling (Nyquist Violation): dt = {dt:.4f}s > dt_nyquist = {nyquist_dt:.4f}s "
+            f"(f_s = {sampling_rate:.1f} Hz < 2·f_max = {nyquist_rate:.1f} Hz). "
+            f"Risk of temporal aliasing, artificial phase jumps, or solver instability."
+        )
+    elif sampling_ratio > 40.0:
+        status = "oversampled"
+        level = "info"
+        message = (
+            f"ℹ️ Heavy Oversampling: dt = {dt:.4f}s is {sampling_ratio:.1f}× above Nyquist rate "
+            f"(dt_nyquist = {nyquist_dt:.4f}s). Long horizons may increase compute time and memory usage."
+        )
+    else:
+        status = "optimal"
+        level = "success"
+        message = (
+            f"✓ Nyquist Criterion Satisfied: dt = {dt:.4f}s provides {sampling_ratio:.1f}× oversampling "
+            f"(f_s = {sampling_rate:.1f} Hz vs 2·f_max = {nyquist_rate:.1f} Hz)."
+        )
+
+    return {
+        "status": status,
+        "level": level,
+        "sampling_rate": sampling_rate,
+        "max_frequency": f_max,
+        "nyquist_rate": nyquist_rate,
+        "nyquist_dt": nyquist_dt,
+        "sampling_ratio": sampling_ratio,
+        "message": message,
+    }
 
 
 def validate_simulation_inputs(

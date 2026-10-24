@@ -83,11 +83,36 @@ def test_phase_trajectories_figure() -> None:
 
 
 def test_network_figure() -> None:
+    # Small N (N <= cutoff): labels shown
     adj = np.array([[0, 1, 1], [1, 0, 1], [1, 1, 0]])
     freqs = np.array([-0.5, 0.0, 0.5])
     fig = network_figure(adj, freqs, seed=42)
     assert isinstance(fig, go.Figure)
     assert len(fig.data) == 2  # edge trace + node trace
+    node_trace = fig.data[1]
+    assert node_trace.mode == "markers+text"
+    assert node_trace.marker.size == 22.0
+    assert node_trace.text is not None
+
+    # Large N (N > cutoff e.g. N=50): labels hidden, markers scaled down
+    n_large = 50
+    adj_large = np.zeros((n_large, n_large), dtype=int)
+    freqs_large = np.random.default_rng(42).normal(0, 1, n_large)
+    fig_large = network_figure(adj_large, freqs_large, seed=42)
+    assert len(fig_large.data) == 2
+    node_trace_large = fig_large.data[1]
+    assert node_trace_large.mode == "markers"
+    assert node_trace_large.text is None
+    assert node_trace_large.marker.size < 22.0
+
+    # Max N (N=500): scaled down properly
+    n_max = 500
+    adj_max = np.zeros((n_max, n_max), dtype=int)
+    freqs_max = np.random.default_rng(42).normal(0, 1, n_max)
+    fig_max = network_figure(adj_max, freqs_max, seed=42)
+    node_trace_max = fig_max.data[1]
+    assert node_trace_max.mode == "markers"
+    assert node_trace_max.marker.size == 4.0
 
 
 def test_frequency_distribution_figure() -> None:
