@@ -7,20 +7,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="036a4c8f-8947-4828-9ec4-48c52b6531ba" name="Changes" comment="Add project setup files, design tokens, and developer guidelines.">
+    <list default="true" id="036a4c8f-8947-4828-9ec4-48c52b6531ba" name="Changes" comment="Dynamic scaling, Nyquist validation, and decimation logic for enhanced performance and visualization. Expanded oscillator count to 500.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/callbacks/simulation.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/callbacks/simulation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/components/controls.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/components/controls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/components/plots.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/components/plots.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/benchmark.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/benchmark.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/validation.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/validation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/css/style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/services.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/services.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_callbacks.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_callbacks.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_components.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_components.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -282,7 +271,15 @@
       <option name="project" value="LOCAL" />
       <updated>1792849701272</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Dynamic scaling, Nyquist validation, and decimation logic for enhanced performance and visualization. Expanded oscillator count to 500.">
+      <option name="closed" value="true" />
+      <created>1792851513018</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1792851513018</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -290,6 +287,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Add project setup files, design tokens, and developer guidelines." />
-    <option name="LAST_COMMIT_MESSAGE" value="Add project setup files, design tokens, and developer guidelines." />
+    <MESSAGE value="Dynamic scaling, Nyquist validation, and decimation logic for enhanced performance and visualization. Expanded oscillator count to 500." />
+    <option name="LAST_COMMIT_MESSAGE" value="Dynamic scaling, Nyquist validation, and decimation logic for enhanced performance and visualization. Expanded oscillator count to 500." />
   </component>
 </project>

@@ -235,13 +235,13 @@ def phase_heatmap_figure(time: np.ndarray, theta: np.ndarray) -> go.Figure:
     # High-contrast cyclic colormap (no green, yellow, or orange)
     # Seamlessly continuous from magenta at 0 rad through cosmic violet, deep blue, electric cyan (at π), and back to magenta (at 2π)
     cyclic_phase_colorscale = [
-        [0.0, "#ec4899"],    # Magenta / Hot Pink (0 rad)
-        [0.2, "#8b5cf6"],    # Cosmic Violet
-        [0.35, "#1d4ed8"],   # Deep Royal Blue
+        [0.0, "#0070eb"],    # Magenta / Hot Pink (0 rad)
+        [0.2, "#0A95EB"],    # Cosmic Violet
+        [0.35, "#14B5FF"],   # Deep Royal Blue
         [0.5, "#00f0ff"],    # High-contrast Electric Cyan (π rad)
-        [0.65, "#1d4ed8"],   # Deep Royal Blue
-        [0.8, "#8b5cf6"],    # Cosmic Violet
-        [1.0, "#ec4899"],    # Magenta / Hot Pink (2π rad - seamless loop to 0)
+        [0.65, "#D8B4FE"],   # Deep Royal Blue
+        [0.8, "#A855F7"],    # Cosmic Violet
+        [1.0, "#5E17EB"],    # Magenta / Hot Pink (2π rad - seamless loop to 0)
     ]
 
     figure.add_trace(
