@@ -25,14 +25,13 @@ DEFAULTS: dict[str, Any] = {
     "custom_adjacency": "",
 }
 
-# Network and oscillator visual colorscale (ADHD high-contrast multi-color spectrum)
+# Network and oscillator visual colorscale (PyCharm blue-purple-pink signature spectrum)
 NETWORK_COLORSCALE = [
-    [0.0, "#7652f5"],    # Cosmic Violet
-    [0.2, "#14b5ff"],    # Electric Blue
-    [0.4, "#00e8ff"],    # Bright Cyan
-    [0.6, "#22f792"],    # Neon Emerald Green
-    [0.8, "#f5ce62"],    # Warm Gold / Amber
-    [1.0, "#f78166"],    # Coral / Orange
+    [0.0, "#0070eb"],    # Deep Sapphire Blue
+    [0.25, "#14b5ff"],   # Electric Cyan Blue
+    [0.5, "#7652f5"],    # Cosmic Violet
+    [0.75, "#a855f7"],   # Bright Amethyst Purple
+    [1.0, "#ec4899"],    # Vibrant Rose Pink
 ]
 
 # Validation boundaries

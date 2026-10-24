@@ -18,25 +18,82 @@ def metric_cards(data: dict[str, Any] | None, frame: int | None) -> html.Div | l
     time = np.asarray(data["time"])
     idx = max(0, min(int(frame or 0), len(order) - 1))
 
-    cards = [
-        ("Current r", f"{float(order[idx]):.3f}", "metric-card metric-current"),
-        ("Peak r", f"{float(np.max(order)):.3f}", "metric-card metric-peak"),
-        ("Time", f"{float(time[idx]):.2f}s", "metric-card metric-time"),
-        ("Oscillators", f"{theta.shape[1]}", "metric-card metric-oscillators"),
+    card_items = [
+        (
+            "Current r",
+            f"{float(order[idx]):.3f}",
+            "Phase coherence",
+            "r(t)",
+            "metric-card metric-current",
+        ),
+        (
+            "Peak r",
+            f"{float(np.max(order)):.3f}",
+            "Max coherence",
+            "max(r)",
+            "metric-card metric-peak",
+        ),
+        (
+            "Time",
+            f"{float(time[idx]):.2f}s",
+            "Elapsed timeline",
+            "t",
+            "metric-card metric-time",
+        ),
+        (
+            "Oscillators",
+            f"{theta.shape[1]}",
+            "Active ensemble",
+            "N",
+            "metric-card metric-oscillators",
+        ),
     ]
 
     return html.Div(
         [
             html.Div(
                 [
-                    html.Span(label, className="metric-label"),
-                    html.Strong(value),
+                    html.Div(
+                        [
+                            html.Span("LIVE TELEMETRY", className="eyebrow metrics-eyebrow"),
+                            html.H4("Synchronization State & Metrics", className="metrics-panel-title"),
+                        ],
+                        className="metrics-panel-heading",
+                    ),
+                    html.Div(
+                        [
+                            html.Span(
+                                f"FRAME {idx + 1} / {len(time)}",
+                                className="status-pill status-pill-cyan metrics-status-pill",
+                            ),
+                        ],
+                        className="metrics-panel-meta",
+                    ),
                 ],
-                className=css_class,
-            )
-            for label, value, css_class in cards
+                className="metrics-panel-header",
+            ),
+            html.Div(
+                [
+                    html.Div(
+                        [
+                            html.Div(
+                                [
+                                    html.Span(label, className="metric-label"),
+                                    html.Span(badge, className="metric-badge"),
+                                ],
+                                className="metric-card-top",
+                            ),
+                            html.Strong(value, className="metric-value"),
+                            html.Span(subtext, className="metric-subtext"),
+                        ],
+                        className=css_class,
+                    )
+                    for label, value, subtext, badge, css_class in card_items
+                ],
+                className="metric-grid",
+            ),
         ],
-        className="metric-grid",
+        className="metrics-container-card",
     )
 
 

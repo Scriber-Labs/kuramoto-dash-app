@@ -276,7 +276,7 @@ def timeline_controls() -> html.Div:
                     html.Button(
                         "Pause animation",
                         id="play-btn",
-                        className="button button-play animation-button btn-hover color-5",
+                        className="button button-play animation-button btn-hover color-11",
                     ),
                 ],
                 className="timeline-controls",

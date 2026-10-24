@@ -49,6 +49,15 @@ def test_unit_circle_figure() -> None:
     assert isinstance(fig, go.Figure)
     assert len(fig.data) >= 3  # unit circle line, axes, oscillators, order vector
 
+    # Test with history for trailing shadow dots
+    history = np.array([[0.0, 0.1, 0.2], [0.1, 0.2, 0.3]])
+    fig_trail = unit_circle_figure(
+        theta, order=0.75, order_phase=0.5, history_theta=history
+    )
+    assert isinstance(fig_trail, go.Figure)
+    # Trace count should include trailing traces
+    assert len(fig_trail.data) == len(fig.data) + len(history)
+
 
 def test_order_figure() -> None:
     time = np.linspace(0, 10, 50)

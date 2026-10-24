@@ -26,7 +26,7 @@ def create_layout() -> html.Div:
                             html.Section(
                                 [
                                     html.Div(
-                                        id="metric-cards", className="metric-grid"
+                                        id="metric-cards", className="metrics-wrapper"
                                     ),
                                     html.Div(
                                         [

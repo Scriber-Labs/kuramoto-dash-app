@@ -12,19 +12,19 @@ from plotly.colors import sample_colorscale
 from app.config import NETWORK_COLORSCALE
 from app.services.topology import TopologyRegistry
 
-# High-contrast ADHD semantic palette for individual oscillators and multi-trace plots
+# High-contrast PyCharm-inspired palette for individual oscillators and multi-trace plots
 OSCILLATOR_PALETTE = [
     "#00e8ff",  # Bright Cyan
-    "#22f792",  # Neon Emerald Green
-    "#9b7dff",  # Cosmic Violet
-    "#f78166",  # Coral Orange
-    "#ec4899",  # Hot Pink / Magenta
-    "#f5ce62",  # Warm Gold / Amber
+    "#7652f5",  # Cosmic Violet
+    "#ec4899",  # Magenta / Rose Pink
     "#14b5ff",  # Electric Blue
-    "#a78bfa",  # Light Lavender Purple
-    "#34d399",  # Emerald Mint
-    "#fb923c",  # Vivid Orange
-    "#f472b6",  # Rose Pink
+    "#a855f7",  # Bright Amethyst
+    "#f43f5e",  # Coral Pink
+    "#0070eb",  # Deep Sapphire Blue
+    "#9b7dff",  # Lavender Purple
+    "#22f792",  # Neon Emerald Green
+    "#f78166",  # Warm Orange
+    "#c026d3",  # Deep Fuchsia
     "#38bdf8",  # Sky Blue
 ]
 
@@ -84,13 +84,48 @@ def network_colors(frequencies: np.ndarray) -> list[str]:
     return sample_colorscale(NETWORK_COLORSCALE, normalized.tolist())
 
 
+def _convert_color_to_rgba(color: str, opacity: float) -> str:
+    """Convert hex, hsl, or rgb(a) color string to rgba format with specified opacity."""
+    color = color.strip()
+    if color.startswith("#"):
+        hex_val = color.lstrip("#")
+        if len(hex_val) == 3:
+            hex_val = "".join([c * 2 for c in hex_val])
+        if len(hex_val) == 6:
+            r = int(hex_val[0:2], 16)
+            g = int(hex_val[2:4], 16)
+            b = int(hex_val[4:6], 16)
+            return f"rgba({r}, {g}, {b}, {opacity:.3f})"
+    elif color.startswith("hsl"):
+        import re
+
+        match = re.match(r"hsl\s*\(\s*(\d+)\s*,\s*(\d+)%\s*,\s*(\d+)%\s*\)", color)
+        if match:
+            h = int(match.group(1)) / 360.0
+            s = int(match.group(2)) / 100.0
+            l = int(match.group(3)) / 100.0
+            import colorsys
+
+            r_f, g_f, b_f = colorsys.hls_to_rgb(h, l, s)
+            return f"rgba({int(r_f * 255)}, {int(g_f * 255)}, {int(b_f * 255)}, {opacity:.3f})"
+    elif color.startswith("rgb"):
+        import re
+
+        match = re.match(r"rgba?\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)", color)
+        if match:
+            r, g, b = match.group(1), match.group(2), match.group(3)
+            return f"rgba({r}, {g}, {b}, {opacity:.3f})"
+    return f"rgba(20, 181, 255, {opacity:.3f})"
+
+
 def unit_circle_figure(
     theta: np.ndarray,
     order: float,
     order_phase: float,
     oscillator_colors: list[str] | None = None,
+    history_theta: np.ndarray | None = None,
 ) -> go.Figure:
-    """Render the unit circle phase diagram with individual oscillators and order phasor."""
+    """Render the unit circle phase diagram with individual oscillators, trailing shadow dots, and order phasor."""
     figure = base_figure("Phase field")
     circle = np.linspace(0, 2 * np.pi, 160)
     figure.add_trace(
@@ -119,6 +154,38 @@ def unit_circle_figure(
             f"hsl({int(i * 360 / max(len(theta), 1))}, 92%, 65%)"
             for i in range(len(theta))
         ]
+
+        # Render trailing shadow dots if history is provided
+        if history_theta is not None and len(history_theta) > 0:
+            trail_len = len(history_theta)
+            for step_idx, past_phase in enumerate(history_theta):
+                # Older frames have lower step_idx, recent frames have higher step_idx
+                # Normalized weight from 0 (oldest) to 1 (just before current)
+                weight = (step_idx + 1) / (trail_len + 1)
+                trail_opacity = 0.10 + 0.50 * (weight ** 1.5)
+                trail_size = max(4.0, 12 * (0.45 + 0.45 * weight))
+
+                trail_colors = [
+                    _convert_color_to_rgba(c, trail_opacity)
+                    for c in oscillator_colors
+                ]
+
+                figure.add_trace(
+                    go.Scatter(
+                        x=np.cos(past_phase),
+                        y=np.sin(past_phase),
+                        mode="markers",
+                        marker={
+                            "size": trail_size,
+                            "color": trail_colors,
+                            "line": {"width": 0},
+                        },
+                        hoverinfo="skip",
+                        showlegend=False,
+                        name=f"trail_{step_idx}",
+                    )
+                )
+
         figure.add_trace(
             go.Scatter(
                 x=np.cos(theta),
@@ -201,7 +268,7 @@ def order_figure(time: np.ndarray, order: np.ndarray, frame: int) -> go.Figure:
             mode="markers",
             marker={
                 "size": 12,
-                "color": "#ff9a44",
+                "color": "#22f792",
                 "line": {"color": "rgba(255, 255, 255, 0.95)", "width": 2},
             },
             name="current frame",
@@ -221,7 +288,7 @@ def order_figure(time: np.ndarray, order: np.ndarray, frame: int) -> go.Figure:
                 "x1": time[frame],
                 "y0": 0,
                 "y1": 1,
-                "line": {"color": "rgba(255, 173, 102, 0.75)", "width": 2, "dash": "dot"},
+                "line": {"color": "rgba(34, 247, 146, 0.8)", "width": 2, "dash": "dot"},
             }
         ],
     )
@@ -444,8 +511,8 @@ def frequency_distribution_figure(frequencies: np.ndarray) -> go.Figure:
             x=frequencies,
             nbinsx=min(18, max(6, len(frequencies) // 2)),
             marker={
-                "color": "rgba(34, 247, 146, 0.65)",
-                "line": {"color": "#22f792", "width": 1.2},
+                "color": "rgba(118, 82, 245, 0.65)",
+                "line": {"color": "#a855f7", "width": 1.4},
             },
             hovertemplate="ω range: %{x}<br>count: %{y}<extra></extra>",
             name="frequency",
@@ -518,10 +585,10 @@ def symmetry_figure(
             x=current_time,
             line_width=1.5,
             line_dash="dot",
-            line_color="#f5ce62",
+            line_color="#22f792",
             annotation_text=f"t={current_time:.2f}s",
             annotation_position="top right",
-            annotation_font_color="#f5ce62",
+            annotation_font_color="#22f792",
             annotation_font_size=10,
         )
 

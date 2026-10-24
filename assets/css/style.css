@@ -47,17 +47,19 @@
   --gold: #f5ce62;
   --yellow: #fef08a;
 
-  /* Vibrant Multi-Stop Signature Gradients */
-  --gradient-eigenscribe: linear-gradient(to right bottom, #00e8ff, #14b5ff, #5280ff, #7952f5);
-  --gradient-multi: linear-gradient(135deg, #00f2ff 0%, #3b82f6 25%, #8b5cf6 50%, #ec4899 75%, #f78166 100%);
-  --gradient-cyan-to-blue: linear-gradient(130deg, #00ffee, #0a95eb);
-  --gradient-green-to-blue: linear-gradient(135deg, #22f792, #27aaff);
-  --gradient-sunset: linear-gradient(135deg, #fc6076, #ff9a44, #ef9d43, #e75516);
-  --gradient-emerald: linear-gradient(to right, #0ba360, #3cba92, #30dd8a, #2bb673);
-  --gradient-rainbow: linear-gradient(to right, #009245, #3f86ed, #6253e1, #8E37D7, #fa7199);
-  --gradient-purple-magenta: linear-gradient(to right, #6253e1, #852D91, #A3A1FF, #fc6076);
-  --creator-gradient: linear-gradient(to right bottom, #00e8ff, #14b5ff, #3a98ff, #0070eb);
-  --eig-blue-purple-gradient: linear-gradient(135deg, #00f5ff 0%, #1d9cff 34%, #6c4dff 68%, #aa5cff 100%);
+  /* PyCharm & JetBrains Signature Gradients (Dominant Blue-Purple with Pink Accents) */
+  --gradient-pycharm: linear-gradient(135deg, #00c6ff 0%, #0072ff 25%, #7652f5 60%, #c026d3 85%, #f43f5e 100%);
+  --gradient-pycharm-subtle: linear-gradient(135deg, #0070eb 0%, #14b5ff 30%, #7652f5 75%, #a855f7 100%);
+  --gradient-multi: linear-gradient(135deg, #00e8ff 0%, #14b5ff 22%, #6366f1 50%, #7652f5 72%, #ec4899 92%, #f43f5e 100%);
+  --gradient-eigenscribe: linear-gradient(135deg, #0070eb 0%, #14b5ff 28%, #7652f5 70%, #a855f7 100%);
+  --gradient-cyan-to-blue: linear-gradient(130deg, #00e8ff 0%, #0070eb 100%);
+  --gradient-green-to-blue: linear-gradient(135deg, #00e8ff 0%, #14b5ff 40%, #7652f5 100%);
+  --gradient-sunset: linear-gradient(135deg, #7652f5 0%, #9b7dff 35%, #ec4899 75%, #f78166 100%);
+  --gradient-emerald: linear-gradient(135deg, #00e8ff 0%, #14b5ff 35%, #7652f5 75%, #a855f7 100%);
+  --gradient-rainbow: linear-gradient(135deg, #0070eb 0%, #14b5ff 25%, #7652f5 55%, #c026d3 80%, #ec4899 100%);
+  --gradient-purple-magenta: linear-gradient(135deg, #6253e1 0%, #7652f5 35%, #a855f7 70%, #ec4899 100%);
+  --creator-gradient: linear-gradient(135deg, #00e8ff 0%, #14b5ff 30%, #5280ff 65%, #7652f5 100%);
+  --eig-blue-purple-gradient: linear-gradient(135deg, #00f5ff 0%, #1d9cff 28%, #6c4dff 65%, #c026d3 90%, #f43f5e 100%);
 
   /* Depth & Shadows */
   --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
@@ -388,26 +390,25 @@ select:focus,
   outline: none !important;
 }
 
-/* Number Input Stepper Controls (+ and - buttons) */
+/* Number Input Stepper Controls (+ and - buttons) - Crisp & Clearly Visible */
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
   opacity: 0.85;
   cursor: pointer;
-  filter: invert(1) hue-rotate(185deg) saturate(4) brightness(1.3) drop-shadow(0 0 4px rgba(0, 232, 255, 0.9));
-  padding: 4px;
-  margin-right: 2px;
-  border-radius: 4px;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  height: 28px;
+  margin-right: 4px;
+  filter: hue-rotate(190deg) saturate(3) brightness(1.1);
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 input[type="number"]::-webkit-inner-spin-button:hover,
 input[type="number"]::-webkit-outer-spin-button:hover {
   opacity: 1;
-  filter: invert(1) hue-rotate(170deg) saturate(6) brightness(1.7) drop-shadow(0 0 8px rgba(0, 232, 255, 1));
-  transform: scale(1.18);
+  filter: hue-rotate(190deg) saturate(4) brightness(1.3);
+  transform: scale(1.15);
 }
 
-/* Dropdown Menu Outer & Options */
+/* Dropdown Menu Outer, List & Options - High-Contrast Dark Glassmorphism */
 body .dash-dropdown .Select-control,
 body #network-type .Select-control,
 body #frequency-distribution .Select-control {
@@ -419,36 +420,74 @@ body .dash-dropdown .Select-arrow {
   filter: drop-shadow(0 0 4px rgba(0, 232, 255, 0.8));
 }
 
-body .dash-dropdown .Select-menu-outer {
-  background: linear-gradient(145deg, rgba(6, 12, 28, 0.96) 0%, rgba(11, 20, 44, 0.94) 100%) !important;
-  border: 1px solid rgba(0, 232, 255, 0.45) !important;
+body .dash-dropdown .Select-menu-outer,
+body .dash-dropdown .Select-menu,
+body .dash-dropdown div[class*="-menu"],
+body .dash-dropdown div[class*="-MenuList"],
+.dash-dropdown .Select-menu-outer,
+.dash-dropdown .Select-menu {
+  background: #0b0f24 !important;
+  background-color: #0b0f24 !important;
+  background-image: linear-gradient(145deg, rgba(8, 14, 34, 0.98) 0%, rgba(18, 14, 45, 0.98) 100%) !important;
+  border: 1px solid rgba(121, 82, 245, 0.45) !important;
   border-radius: 12px !important;
   backdrop-filter: blur(20px) saturate(160%) !important;
   -webkit-backdrop-filter: blur(20px) saturate(160%) !important;
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.75), 0 0 24px rgba(0, 232, 255, 0.25) !important;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.85), 0 0 24px rgba(121, 82, 245, 0.30) !important;
   margin-top: 5px;
   overflow: hidden;
+  z-index: 1000 !important;
 }
 
-body .dash-dropdown .Select-option {
+body .dash-dropdown .Select-option,
+body .dash-dropdown .VirtualizedSelectOption,
+body .dash-dropdown div[class*="-option"],
+.dash-dropdown .Select-option,
+.dash-dropdown .VirtualizedSelectOption {
   background: transparent !important;
+  background-color: transparent !important;
   color: #e0f2fe !important;
+  -webkit-text-fill-color: #e0f2fe !important;
   padding: 10px 14px !important;
+  cursor: pointer !important;
+  font-size: 13px !important;
   transition: all 0.2s ease !important;
 }
 
 body .dash-dropdown .Select-option:hover,
-body .dash-dropdown .Select-option.is-focused {
-  background: linear-gradient(90deg, rgba(0, 232, 255, 0.28) 0%, rgba(121, 82, 245, 0.32) 100%) !important;
+body .dash-dropdown .Select-option.is-focused,
+body .dash-dropdown .VirtualizedSelectFocusedOption,
+body .dash-dropdown div[class*="-option"]:hover,
+body .dash-dropdown div[class*="-option"][class*="is-focused"],
+.dash-dropdown .Select-option:hover,
+.dash-dropdown .Select-option.is-focused,
+.dash-dropdown .VirtualizedSelectFocusedOption {
+  background: linear-gradient(90deg, rgba(0, 112, 235, 0.35) 0%, rgba(121, 82, 245, 0.40) 100%) !important;
+  background-color: rgba(121, 82, 245, 0.35) !important;
   color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
   text-shadow: 0 0 8px rgba(0, 232, 255, 0.8) !important;
 }
 
-body .dash-dropdown .Select-option.is-selected {
-  background: linear-gradient(90deg, rgba(0, 232, 255, 0.42) 0%, rgba(121, 82, 245, 0.45) 100%) !important;
+body .dash-dropdown .Select-option.is-selected,
+body .dash-dropdown .VirtualizedSelectSelectedOption,
+body .dash-dropdown div[class*="-option"][class*="is-selected"],
+.dash-dropdown .Select-option.is-selected,
+.dash-dropdown .VirtualizedSelectSelectedOption {
+  background: linear-gradient(90deg, rgba(0, 112, 235, 0.50) 0%, rgba(121, 82, 245, 0.55) 70%, rgba(236, 72, 153, 0.45) 100%) !important;
+  background-color: rgba(121, 82, 245, 0.55) !important;
   color: #00e8ff !important;
+  -webkit-text-fill-color: #00e8ff !important;
   font-weight: 700 !important;
   text-shadow: 0 0 10px rgba(0, 232, 255, 0.9) !important;
+}
+
+/* Native select element options */
+select option,
+select optgroup {
+  background: #0b0f24 !important;
+  background-color: #0b0f24 !important;
+  color: #e0f2fe !important;
 }
 
 body .dash-dropdown .Select-value-label,
@@ -572,7 +611,7 @@ input[type="checkbox"] {
   transform: translateY(0);
 }
 
-/* Core Multi-Colored Signature Buttons (.btn-hover .color-1 to .color-9) */
+/* Core Multi-Colored Signature Buttons (.btn-hover .color-1 to .color-9) - PyCharm Blue-Purple-Pink */
 .btn-hover {
   background-size: 300% 100%;
   border-radius: 50px;
@@ -584,72 +623,82 @@ input[type="checkbox"] {
 }
 
 .btn-hover.color-1,
-.button-primary {
-  background-image: linear-gradient(to right, #25aae1, #40e495, #30dd8a, #2bb673) !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.30), 0 4px 16px 0 rgba(49, 196, 190, 0.65) !important;
+.btn-hover.color-5,
+.button-primary,
+.button-run {
+  background-image: linear-gradient(to right, #0070eb, #14b5ff, #7652f5, #ec4899) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 4px 18px 0 rgba(118, 82, 245, 0.65), 0 0 14px rgba(0, 232, 255, 0.40) !important;
 }
 
 .btn-hover.color-1:hover,
-.button-primary:hover {
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.40), 0 6px 22px 0 rgba(49, 196, 190, 0.85) !important;
+.btn-hover.color-5:hover,
+.button-primary:hover,
+.button-run:hover {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 6px 24px 0 rgba(118, 82, 245, 0.85), 0 0 20px rgba(236, 72, 153, 0.55) !important;
 }
 
 .btn-hover.color-2 {
-  background-image: linear-gradient(to right, #f5ce62, #e43603, #fa7199, #e85a19) !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.30), 0 4px 16px 0 rgba(229, 66, 10, 0.65) !important;
+  background-image: linear-gradient(to right, #7652f5, #9b7dff, #ec4899, #f43f5e) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.30), 0 4px 16px 0 rgba(121, 82, 245, 0.65) !important;
 }
 
 .btn-hover.color-3,
 .button-quiet {
-  background-image: linear-gradient(to right, #667eea, #764ba2, #6B8DD6, #8E37D7) !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.30), 0 4px 16px 0 rgba(116, 79, 168, 0.65) !important;
+  background-image: linear-gradient(to right, #0052cc, #3b82f6, #6366f1, #7652f5) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.30), 0 4px 16px 0 rgba(59, 130, 246, 0.65) !important;
 }
 
 .btn-hover.color-3:hover,
 .button-quiet:hover {
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.40), 0 6px 22px 0 rgba(116, 79, 168, 0.85) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.40), 0 6px 22px 0 rgba(59, 130, 246, 0.85) !important;
 }
 
 .btn-hover.color-4,
 .button-secondary {
-  background-image: linear-gradient(to right, #fc6076, #ff9a44, #ef9d43, #e75516) !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.30), 0 4px 16px 0 rgba(252, 104, 110, 0.65) !important;
+  background-image: linear-gradient(to right, #0072ff, #5280ff, #7652f5, #d946ef) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.30), 0 4px 16px 0 rgba(118, 82, 245, 0.65) !important;
 }
 
 .btn-hover.color-4:hover,
 .button-secondary:hover {
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.40), 0 6px 22px 0 rgba(252, 104, 110, 0.85) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.40), 0 6px 22px 0 rgba(118, 82, 245, 0.85), 0 0 16px rgba(217, 70, 239, 0.5) !important;
 }
 
-.btn-hover.color-5,
-.button-play {
-  background-image: linear-gradient(to right, #0ba360, #3cba92, #30dd8a, #2bb673) !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.30), 0 4px 16px 0 rgba(23, 168, 108, 0.65) !important;
+.btn-hover.color-11,
+.btn-hover.color-pause,
+.button-play,
+.button-pause,
+.animation-button {
+  background-image: linear-gradient(to right, #4f46e5, #7652f5, #c026d3, #ec4899) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.30), 0 4px 16px 0 rgba(192, 38, 211, 0.65) !important;
 }
 
-.btn-hover.color-5:hover,
-.button-play:hover {
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.40), 0 6px 22px 0 rgba(23, 168, 108, 0.85) !important;
+.btn-hover.color-11:hover,
+.btn-hover.color-pause:hover,
+.button-play:hover,
+.button-pause:hover,
+.animation-button:hover {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.40), 0 6px 22px 0 rgba(192, 38, 211, 0.85), 0 0 18px rgba(236, 72, 153, 0.6) !important;
 }
 
 .btn-hover.color-6 {
-  background-image: linear-gradient(to right, #009245, #3f86ed, #6253e1, #8E37D7, #fa7199) !important;
-  box-shadow: 0 4px 16px 0 rgba(83, 176, 57, 0.65) !important;
+  background-image: linear-gradient(to right, #0070eb, #14b5ff, #7652f5, #ec4899) !important;
+  box-shadow: 0 4px 16px 0 rgba(118, 82, 245, 0.65) !important;
 }
 
 .btn-hover.color-7 {
-  background-image: linear-gradient(to right, #6253e1, #852D91, #A3A1FF, #fc6076) !important;
+  background-image: linear-gradient(to right, #6253e1, #7652f5, #a855f7, #ec4899) !important;
   box-shadow: 0 4px 16px 0 rgba(126, 52, 161, 0.65) !important;
 }
 
 .btn-hover.color-8 {
-  background-image: linear-gradient(to right, #29323c, #485563, #2b5876, #4e4376) !important;
-  box-shadow: 0 4px 16px 0 rgba(45, 54, 65, 0.75) !important;
+  background-image: linear-gradient(to right, #1e1b4b, #312e81, #4338ca, #6366f1) !important;
+  box-shadow: 0 4px 16px 0 rgba(67, 56, 202, 0.75) !important;
 }
 
 .btn-hover.color-9 {
-  background-image: linear-gradient(to right, #25aae1, #4481eb, #04befe, #3f86ed) !important;
-  box-shadow: 0 4px 16px 0 rgba(65, 132, 234, 0.65) !important;
+  background-image: linear-gradient(to right, #00c6ff, #0072ff, #7652f5, #9b7dff) !important;
+  box-shadow: 0 4px 16px 0 rgba(0, 114, 255, 0.65) !important;
 }
 
 .run-status {
@@ -674,40 +723,120 @@ input[type="checkbox"] {
 }
 
 /* ==============================================================================
- * 5️⃣ METRIC CARDS & DATA VISUALIZATION PANELS
+ * 5️⃣ SPECIAL METRIC CARD CONTAINER & ENLARGED TELEMETRY BLOCKS
  * ============================================================================== */
 
 .visual-panel {
   min-width: 0;
 }
 
-.metric-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  margin-bottom: 20px;
+.metrics-wrapper {
+  margin-bottom: 24px;
 }
 
-.metric-card {
-  padding: 16px 20px;
-  min-height: 84px;
+/* Special Glassmorphic Card Container for All System Metrics */
+.metrics-container-card {
+  position: relative;
+  padding: 22px 24px 20px;
+  border-radius: 22px;
+  background: linear-gradient(145deg, rgba(16, 14, 38, 0.92) 0%, rgba(8, 12, 28, 0.84) 100%);
+  border: 1px solid rgba(121, 82, 245, 0.35);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 16px 45px rgba(0, 0, 0, 0.55),
+    0 0 30px rgba(121, 82, 245, 0.16);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.metrics-container-card:hover {
+  border-color: rgba(0, 232, 255, 0.45);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.20),
+    0 20px 50px rgba(0, 0, 0, 0.65),
+    0 0 36px rgba(0, 232, 255, 0.20);
+}
+
+/* Top Signature PyCharm Gradient Border */
+.metrics-container-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  border-top-left-radius: 22px;
+  border-top-right-radius: 22px;
+  background: var(--gradient-pycharm);
+}
+
+.metrics-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.metrics-panel-heading {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  background: linear-gradient(145deg, rgba(16, 14, 32, 0.88), rgba(6, 9, 20, 0.72));
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.10), 0 12px 34px rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(16px) saturate(140%);
-  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  gap: 2px;
+}
+
+.metrics-eyebrow {
+  margin: 0;
+  font-size: 10px;
+  letter-spacing: .16em;
+  color: var(--cyan-bright);
+}
+
+.metrics-panel-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: .02em;
+  color: #f0f6fc;
+}
+
+.metrics-status-pill {
+  font-size: 11px;
+  padding: 5px 12px;
+}
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin: 0;
+}
+
+/* Enlarged, Prominent Metric Block Tiles */
+.metric-card {
+  padding: 16px 20px;
+  min-height: 118px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  background: linear-gradient(145deg, rgba(12, 16, 36, 0.90), rgba(6, 9, 22, 0.85));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.10), 0 8px 24px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
   position: relative;
-  overflow: visible;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  overflow: hidden;
+  contain: layout;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
 .metric-card:hover {
   transform: translateY(-3px);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.20), 0 16px 40px rgba(0, 0, 0, 0.45);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 14px 34px rgba(0, 0, 0, 0.50);
 }
 
 .metric-card::before {
@@ -716,99 +845,153 @@ input[type="checkbox"] {
   top: 0;
   left: 0;
   right: 0;
-  height: 4px;
-  border-top-left-radius: 18px;
-  border-top-right-radius: 18px;
-  background: var(--gradient-eigenscribe);
+  height: 3px;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
 }
 
-.metric-card strong {
-  display: block;
-  font-size: clamp(22px, 2.2vw, 30px);
-  font-weight: 700;
-  line-height: 1.25;
-  margin-top: 4px;
-  margin-bottom: 0;
-  letter-spacing: -0.01em;
-  overflow: visible;
-  word-break: normal;
+.metric-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
 }
 
 .metric-label {
   color: var(--muted);
   font-size: 11px;
   text-transform: uppercase;
-  letter-spacing: .14em;
+  letter-spacing: .12em;
   font-weight: 700;
   line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* Metric Card 1: Current r (Warm Coral / Amber) */
+.metric-badge {
+  font-size: 10px;
+  font-weight: 700;
+  font-family: "Fira Code", monospace;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.metric-value,
+.metric-card strong {
+  display: block;
+  font-size: clamp(24px, 2.3vw, 34px);
+  font-weight: 700;
+  line-height: 1.15;
+  margin-top: 4px;
+  margin-bottom: 2px;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums lining-nums;
+  -moz-font-feature-settings: "tnum" 1;
+  -webkit-font-feature-settings: "tnum" 1;
+  font-feature-settings: "tnum" 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.metric-subtext {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Metric Tile 1: Current r (Order Parameter Variable - Warm Coral / Orange) */
 .metric-current {
-  border-color: rgba(255, 140, 60, 0.55);
+  border-color: rgba(255, 140, 60, 0.50);
   box-shadow:
     inset 0 1px 0 rgba(255, 214, 168, 0.16),
-    0 0 28px rgba(255, 126, 38, 0.25),
-    0 12px 34px rgba(0, 0, 0, 0.3);
+    0 0 24px rgba(255, 126, 38, 0.22),
+    0 8px 24px rgba(0, 0, 0, 0.35);
 }
 .metric-current::before {
   background: linear-gradient(to right, #ff9a44, #e75516);
 }
 .metric-current .metric-label,
+.metric-current .metric-badge,
 .metric-current strong {
   color: #ffad66;
   text-shadow: 0 0 16px rgba(255, 126, 38, 0.7);
 }
+.metric-current .metric-badge {
+  background: rgba(255, 140, 60, 0.16);
+  border-color: rgba(255, 140, 60, 0.35);
+}
 
-/* Metric Card 2: Peak r (Bright Cyan / Blue) */
+/* Metric Tile 2: Peak r (Order Parameter Variable - Warm Amber / Orange) */
 .metric-peak {
-  border-color: rgba(0, 232, 255, 0.55);
+  border-color: rgba(255, 170, 64, 0.50);
   box-shadow:
-    inset 0 1px 0 rgba(200, 245, 255, 0.16),
-    0 0 28px rgba(0, 232, 255, 0.25),
-    0 12px 34px rgba(0, 0, 0, 0.3);
+    inset 0 1px 0 rgba(255, 220, 160, 0.16),
+    0 0 24px rgba(255, 170, 64, 0.22),
+    0 8px 24px rgba(0, 0, 0, 0.35);
 }
 .metric-peak::before {
-  background: linear-gradient(to right, #00e8ff, #14b5ff);
+  background: linear-gradient(to right, #f59e0b, #f97316);
 }
 .metric-peak .metric-label,
+.metric-peak .metric-badge,
 .metric-peak strong {
-  color: #00e8ff;
-  text-shadow: 0 0 16px rgba(0, 232, 255, 0.7);
+  color: #ffbe76;
+  text-shadow: 0 0 16px rgba(255, 170, 64, 0.7);
+}
+.metric-peak .metric-badge {
+  background: rgba(255, 170, 64, 0.16);
+  border-color: rgba(255, 170, 64, 0.35);
 }
 
-/* Metric Card 3: Time (Neon Emerald Green) */
+/* Metric Tile 3: Time (Time Variable - Neon Emerald Green) */
 .metric-time {
-  border-color: rgba(34, 247, 146, 0.55);
+  border-color: rgba(34, 247, 146, 0.50);
   box-shadow:
-    inset 0 1px 0 rgba(191, 255, 222, 0.16),
-    0 0 28px rgba(34, 247, 146, 0.25),
-    0 12px 34px rgba(0, 0, 0, 0.3);
+    inset 0 1px 0 rgba(200, 255, 230, 0.16),
+    0 0 24px rgba(34, 247, 146, 0.22),
+    0 8px 24px rgba(0, 0, 0, 0.35);
 }
 .metric-time::before {
   background: linear-gradient(to right, #00f5db, #22f792);
 }
 .metric-time .metric-label,
+.metric-time .metric-badge,
 .metric-time strong {
   color: #22f792;
   text-shadow: 0 0 16px rgba(34, 247, 146, 0.7);
 }
+.metric-time .metric-badge {
+  background: rgba(34, 247, 146, 0.16);
+  border-color: rgba(34, 247, 146, 0.35);
+}
 
-/* Metric Card 4: Oscillators (Cosmic Violet / Purple) */
+/* Metric Tile 4: Oscillators (Ensemble Count - PyCharm Cosmic Violet / Purple) */
 .metric-oscillators {
-  border-color: rgba(155, 125, 255, 0.55);
+  border-color: rgba(121, 82, 245, 0.50);
   box-shadow:
-    inset 0 1px 0 rgba(225, 199, 255, 0.16),
-    0 0 28px rgba(121, 82, 245, 0.28),
-    0 12px 34px rgba(0, 0, 0, 0.3);
+    inset 0 1px 0 rgba(220, 205, 255, 0.16),
+    0 0 24px rgba(121, 82, 245, 0.22),
+    0 8px 24px rgba(0, 0, 0, 0.35);
 }
 .metric-oscillators::before {
-  background: linear-gradient(to right, #9b7dff, #ec4899);
+  background: linear-gradient(to right, #7652f5, #ec4899);
 }
 .metric-oscillators .metric-label,
+.metric-oscillators .metric-badge,
 .metric-oscillators strong {
-  color: #c78cff;
-  text-shadow: 0 0 16px rgba(154, 92, 255, 0.7);
+  color: #a855f7;
+  text-shadow: 0 0 16px rgba(121, 82, 245, 0.7);
+}
+.metric-oscillators .metric-badge {
+  background: rgba(121, 82, 245, 0.16);
+  border-color: rgba(121, 82, 245, 0.35);
 }
 
 .chart-grid {

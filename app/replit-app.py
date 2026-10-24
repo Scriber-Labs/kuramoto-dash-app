@@ -108,6 +108,7 @@ def _unit_circle_figure(
     order: float,
     order_phase: float,
     oscillator_colors: list[str] | None = None,
+    history_theta: np.ndarray | None = None,
 ) -> go.Figure:
     figure = _base_figure("Phase field")
     circle = np.linspace(0, 2 * np.pi, 160)
@@ -137,6 +138,32 @@ def _unit_circle_figure(
             f"hsl({int(i * 300 / max(len(theta), 1))}, 88%, 66%)"
             for i in range(len(theta))
         ]
+
+        # Render trailing shadow dots if history is provided
+        if history_theta is not None and len(history_theta) > 0:
+            trail_len = len(history_theta)
+            for step_idx, past_phase in enumerate(history_theta):
+                weight = (step_idx + 1) / (trail_len + 1)
+                trail_opacity = 0.10 + 0.50 * (weight ** 1.5)
+                trail_size = max(4.0, 11 * (0.45 + 0.45 * weight))
+
+                figure.add_trace(
+                    go.Scatter(
+                        x=np.cos(past_phase),
+                        y=np.sin(past_phase),
+                        mode="markers",
+                        marker={
+                            "size": trail_size,
+                            "color": oscillator_colors,
+                            "opacity": trail_opacity,
+                            "line": {"width": 0},
+                        },
+                        hoverinfo="skip",
+                        showlegend=False,
+                        name=f"trail_{step_idx}",
+                    )
+                )
+
         figure.add_trace(
             go.Scatter(
                 x=np.cos(theta),
@@ -216,7 +243,7 @@ def _order_figure(time: np.ndarray, order: np.ndarray, frame: int) -> go.Figure:
             mode="markers",
             marker={
                 "size": 12,
-                "color": "#ff9a44",
+                "color": "#22f792",
                 "line": {"color": "rgba(255, 255, 255, 0.95)", "width": 2},
             },
             name="current frame",
@@ -236,7 +263,7 @@ def _order_figure(time: np.ndarray, order: np.ndarray, frame: int) -> go.Figure:
                 "x1": time[frame],
                 "y0": 0,
                 "y1": 1,
-                "line": {"color": "rgba(255, 173, 102, 0.75)", "width": 2, "dash": "dot"},
+                "line": {"color": "rgba(34, 247, 146, 0.8)", "width": 2, "dash": "dot"},
             }
         ],
     )
@@ -1047,12 +1074,18 @@ def update_visuals(data: dict[str, Any] | None, frame: int | None):
     phase = theta[index]
     mean_field = np.mean(np.exp(1j * phase))
     oscillator_colors = _network_colors(frequencies)
+
+    trail_length = 6
+    start_idx = max(0, index - trail_length)
+    history_theta = theta[start_idx:index] if index > start_idx else None
+
     return (
         _unit_circle_figure(
             phase,
             float(abs(mean_field)),
             float(np.angle(mean_field)),
             oscillator_colors,
+            history_theta=history_theta,
         ),
         _order_figure(time, order, index),
         _phase_figure(time, theta),

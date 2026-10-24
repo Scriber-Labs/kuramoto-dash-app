@@ -46,12 +46,18 @@ def handle_update_animation_visuals(
     mean_field = np.mean(np.exp(1j * phase))
     osc_colors = network_colors(frequencies)
 
+    # Extract trailing history frames for shadow dots effect
+    trail_length = 6
+    start_idx = max(0, index - trail_length)
+    history_theta = theta[start_idx:index] if index > start_idx else None
+
     return (
         unit_circle_figure(
             phase,
             float(abs(mean_field)),
             float(np.angle(mean_field)),
             osc_colors,
+            history_theta=history_theta,
         ),
         order_figure(time, order, index),
         metric_cards(data, index),
