@@ -7,17 +7,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="036a4c8f-8947-4828-9ec4-48c52b6531ba" name="Changes" comment="Add Lie symmetry tracking with updated diagnostics, UI integration, and improved plot styling.">
+    <list default="true" id="036a4c8f-8947-4828-9ec4-48c52b6531ba" name="Changes" comment="Enhance telemetry, metrics UI, and visualizations. Added history-based trailing dots to unit circle plots, revamped metric cards with richer data display and PyCharm-inspired styling, updated colorscales, and improved CSS for dropdowns and buttons.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/callbacks/visualization.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/callbacks/visualization.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/components/cards.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/components/cards.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/components/controls.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/components/controls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/components/plots.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/components/plots.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/layout.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/layout.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/replit-app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/replit-app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/css/style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test_components.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_components.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.scriber-core" beforeDir="false" afterPath="$PROJECT_DIR$/.scriber-core" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.scriber-core/boilerplates/css/tse-boilerplate.css" beforeDir="false" afterPath="$PROJECT_DIR$/.scriber-core/boilerplates/css/tse-boilerplate.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.scriber-core/boilerplates/python/visualization_boilerplate.py" beforeDir="false" afterPath="$PROJECT_DIR$/.scriber-core/boilerplates/python/visualization_boilerplate.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,23 +31,23 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0" />
-      <entry key="MS500" value="1.0000000000028277" />
-      <entry key="S2" value="1.0034751583340122" />
-      <entry key="S5" value="1.317837010655428" />
-      <entry key="S10" value="2.5986030801839304" />
-      <entry key="S30" value="5.976852712418985" />
-      <entry key="S60" value="7.776821694276364" />
-      <entry key="M2" value="11.242288829362089" />
-      <entry key="M5" value="26.92838085135498" />
-      <entry key="M10" value="43.374199758164615" />
-      <entry key="M15" value="51.994239792425496" />
-      <entry key="M30" value="64.77730043383978" />
-      <entry key="H1" value="76.34426023297733" />
-      <entry key="H2" value="85.75813875613059" />
-      <entry key="H4" value="92.09893708175919" />
-      <entry key="D1" value="98.55533736393201" />
-      <entry key="W1" value="99.79019811227722" />
+      <entry key="MS100" value="1.0111357764926345" />
+      <entry key="MS500" value="2.3995220383744376" />
+      <entry key="S2" value="7.91290013390669" />
+      <entry key="S5" value="13.384149401756218" />
+      <entry key="S10" value="16.59152290689378" />
+      <entry key="S30" value="19.368992815710026" />
+      <entry key="S60" value="20.16223537278242" />
+      <entry key="M2" value="20.575383277265857" />
+      <entry key="M5" value="20.829332102808053" />
+      <entry key="M10" value="21.114975695229052" />
+      <entry key="M15" value="22.3871221770242" />
+      <entry key="M30" value="31.768025352719036" />
+      <entry key="H1" value="52.15376450553685" />
+      <entry key="H2" value="75.78800785819195" />
+      <entry key="H4" value="94.61511014492284" />
+      <entry key="D1" value="115.94373931562572" />
+      <entry key="W1" value="120.25939922670618" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
@@ -75,23 +69,23 @@
       <entry key="W1" value="0.0" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.757858283255199" />
-      <entry key="MS500" value="0.9460576467282028" />
-      <entry key="S2" value="0.9896295308915753" />
-      <entry key="S5" value="1.3092833904611003" />
-      <entry key="S10" value="2.5880445314822804" />
-      <entry key="S30" value="5.9675513461214225" />
-      <entry key="S60" value="7.7704970381767655" />
-      <entry key="M2" value="11.236560381902946" />
-      <entry key="M5" value="26.92044130940589" />
-      <entry key="M10" value="43.36709941488999" />
-      <entry key="M15" value="51.98840870525787" />
-      <entry key="M30" value="64.77366763914647" />
-      <entry key="H1" value="76.342213801504" />
-      <entry key="H2" value="85.75704730411877" />
-      <entry key="H4" value="92.09837236068896" />
-      <entry key="D1" value="98.55524039714642" />
-      <entry key="W1" value="99.79018418706822" />
+      <entry key="MS100" value="0.9565855302011032" />
+      <entry key="MS500" value="2.3711405897531614" />
+      <entry key="S2" value="7.886609942213965" />
+      <entry key="S5" value="13.365114470082705" />
+      <entry key="S10" value="16.5794156870986" />
+      <entry key="S30" value="19.364197853592497" />
+      <entry key="S60" value="20.159728667182204" />
+      <entry key="M2" value="20.574101416704938" />
+      <entry key="M5" value="20.828812186837833" />
+      <entry key="M10" value="21.114681765527916" />
+      <entry key="M15" value="22.386785889059613" />
+      <entry key="M30" value="31.76733257862549" />
+      <entry key="H1" value="52.15288536108705" />
+      <entry key="H2" value="75.78728862957793" />
+      <entry key="H4" value="94.61464781411513" />
+      <entry key="D1" value="115.94364408057838" />
+      <entry key="W1" value="120.25938511539736" />
     </decayedShown>
   </component>
   <component name="ProblemsViewState">
@@ -334,7 +328,15 @@
       <option name="project" value="LOCAL" />
       <updated>1792873978788</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Enhance telemetry, metrics UI, and visualizations. Added history-based trailing dots to unit circle plots, revamped metric cards with richer data display and PyCharm-inspired styling, updated colorscales, and improved CSS for dropdowns and buttons.">
+      <option name="closed" value="true" />
+      <created>1792877452465</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1792877452465</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -345,7 +347,8 @@
     <MESSAGE value="Dynamic scaling, Nyquist validation, and decimation logic for enhanced performance and visualization. Expanded oscillator count to 500." />
     <MESSAGE value="Update cyclic colormap for plots and adjust IDEA workspace metadata." />
     <MESSAGE value="Add Lie symmetry tracking with updated diagnostics, UI integration, and improved plot styling." />
-    <option name="LAST_COMMIT_MESSAGE" value="Add Lie symmetry tracking with updated diagnostics, UI integration, and improved plot styling." />
+    <MESSAGE value="Enhance telemetry, metrics UI, and visualizations. Added history-based trailing dots to unit circle plots, revamped metric cards with richer data display and PyCharm-inspired styling, updated colorscales, and improved CSS for dropdowns and buttons." />
+    <option name="LAST_COMMIT_MESSAGE" value="Enhance telemetry, metrics UI, and visualizations. Added history-based trailing dots to unit circle plots, revamped metric cards with richer data display and PyCharm-inspired styling, updated colorscales, and improved CSS for dropdowns and buttons." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
