@@ -24,6 +24,7 @@ def render_nyquist_banner(
     custom_frequencies: str | None,
     n_oscillators: int | None,
     seed: int | None,
+    solver: str | None = None,
 ) -> html.Div:
     """Render illuminated Nyquist theorem status banner."""
     dt_val = float(dt if dt is not None else 0.05)
@@ -32,6 +33,7 @@ def render_nyquist_banner(
     std_val = float(frequency_std if frequency_std is not None else 1.0)
     n_val = int(n_oscillators if n_oscillators is not None else 24)
     seed_val = int(seed if seed is not None else 27)
+    solver_val = str(solver or "RK45")
 
     try:
         freqs = generate_frequencies(
@@ -51,10 +53,11 @@ def render_nyquist_banner(
         coupling=coupling_val,
         mean_freq=mean_val,
         std_freq=std_val,
+        solver=solver_val,
     )
 
     status_class = f"nyquist-banner nyquist-{nyquist['level']}"
-    icon = "⚠️" if nyquist["status"] == "undersampled" else ("ℹ️" if nyquist["status"] == "oversampled" else "✓")
+    icon = "⚠️" if nyquist["status"] in {"undersampled", "marginal"} else ("ℹ️" if nyquist["status"] == "oversampled" else "✓")
 
     return html.Div(
         [
@@ -98,6 +101,7 @@ def handle_run_or_reset(
     frequency_std: float | None,
     custom_frequencies: str | None,
     custom_adjacency: str | None = None,
+    track_symmetries: list[str] | bool | str | None = None,
 ) -> tuple[dict[str, Any] | None, int, int, str]:
     """Execute simulation run or reset state."""
     if triggered_id == "reset-btn":
@@ -117,12 +121,14 @@ def handle_run_or_reset(
             frequency_std=frequency_std,
             custom_frequencies=custom_frequencies,
             custom_adjacency=custom_adjacency,
+            track_symmetries=track_symmetries,
         )
         dataset = generate_dataset(**config)
         payload = package_simulation_payload(dataset, config)
         n_frames = len(payload["time"])
+        sym_note = " · Lie symmetries tracked" if payload.get("symmetries") else ""
         status_msg = (
-            f"Generated {n_frames} frames · {config['solver']} · seed {config['seed']}"
+            f"Generated {n_frames} frames · {config['solver']}{sym_note} · seed {config['seed']}"
         )
         return payload, n_frames - 1, 0, status_msg
     except (TypeError, ValueError) as error:
@@ -142,6 +148,7 @@ def register_simulation_callbacks(app: Dash) -> None:
         Input("custom-frequencies", "value"),
         Input("n-oscillators", "value"),
         Input("seed", "value"),
+        Input("solver", "value"),
     )
     def update_nyquist_warning(
         dt: float | None,
@@ -152,6 +159,7 @@ def register_simulation_callbacks(app: Dash) -> None:
         custom_frequencies: str | None,
         n_oscillators: int | None,
         seed: int | None,
+        solver: str | None,
     ) -> html.Div:
         return render_nyquist_banner(
             dt=dt,
@@ -162,6 +170,7 @@ def register_simulation_callbacks(app: Dash) -> None:
             custom_frequencies=custom_frequencies,
             n_oscillators=n_oscillators,
             seed=seed,
+            solver=solver,
         )
 
     @app.callback(
@@ -183,6 +192,7 @@ def register_simulation_callbacks(app: Dash) -> None:
         State("frequency-std", "value"),
         State("custom-frequencies", "value"),
         State("custom-adjacency", "value"),
+        State("track-symmetries", "value"),
         prevent_initial_call="initial_duplicate",
     )
     def run_or_reset(
@@ -200,6 +210,7 @@ def register_simulation_callbacks(app: Dash) -> None:
         frequency_std: float | None,
         custom_frequencies: str | None,
         custom_adjacency: str | None,
+        track_symmetries: list[str] | bool | str | None,
     ) -> tuple[dict[str, Any] | None, int, int, str]:
         return handle_run_or_reset(
             triggered_id=getattr(ctx, "triggered_id", None),
@@ -215,4 +226,5 @@ def register_simulation_callbacks(app: Dash) -> None:
             frequency_std=frequency_std,
             custom_frequencies=custom_frequencies,
             custom_adjacency=custom_adjacency,
+            track_symmetries=track_symmetries,
         )

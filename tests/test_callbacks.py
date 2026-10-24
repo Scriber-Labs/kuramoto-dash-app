@@ -12,13 +12,14 @@ from app.callbacks.simulation import handle_run_or_reset, render_nyquist_banner
 from app.callbacks.visualization import (
     handle_update_animation_visuals,
     handle_update_static_visuals,
+    handle_update_symmetry_visual,
     handle_update_visuals,
 )
 from app.services import collect_config, generate_dataset, package_simulation_payload
 
 
 def test_nyquist_banner_callback_rendering() -> None:
-    # Test undersampled rendering
+    # Test undersampled rendering with RK45
     banner_under = render_nyquist_banner(
         dt=0.8,
         coupling=2.0,
@@ -28,9 +29,25 @@ def test_nyquist_banner_callback_rendering() -> None:
         custom_frequencies="",
         n_oscillators=24,
         seed=27,
+        solver="RK45",
     )
     assert banner_under is not None
     assert "nyquist-warning" in banner_under.className
+
+    # Test undersampled rendering with Euler (specific Euler warning message)
+    banner_euler = render_nyquist_banner(
+        dt=0.8,
+        coupling=2.0,
+        frequency_distribution="Normal",
+        frequency_mean=0.0,
+        frequency_std=2.0,
+        custom_frequencies="",
+        n_oscillators=24,
+        seed=27,
+        solver="Euler",
+    )
+    assert banner_euler is not None
+    assert "nyquist-warning" in banner_euler.className
 
     # Test optimal rendering
     banner_opt = render_nyquist_banner(
@@ -42,6 +59,7 @@ def test_nyquist_banner_callback_rendering() -> None:
         custom_frequencies="",
         n_oscillators=24,
         seed=27,
+        solver="RK45",
     )
     assert banner_opt is not None
     assert "nyquist-success" in banner_opt.className
@@ -88,11 +106,15 @@ def test_simulation_callback_execution() -> None:
         frequency_mean=0.0,
         frequency_std=1.0,
         custom_frequencies="",
+        track_symmetries=["track"],
     )
     assert data is not None
     assert "time" in data
+    assert "symmetries" in data
+    assert data["symmetries"] is not None
     assert max_f > 0
     assert "Generated" in status
+    assert "symmetries" in status.lower()
 
 
 def test_visualization_callback_execution() -> None:
@@ -121,6 +143,13 @@ def test_visualization_callback_execution() -> None:
     assert len(static_res) == 4
     for fig in static_res:
         assert hasattr(fig, "to_plotly_json")
+
+    # Test symmetry visual handler (empty and populated)
+    sym_fig_empty = handle_update_symmetry_visual(None, frame=0)
+    assert hasattr(sym_fig_empty, "to_plotly_json")
+
+    sym_fig_populated = handle_update_symmetry_visual(payload, frame=2)
+    assert hasattr(sym_fig_populated, "to_plotly_json")
 
 
 def test_dataset_callback_handlers() -> None:

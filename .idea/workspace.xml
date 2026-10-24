@@ -7,9 +7,24 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="036a4c8f-8947-4828-9ec4-48c52b6531ba" name="Changes" comment="Dynamic scaling, Nyquist validation, and decimation logic for enhanced performance and visualization. Expanded oscillator count to 500.">
+    <list default="true" id="036a4c8f-8947-4828-9ec4-48c52b6531ba" name="Changes" comment="Update cyclic colormap for plots and adjust IDEA workspace metadata.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/callbacks/simulation.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/callbacks/simulation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/callbacks/visualization.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/callbacks/visualization.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/components/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/components/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/components/controls.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/components/controls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/components/plots.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/components/plots.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/layout.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/layout.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/replit-app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/replit-app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/benchmark.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/benchmark.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/diagnostics.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/diagnostics.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/simulation.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/simulation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/validation.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/validation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/services.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/services.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test_callbacks.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_callbacks.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test_components.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_components.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,23 +44,23 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.3679022135633034" />
-      <entry key="MS500" value="2.6790755060108027" />
-      <entry key="S2" value="5.284323936429752" />
-      <entry key="S5" value="9.582128846865718" />
-      <entry key="S10" value="14.12101736571235" />
-      <entry key="S30" value="19.777161091018055" />
-      <entry key="S60" value="21.74076148046902" />
-      <entry key="M2" value="22.830488901267326" />
-      <entry key="M5" value="23.522216771582176" />
-      <entry key="M10" value="23.759410244365238" />
-      <entry key="M15" value="23.83922682430036" />
-      <entry key="M30" value="23.919422744771786" />
-      <entry key="H1" value="23.959663580467417" />
-      <entry key="H2" value="23.979819826581668" />
-      <entry key="H4" value="23.989906920416367" />
-      <entry key="D1" value="23.998317404225787" />
-      <entry key="W1" value="23.999759618989017" />
+      <entry key="MS100" value="1.0" />
+      <entry key="MS500" value="1.0000000000028277" />
+      <entry key="S2" value="1.0034751583340122" />
+      <entry key="S5" value="1.317837010655428" />
+      <entry key="S10" value="2.5986030801839304" />
+      <entry key="S30" value="5.976852712418985" />
+      <entry key="S60" value="7.776821694276364" />
+      <entry key="M2" value="11.242288829362089" />
+      <entry key="M5" value="26.92838085135498" />
+      <entry key="M10" value="43.374199758164615" />
+      <entry key="M15" value="51.994239792425496" />
+      <entry key="M30" value="64.77730043383978" />
+      <entry key="H1" value="76.34426023297733" />
+      <entry key="H2" value="85.75813875613059" />
+      <entry key="H4" value="92.09893708175919" />
+      <entry key="D1" value="98.55533736393201" />
+      <entry key="W1" value="99.79019811227722" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
@@ -67,23 +82,23 @@
       <entry key="W1" value="0.0" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="1.3031154983608846" />
-      <entry key="MS500" value="2.6528981622678094" />
-      <entry key="S2" value="5.270294539008682" />
-      <entry key="S5" value="9.56914236675133" />
-      <entry key="S10" value="14.10974030986821" />
-      <entry key="S30" value="19.771195069003326" />
-      <entry key="S60" value="21.73737590047028" />
-      <entry key="M2" value="22.828682662613204" />
-      <entry key="M5" value="23.521465232068177" />
-      <entry key="M10" value="23.759029474536984" />
-      <entry key="M15" value="23.838971854515492" />
-      <entry key="M30" value="23.919294695207245" />
-      <entry key="H1" value="23.95959941394139" />
-      <entry key="H2" value="23.979787707810505" />
-      <entry key="H4" value="23.98989085214471" />
-      <entry key="D1" value="23.998314724945573" />
-      <entry key="W1" value="23.999759236204447" />
+      <entry key="MS100" value="0.757858283255199" />
+      <entry key="MS500" value="0.9460576467282028" />
+      <entry key="S2" value="0.9896295308915753" />
+      <entry key="S5" value="1.3092833904611003" />
+      <entry key="S10" value="2.5880445314822804" />
+      <entry key="S30" value="5.9675513461214225" />
+      <entry key="S60" value="7.7704970381767655" />
+      <entry key="M2" value="11.236560381902946" />
+      <entry key="M5" value="26.92044130940589" />
+      <entry key="M10" value="43.36709941488999" />
+      <entry key="M15" value="51.98840870525787" />
+      <entry key="M30" value="64.77366763914647" />
+      <entry key="H1" value="76.342213801504" />
+      <entry key="H2" value="85.75704730411877" />
+      <entry key="H4" value="92.09837236068896" />
+      <entry key="D1" value="98.55524039714642" />
+      <entry key="W1" value="99.79018418706822" />
     </decayedShown>
   </component>
   <component name="ProblemsViewState">
@@ -98,26 +113,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "codeWithMe.voiceChat.enabledByDefault": "false",
-    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "junie.onboarding.icon.badge.shown": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "python.packages.toolwindow.project.migrated.to.right.top.v2": "true",
-    "to.speed.mode.migration.done": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.plots.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;python.packages.toolwindow.project.migrated.to.right.top.v2&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration default="true" type="LATEX_RUN_CONFIGURATION" factoryName="LaTeX configuration factory">
       <steps>
@@ -142,6 +159,30 @@
       <module name="" />
       <option name="RUN_TOOL" value="" />
       <option name="SCRIPT_NAME" value="" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="plots" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="kuramoto-dash-app" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/app/components" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="DEBUG_JUST_MY_CODE" value="false" />
+      <option name="RUN_TOOL" value="" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/app/components/plots.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -247,6 +288,11 @@
       <option name="USE_PATTERN" value="false" />
       <method v="2" />
     </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.plots" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
@@ -279,7 +325,15 @@
       <option name="project" value="LOCAL" />
       <updated>1792851513018</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Update cyclic colormap for plots and adjust IDEA workspace metadata.">
+      <option name="closed" value="true" />
+      <created>1792852319283</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1792852319283</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -288,6 +342,18 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Add project setup files, design tokens, and developer guidelines." />
     <MESSAGE value="Dynamic scaling, Nyquist validation, and decimation logic for enhanced performance and visualization. Expanded oscillator count to 500." />
-    <option name="LAST_COMMIT_MESSAGE" value="Dynamic scaling, Nyquist validation, and decimation logic for enhanced performance and visualization. Expanded oscillator count to 500." />
+    <MESSAGE value="Update cyclic colormap for plots and adjust IDEA workspace metadata." />
+    <option name="LAST_COMMIT_MESSAGE" value="Update cyclic colormap for plots and adjust IDEA workspace metadata." />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/app/components/plots.py</url>
+          <line>203</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

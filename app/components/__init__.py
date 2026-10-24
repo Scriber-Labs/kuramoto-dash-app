@@ -21,6 +21,7 @@ from app.components.plots import (
     order_figure,
     phase_heatmap_figure,
     phase_trajectories_figure,
+    symmetry_figure,
     unit_circle_figure,
 )
 
@@ -32,6 +33,7 @@ __all__ = [
     "order_figure",
     "phase_heatmap_figure",
     "phase_trajectories_figure",
+    "symmetry_figure",
     "network_figure",
     "frequency_distribution_figure",
     "metric_cards",

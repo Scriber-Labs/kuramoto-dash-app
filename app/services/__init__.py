@@ -5,6 +5,7 @@ from app.services.cli_bridge import build_cli_config, run_cli_command
 from app.services.diagnostics import (
     DiagnosticRegistry,
     analyze_graph_topology,
+    analyze_lie_symmetries,
     analyze_spectral_dynamics,
 )
 from app.services.distributions import DistributionRegistry
@@ -29,6 +30,7 @@ __all__ = [
     "DiagnosticRegistry",
     "parse_custom_adjacency",
     "analyze_graph_topology",
+    "analyze_lie_symmetries",
     "analyze_spectral_dynamics",
     "check_nyquist_sampling",
     "build_cli_config",

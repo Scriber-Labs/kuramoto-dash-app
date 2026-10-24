@@ -177,9 +177,9 @@ def _order_figure(time: np.ndarray, order: np.ndarray, frame: int) -> go.Figure:
     figure = _base_figure("Synchronization strength")
     frame = max(0, min(int(frame), len(order) - 1))
     glow_layers = [
-        ("rgba(118, 82, 245, .12)", 18),
-        ("rgba(0, 232, 255, .14)", 12),
-        ("rgba(0, 245, 219, .2)", 7),
+        ("rgba(255, 126, 38, 0.15)", 18),
+        ("rgba(255, 154, 68, 0.22)", 12),
+        ("rgba(255, 173, 102, 0.32)", 7),
     ]
     for color, width in glow_layers:
         figure.add_trace(
@@ -202,9 +202,9 @@ def _order_figure(time: np.ndarray, order: np.ndarray, frame: int) -> go.Figure:
             x=time,
             y=order,
             mode="lines",
-            line={"color": "#00f5db", "width": 3, "shape": "spline", "smoothing": 0.55},
+            line={"color": "#ffad66", "width": 3, "shape": "spline", "smoothing": 0.55},
             fill="tozeroy",
-            fillcolor="rgba(0,245,219,.09)",
+            fillcolor="rgba(255, 126, 38, 0.14)",
             name="r(t)",
             hovertemplate="t=%{x:.2f}<br>r=%{y:.3f}<extra></extra>",
         )
@@ -215,9 +215,9 @@ def _order_figure(time: np.ndarray, order: np.ndarray, frame: int) -> go.Figure:
             y=[order[frame]],
             mode="markers",
             marker={
-                "size": 11,
-                "color": "#00f5db",
-                "line": {"color": "#f5f3ff", "width": 2},
+                "size": 12,
+                "color": "#ff9a44",
+                "line": {"color": "rgba(255, 255, 255, 0.95)", "width": 2},
             },
             name="current frame",
             hovertemplate="t=%{x:.2f}<br>r=%{y:.3f}<extra></extra>",
@@ -236,7 +236,7 @@ def _order_figure(time: np.ndarray, order: np.ndarray, frame: int) -> go.Figure:
                 "x1": time[frame],
                 "y0": 0,
                 "y1": 1,
-                "line": {"color": "rgba(0,245,219,.28)", "width": 1, "dash": "dot"},
+                "line": {"color": "rgba(255, 173, 102, 0.75)", "width": 2, "dash": "dot"},
             }
         ],
     )

@@ -133,6 +133,25 @@ def sidebar_controls() -> html.Aside:
                     inputClassName="radio-input",
                 ),
             ),
+            html.Div(
+                id="rotor-symmetry-toggle-group",
+                children=[
+                    dcc.Checklist(
+                        id="track-symmetries",
+                        options=[
+                            {
+                                "label": " Track Lie symmetries (U(1) & Noether charges)",
+                                "value": "track",
+                            }
+                        ],
+                        value=["track"] if DEFAULTS.get("track_symmetries", False) else [],
+                        className="symmetry-checklist",
+                        inputClassName="checklist-input",
+                    ),
+                ],
+                className="field",
+                style={"marginTop": "-4px", "marginBottom": "12px"},
+            ),
             control_group(
                 "Natural frequencies",
                 dcc.Dropdown(

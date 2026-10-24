@@ -11,7 +11,9 @@ import pytest
 from app.services.benchmark import export_dataset_npz, package_simulation_payload
 from app.services.cli_bridge import build_cli_config
 from app.services.diagnostics import (
+    DiagnosticRegistry,
     analyze_graph_topology,
+    analyze_lie_symmetries,
     analyze_spectral_dynamics,
 )
 from app.services.simulation import (
@@ -31,6 +33,19 @@ def test_nyquist_sampling_evaluation() -> None:
     assert res_under["level"] == "warning"
     assert "Undersampling" in res_under["message"]
     assert res_under["sampling_ratio"] < 1.0
+
+    # Euler solver under stiff coupling and undersampling -> specific Euler instability warning
+    res_euler_stiff = check_nyquist_sampling(
+        dt=0.8, frequencies=[10.0, -10.0], coupling=5.0, solver="Euler"
+    )
+    assert res_euler_stiff["status"] == "undersampled"
+    assert "Fixed-Step Euler Instability" in res_euler_stiff["message"]
+
+    # Euler solver near boundary -> marginal warning
+    res_euler_marg = check_nyquist_sampling(
+        dt=0.08, frequencies=[1.0, -1.0], coupling=2.0, solver="Euler"
+    )
+    assert res_euler_marg["status"] in {"marginal", "optimal"}
 
     # Very small dt -> oversampled info
     res_over = check_nyquist_sampling(dt=0.0005, frequencies=[0.5, -0.5], coupling=0.2)
@@ -182,6 +197,26 @@ def test_diagnostics_and_graph_metrics() -> None:
     order = np.cos(times) ** 2
     spec = analyze_spectral_dynamics(times, order, dt=0.1)
     assert "dt" in spec
+
+    # Lie symmetries and Noether charges
+    phases = np.zeros((100, 10))
+    for t_idx in range(100):
+        phases[t_idx] = np.linspace(0, 2 * np.pi, 10, endpoint=False) + 0.1 * times[t_idx]
+    
+    syms = analyze_lie_symmetries(
+        times=times,
+        phases=phases,
+        adj_matrix=adj,
+        coupling=1.5,
+        omega=np.ones(10) * 0.1,
+    )
+    assert "interaction_energy" in syms
+    assert "noether_charge" in syms
+    assert "rotor_unitarity" in syms
+    assert len(syms["interaction_energy"]) == 100
+    assert len(syms["noether_charge"]) == 100
+    assert np.isclose(syms["mean_unitarity"], 1.0, atol=1e-5)
+    assert syms["global_phase_invariance_error"] < 1e-10
 
 
 def test_cli_config_builder() -> None:

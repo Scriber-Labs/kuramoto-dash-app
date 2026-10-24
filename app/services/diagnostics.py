@@ -130,6 +130,74 @@ def analyze_spectral_dynamics(
     }
 
 
+def analyze_lie_symmetries(
+    times: np.ndarray,
+    phases: np.ndarray,
+    adj_matrix: np.ndarray,
+    coupling: float,
+    omega: Optional[np.ndarray] = None,
+) -> Dict[str, Any]:
+    """Compute Lie symmetry invariants, Noether energy, and U(1) phase diagnostics.
+
+    Parameters
+    ----------
+    times : np.ndarray
+        Array of time steps shape (T,).
+    phases : np.ndarray
+        Oscillator phase time series shape (T, N).
+    adj_matrix : np.ndarray
+        Adjacency matrix shape (N, N).
+    coupling : float
+        Coupling strength K.
+    omega : np.ndarray | None
+        Natural frequency array shape (N,).
+
+    Returns
+    -------
+    Dict[str, Any]
+        Dictionary with interaction energy, Noether charge, rotor unitarity, and invariance errors.
+    """
+    t_arr = np.asarray(times, dtype=float)
+    theta = np.asarray(phases, dtype=float)
+    adj = np.asarray(adj_matrix, dtype=float)
+    k_val = float(coupling)
+    n = theta.shape[1] if theta.ndim == 2 else len(theta)
+
+    if len(t_arr) == 0 or n == 0:
+        return {}
+
+    # 1. Interaction Energy (Hamiltonian potential): E(t) = - (K / 2N) sum_{i,j} A_ij cos(theta_j - theta_i)
+    diff = theta[:, :, np.newaxis] - theta[:, np.newaxis, :]
+    cos_diff = np.cos(diff)
+    energy = -0.5 * (k_val / max(1.0, float(n))) * np.sum(adj * cos_diff, axis=(1, 2))
+
+    # 2. Noether Charge / Global U(1) momentum:
+    omega_bar = float(np.mean(omega)) if omega is not None and len(omega) == n else 0.0
+    mean_phase = np.mean(theta, axis=1)
+    noether_charge = mean_phase - omega_bar * t_arr
+    noether_charge_centered = noether_charge - noether_charge[0]
+
+    # 3. Geometric Algebra Rotor Unitarity in Cl(2):
+    half_theta = theta / 2.0
+    rotor_norms = np.cos(half_theta) ** 2 + np.sin(half_theta) ** 2
+    rotor_unitarity = np.mean(rotor_norms, axis=1)
+
+    # 4. Global U(1) phase shift invariance test (alpha = pi/3):
+    alpha = np.pi / 3.0
+    shifted_diff = (theta[:, :, np.newaxis] + alpha) - (theta[:, np.newaxis, :] + alpha)
+    invariance_error = float(np.max(np.abs(np.sin(diff) - np.sin(shifted_diff))))
+
+    return {
+        "interaction_energy": energy.tolist(),
+        "noether_charge": noether_charge_centered.tolist(),
+        "rotor_unitarity": rotor_unitarity.tolist(),
+        "global_phase_invariance_error": invariance_error,
+        "mean_energy": float(np.mean(energy)),
+        "energy_drift": float(energy[-1] - energy[0]) if len(energy) > 0 else 0.0,
+        "mean_unitarity": float(np.mean(rotor_unitarity)),
+    }
+
+
 # Register default diagnostics
 DiagnosticRegistry.register(
     "graph_topology", lambda **kw: analyze_graph_topology(kw["adj_matrix"])
@@ -137,4 +205,14 @@ DiagnosticRegistry.register(
 DiagnosticRegistry.register(
     "spectral_dynamics",
     lambda **kw: analyze_spectral_dynamics(kw["times"], kw["order_param"]),
+)
+DiagnosticRegistry.register(
+    "lie_symmetries",
+    lambda **kw: analyze_lie_symmetries(
+        kw["times"],
+        kw["phases"],
+        kw["adj_matrix"],
+        kw.get("coupling", 1.0),
+        kw.get("omega"),
+    ),
 )

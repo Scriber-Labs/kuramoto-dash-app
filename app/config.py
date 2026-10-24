@@ -14,6 +14,7 @@ DEFAULTS: dict[str, Any] = {
     "frequency_distribution": "Normal",
     "network_type": "All-to-All",
     "solver": "RK45",
+    "track_symmetries": False,
     "frequency_mean": 0.0,
     "frequency_std": 1.0,
     "frequency_low": -1.0,

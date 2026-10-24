@@ -166,6 +166,7 @@ def collect_config(
     frequency_std: float | None = None,
     custom_frequencies: str | None = None,
     custom_adjacency: str | None = None,
+    track_symmetries: bool | list[str] | str | None = None,
 ) -> dict[str, Any]:
     """Validate and package input arguments for simulation run matching CLI configurations."""
     validated = validate_simulation_inputs(
@@ -181,6 +182,7 @@ def collect_config(
         frequency_std=frequency_std,
         custom_frequencies=custom_frequencies,
         custom_adjacency=custom_adjacency,
+        track_symmetries=track_symmetries,
     )
 
     frequencies = generate_frequencies(

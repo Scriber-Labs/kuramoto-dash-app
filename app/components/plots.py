@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 import networkx as nx
 import numpy as np
 import plotly.graph_objects as go
@@ -139,8 +141,8 @@ def unit_circle_figure(
                 x=[0, order * np.cos(order_phase)],
                 y=[0, order * np.sin(order_phase)],
                 mode="lines+markers",
-                line={"color": "#22f792", "width": 4},
-                marker={"size": [3, 12], "color": "#22f792"},
+                line={"color": "#ffad66", "width": 4},
+                marker={"size": [3, 12], "color": "#ffad66", "line": {"color": "#ffffff", "width": 1.5}},
                 name=f"mean field r={order:.3f}",
                 hoverinfo="skip",
             )
@@ -160,9 +162,9 @@ def order_figure(time: np.ndarray, order: np.ndarray, frame: int) -> go.Figure:
         return figure
     frame = max(0, min(int(frame), len(order) - 1))
     glow_layers = [
-        ("rgba(121, 82, 245, 0.18)", 18),
-        ("rgba(0, 232, 255, 0.22)", 12),
-        ("rgba(34, 247, 146, 0.28)", 7),
+        ("rgba(255, 126, 38, 0.15)", 18),
+        ("rgba(255, 154, 68, 0.22)", 12),
+        ("rgba(255, 173, 102, 0.32)", 7),
     ]
     for color, width in glow_layers:
         figure.add_trace(
@@ -185,9 +187,9 @@ def order_figure(time: np.ndarray, order: np.ndarray, frame: int) -> go.Figure:
             x=time,
             y=order,
             mode="lines",
-            line={"color": "#22f792", "width": 3, "shape": "spline", "smoothing": 0.55},
+            line={"color": "#ffad66", "width": 3, "shape": "spline", "smoothing": 0.55},
             fill="tozeroy",
-            fillcolor="rgba(34, 247, 146, 0.12)",
+            fillcolor="rgba(255, 126, 38, 0.14)",
             name="r(t)",
             hovertemplate="t=%{x:.2f}<br>r=%{y:.3f}<extra></extra>",
         )
@@ -199,8 +201,8 @@ def order_figure(time: np.ndarray, order: np.ndarray, frame: int) -> go.Figure:
             mode="markers",
             marker={
                 "size": 12,
-                "color": "#f78166",
-                "line": {"color": "#ffffff", "width": 2},
+                "color": "#ff9a44",
+                "line": {"color": "rgba(255, 255, 255, 0.95)", "width": 2},
             },
             name="current frame",
             hovertemplate="t=%{x:.2f}<br>r=%{y:.3f}<extra></extra>",
@@ -219,7 +221,7 @@ def order_figure(time: np.ndarray, order: np.ndarray, frame: int) -> go.Figure:
                 "x1": time[frame],
                 "y0": 0,
                 "y1": 1,
-                "line": {"color": "rgba(247, 129, 102, 0.8)", "width": 2, "dash": "dot"},
+                "line": {"color": "rgba(255, 173, 102, 0.75)", "width": 2, "dash": "dot"},
             }
         ],
     )
@@ -235,13 +237,14 @@ def phase_heatmap_figure(time: np.ndarray, theta: np.ndarray) -> go.Figure:
     # High-contrast cyclic colormap (no green, yellow, or orange)
     # Seamlessly continuous from magenta at 0 rad through cosmic violet, deep blue, electric cyan (at π), and back to magenta (at 2π)
     cyclic_phase_colorscale = [
-        [0.0, "#0070eb"],    # Magenta / Hot Pink (0 rad)
-        [0.2, "#0A95EB"],    # Cosmic Violet
-        [0.35, "#14B5FF"],   # Deep Royal Blue
-        [0.5, "#00f0ff"],    # High-contrast Electric Cyan (π rad)
-        [0.65, "#D8B4FE"],   # Deep Royal Blue
-        [0.8, "#A855F7"],    # Cosmic Violet
-        [1.0, "#5E17EB"],    # Magenta / Hot Pink (2π rad - seamless loop to 0)
+        [0.0, "#0070eb"],
+        [0.2, "#0A95EB"],
+        [0.35, "#14B5FF"],
+        [0.5, "#00f0ff"],
+        [0.65, "#A855F7"],
+        [0.8, "#5E17EB"],
+        [1.0, "#0070eb"],
+
     ]
 
     figure.add_trace(
@@ -441,8 +444,8 @@ def frequency_distribution_figure(frequencies: np.ndarray) -> go.Figure:
             x=frequencies,
             nbinsx=min(18, max(6, len(frequencies) // 2)),
             marker={
-                "color": "rgba(118, 82, 245, 0.75)",
-                "line": {"color": "#00e8ff", "width": 1.5},
+                "color": "rgba(34, 247, 146, 0.65)",
+                "line": {"color": "#22f792", "width": 1.2},
             },
             hovertemplate="ω range: %{x}<br>count: %{y}<extra></extra>",
             name="frequency",
@@ -451,4 +454,82 @@ def frequency_distribution_figure(frequencies: np.ndarray) -> go.Figure:
     figure.update_xaxes(title="natural frequency ω", gridcolor="rgba(160,180,220,.12)")
     figure.update_yaxes(title="count", gridcolor="rgba(160,180,220,.12)")
     figure.update_layout(height=280, bargap=0.08)
+    return figure
+
+
+def symmetry_figure(
+    times: np.ndarray,
+    symmetries: dict[str, Any] | None,
+    current_index: int | None = None,
+) -> go.Figure:
+    """Render Lie symmetry and Noether conservation curves (Hamiltonian Energy, U(1) Charge, Cl(2) Unitarity)."""
+    figure = base_figure("Lie Symmetry & Noether Diagnostics")
+    if not symmetries or "interaction_energy" not in symmetries:
+        return empty_figure(
+            "Lie Symmetry & Noether Diagnostics",
+            "Select Rotor solver or enable Lie symmetry tracking to view U(1) and Noether curves.",
+        )
+
+    t_arr = np.asarray(times, dtype=float)
+    energy = np.asarray(symmetries["interaction_energy"], dtype=float)
+    noether = np.asarray(symmetries["noether_charge"], dtype=float)
+    unitarity = np.asarray(symmetries["rotor_unitarity"], dtype=float)
+
+    # 1. Hamiltonian Interaction Energy E(t)
+    figure.add_trace(
+        go.Scatter(
+            x=t_arr,
+            y=energy,
+            mode="lines",
+            line={"color": "#00e8ff", "width": 2.2},
+            name="Interaction Energy E(t)",
+            hovertemplate="t=%{x:.2f}s<br>E(t)=%{y:.4f}<extra></extra>",
+        )
+    )
+
+    # 2. Noether Charge / Invariant Q(t)
+    figure.add_trace(
+        go.Scatter(
+            x=t_arr,
+            y=noether,
+            mode="lines",
+            line={"color": "#9b7dff", "width": 1.8, "dash": "dash"},
+            name="Noether Invariant Q(t)",
+            hovertemplate="t=%{x:.2f}s<br>Q(t)=%{y:.4f}<extra></extra>",
+        )
+    )
+
+    # 3. Rotor Cl(2) Unitarity |R(t)|^2
+    figure.add_trace(
+        go.Scatter(
+            x=t_arr,
+            y=unitarity,
+            mode="lines",
+            line={"color": "#22f792", "width": 1.8, "dash": "dot"},
+            name="Rotor Unitarity |R|²",
+            hovertemplate="t=%{x:.2f}s<br>|R|²=%{y:.4f}<extra></extra>",
+        )
+    )
+
+    # Timeline scrubber vertical line
+    if current_index is not None and 0 <= current_index < len(t_arr):
+        current_time = float(t_arr[current_index])
+        figure.add_vline(
+            x=current_time,
+            line_width=1.5,
+            line_dash="dot",
+            line_color="#f5ce62",
+            annotation_text=f"t={current_time:.2f}s",
+            annotation_position="top right",
+            annotation_font_color="#f5ce62",
+            annotation_font_size=10,
+        )
+
+    figure.update_xaxes(title="time t (s)", gridcolor="rgba(160,180,220,.12)")
+    figure.update_yaxes(title="diagnostic amplitude", gridcolor="rgba(160,180,220,.12)")
+    figure.update_layout(
+        height=290,
+        hovermode="x unified",
+        legend={"orientation": "h", "y": 1.12, "x": 0.0},
+    )
     return figure

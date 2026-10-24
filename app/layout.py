@@ -105,6 +105,18 @@ def create_layout() -> html.Div:
                                         ),
                                         className="chart-card",
                                     ),
+                                    html.Div(
+                                        dcc.Graph(
+                                            id="symmetry-plot",
+                                            figure=empty_figure(
+                                                "Lie Symmetry & Noether Diagnostics",
+                                                "Select Rotor solver or enable Lie symmetry tracking to view U(1) and Noether curves.",
+                                            ),
+                                            config={"displayModeBar": False},
+                                        ),
+                                        id="symmetry-card-container",
+                                        className="chart-card",
+                                    ),
                                 ],
                                 className="visual-panel",
                             ),

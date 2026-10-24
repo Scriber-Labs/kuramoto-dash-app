@@ -19,6 +19,7 @@ from app.components import (
     phase_heatmap_figure,
     phase_trajectories_figure,
     sidebar_controls,
+    symmetry_figure,
     timeline_controls,
     unit_circle_figure,
 )
@@ -121,6 +122,27 @@ def test_frequency_distribution_figure() -> None:
     assert isinstance(fig, go.Figure)
     assert len(fig.data) == 1
     assert isinstance(fig.data[0], go.Histogram)
+
+
+def test_symmetry_figure() -> None:
+    # Empty / unconfigured state
+    empty_sym_fig = symmetry_figure(np.array([]), None)
+    assert isinstance(empty_sym_fig, go.Figure)
+    assert "Lie Symmetry" in empty_sym_fig.layout.title.text
+
+    # Populated state
+    times = np.linspace(0, 10, 50)
+    symmetries = {
+        "interaction_energy": [-1.2] * 50,
+        "noether_charge": [0.0] * 50,
+        "rotor_unitarity": [1.0] * 50,
+    }
+    fig = symmetry_figure(times, symmetries, current_index=12)
+    assert isinstance(fig, go.Figure)
+    assert len(fig.data) == 3  # Energy, Noether, Unitarity
+    assert fig.data[0].name == "Interaction Energy E(t)"
+    assert fig.data[1].name == "Noether Invariant Q(t)"
+    assert fig.data[2].name == "Rotor Unitarity |R|²"
 
 
 def test_cards_and_controls() -> None:

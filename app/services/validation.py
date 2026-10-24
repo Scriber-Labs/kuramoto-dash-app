@@ -25,8 +25,10 @@ def check_nyquist_sampling(
     coupling: float = 0.0,
     mean_freq: float = 0.0,
     std_freq: float = 1.0,
+    solver: str = "rk45",
 ) -> dict[str, Any]:
-    """Evaluate whether the time step dt satisfies Nyquist-Shannon sampling criterion.
+    """Evaluate whether the time step dt satisfies Nyquist-Shannon sampling criterion
+    and check numerical stability against stiff coupling dynamics.
 
     Parameters
     ----------
@@ -40,13 +42,15 @@ def check_nyquist_sampling(
         Mean natural frequency if frequencies array is not yet generated.
     std_freq : float
         Standard deviation of natural frequency.
+    solver : str
+        Integration solver ('rk45', 'euler', 'rotor').
 
     Returns
     -------
     dict[str, Any]
         Dictionary containing:
-        - 'status': 'undersampled' | 'oversampled' | 'optimal'
-        - 'level': 'warning' | 'info' | 'success'
+        - 'status': 'undersampled' | 'marginal' | 'oversampled' | 'optimal'
+        - 'level': 'warning' | 'info' | 'success' | 'critical'
         - 'sampling_rate': Sampling frequency f_s in Hz (1 / dt)
         - 'max_frequency': Max dynamic frequency f_max in Hz
         - 'nyquist_rate': Minimum required sampling rate 2 * f_max
@@ -57,7 +61,7 @@ def check_nyquist_sampling(
     if dt <= 0:
         return {
             "status": "undersampled",
-            "level": "critical",
+            "level": "warning",
             "sampling_rate": 0.0,
             "max_frequency": 0.0,
             "nyquist_rate": 0.0,
@@ -86,13 +90,29 @@ def check_nyquist_sampling(
     sampling_rate = 1.0 / dt
     sampling_ratio = sampling_rate / nyquist_rate if nyquist_rate > 0 else 1.0
 
+    solver_key = (solver or "rk45").strip().lower()
+
     if dt > nyquist_dt:
         status = "undersampled"
         level = "warning"
+        if solver_key == "euler":
+            message = (
+                f"⚠️ Fixed-Step Euler Instability: dt = {dt:.4f}s > dt_nyquist = {nyquist_dt:.4f}s (K = {coupling:.1f}). "
+                f"Forward Euler will diverge or produce numerical overflow under stiff dynamics. "
+                f"Reduce dt < {nyquist_dt:.4f}s or switch to adaptive RK45."
+            )
+        else:
+            message = (
+                f"⚠️ Undersampling (Nyquist Violation): dt = {dt:.4f}s > dt_nyquist = {nyquist_dt:.4f}s "
+                f"(f_s = {sampling_rate:.1f} Hz < 2·f_max = {nyquist_rate:.1f} Hz). "
+                f"Risk of temporal aliasing, artificial phase jumps, or solver instability."
+            )
+    elif solver_key == "euler" and sampling_ratio < 2.0:
+        status = "marginal"
+        level = "warning"
         message = (
-            f"⚠️ Undersampling (Nyquist Violation): dt = {dt:.4f}s > dt_nyquist = {nyquist_dt:.4f}s "
-            f"(f_s = {sampling_rate:.1f} Hz < 2·f_max = {nyquist_rate:.1f} Hz). "
-            f"Risk of temporal aliasing, artificial phase jumps, or solver instability."
+            f"⚠️ Euler Marginal Stability: dt = {dt:.4f}s is near Nyquist boundary (dt_nyquist = {nyquist_dt:.4f}s, ratio = {sampling_ratio:.1f}×). "
+            f"Forward Euler may accumulate truncation errors with stiff coupling K = {coupling:.1f}."
         )
     elif sampling_ratio > 40.0:
         status = "oversampled"
@@ -134,6 +154,7 @@ def validate_simulation_inputs(
     frequency_std: float | None = None,
     custom_frequencies: str | None = None,
     custom_adjacency: str | None = None,
+    track_symmetries: bool | list[str] | str | None = None,
 ) -> dict[str, Any]:
     """Validate and sanitize user input simulation parameters.
 
@@ -222,6 +243,17 @@ def validate_simulation_inputs(
         else DEFAULTS["custom_adjacency"]
     )
 
+    if isinstance(track_symmetries, list):
+        symmetries_flag = bool("track" in track_symmetries or True in track_symmetries)
+    elif isinstance(track_symmetries, str):
+        symmetries_flag = track_symmetries.strip().lower() in {"true", "1", "track", "yes"}
+    else:
+        symmetries_flag = bool(
+            track_symmetries
+            if track_symmetries is not None
+            else DEFAULTS.get("track_symmetries", False)
+        )
+
     return {
         "n_oscillators": n,
         "coupling": k,
@@ -231,6 +263,7 @@ def validate_simulation_inputs(
         "frequency_distribution": freq_dist,
         "network_type": net_type,
         "solver": solv,
+        "track_symmetries": symmetries_flag,
         "frequency_mean": mean_val,
         "frequency_std": std_val,
         "custom_frequencies": cust_freq,

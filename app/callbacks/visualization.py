@@ -17,6 +17,7 @@ from app.components.plots import (
     order_figure,
     phase_heatmap_figure,
     phase_trajectories_figure,
+    symmetry_figure,
     unit_circle_figure,
 )
 
@@ -93,6 +94,29 @@ def handle_update_static_visuals(
     )
 
 
+def handle_update_symmetry_visual(
+    data: dict[str, Any] | None,
+    frame: int | None = None,
+) -> go.Figure:
+    """Compute and render Lie symmetry and Noether diagnostic figure."""
+    if not data or "time" not in data or not data["time"]:
+        return empty_figure(
+            "Lie Symmetry & Noether Diagnostics",
+            "Select Rotor solver or enable Lie symmetry tracking to view U(1) and Noether curves.",
+        )
+
+    symmetries = data.get("symmetries")
+    if not symmetries:
+        return empty_figure(
+            "Lie Symmetry & Noether Diagnostics",
+            "Symmetry tracking was not enabled for this run. Enable toggle in sidebar to track U(1) and Noether charges.",
+        )
+
+    time = np.asarray(data["time"], dtype=float)
+    index = max(0, min(int(frame or 0), len(time) - 1)) if frame is not None else None
+    return symmetry_figure(time, symmetries, current_index=index)
+
+
 def handle_update_visuals(
     data: dict[str, Any] | None,
     frame: int | None,
@@ -138,3 +162,14 @@ def register_visualization_callbacks(app: Dash) -> None:
         data: dict[str, Any] | None,
     ) -> tuple[go.Figure, go.Figure, go.Figure, go.Figure]:
         return handle_update_static_visuals(data)
+
+    @app.callback(
+        Output("symmetry-plot", "figure"),
+        Input("simulation-store", "data"),
+        Input("time-slider", "value"),
+    )
+    def update_symmetry_visual(
+        data: dict[str, Any] | None,
+        frame: int | None,
+    ) -> go.Figure:
+        return handle_update_symmetry_visual(data, frame)
