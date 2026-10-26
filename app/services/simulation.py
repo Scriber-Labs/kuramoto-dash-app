@@ -6,7 +6,12 @@ import json
 from typing import Any, Optional
 
 import numpy as np
-from kuramoto.model import order_parameter
+try:
+    from kuramoto.model import order_parameter
+except ImportError:
+    def order_parameter(phases: np.ndarray) -> np.ndarray:
+        """Compute Kuramoto order parameter r(t) for phase time series."""
+        return np.abs(np.mean(np.exp(1j * phases), axis=-1))
 
 from app.services.distributions import DistributionRegistry
 from app.services.solvers import SolverRegistry
@@ -167,6 +172,11 @@ def collect_config(
     custom_frequencies: str | None = None,
     custom_adjacency: str | None = None,
     track_symmetries: bool | list[str] | str | None = None,
+    adaptive_rtol: float | None = None,
+    adaptive_atol: float | None = None,
+    dt_min: float | None = None,
+    dt_max: float | None = None,
+    shots: int | None = None,
 ) -> dict[str, Any]:
     """Validate and package input arguments for simulation run matching CLI configurations."""
     validated = validate_simulation_inputs(
@@ -183,6 +193,11 @@ def collect_config(
         custom_frequencies=custom_frequencies,
         custom_adjacency=custom_adjacency,
         track_symmetries=track_symmetries,
+        adaptive_rtol=adaptive_rtol,
+        adaptive_atol=adaptive_atol,
+        dt_min=dt_min,
+        dt_max=dt_max,
+        shots=shots,
     )
 
     frequencies = generate_frequencies(

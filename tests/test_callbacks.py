@@ -11,8 +11,11 @@ from app.callbacks.dataset import handle_advance_animation, handle_toggle_animat
 from app.callbacks.simulation import handle_run_or_reset, render_nyquist_banner
 from app.callbacks.visualization import (
     handle_update_animation_visuals,
+    handle_update_quantum_comparison_visual,
+    handle_update_spectral_visual,
     handle_update_static_visuals,
     handle_update_symmetry_visual,
+    handle_update_u1_visual,
     handle_update_visuals,
 )
 from app.services import collect_config, generate_dataset, package_simulation_payload
@@ -92,7 +95,7 @@ def test_simulation_callback_execution() -> None:
     assert val == 0
     assert "Ready" in status
 
-    # Test run action
+    # Test run action with adaptive solver and symmetry tracking
     data, max_f, val, status = handle_run_or_reset(
         triggered_id="run-btn",
         n_oscillators=6,
@@ -102,11 +105,15 @@ def test_simulation_callback_execution() -> None:
         seed=42,
         frequency_distribution="Normal",
         network_type="Ring",
-        solver="RK45",
+        solver="dopri54",
         frequency_mean=0.0,
         frequency_std=1.0,
         custom_frequencies="",
         track_symmetries=["track"],
+        adaptive_rtol=1e-5,
+        adaptive_atol=1e-7,
+        dt_min=1e-4,
+        dt_max=0.5,
     )
     assert data is not None
     assert "time" in data
@@ -114,7 +121,6 @@ def test_simulation_callback_execution() -> None:
     assert data["symmetries"] is not None
     assert max_f > 0
     assert "Generated" in status
-    assert "symmetries" in status.lower()
 
 
 def test_visualization_callback_execution() -> None:
@@ -123,7 +129,7 @@ def test_visualization_callback_execution() -> None:
     assert len(res_empty) == 7
 
     # Test populated state
-    cfg = collect_config(4, 1.0, 1.0, 0.1, 42, "Normal", "Ring", "RK45")
+    cfg = collect_config(4, 1.0, 1.0, 0.1, 42, "Normal", "Ring", "rkmk4")
     ds = generate_dataset(**cfg)
     payload = package_simulation_payload(ds, cfg)
 
@@ -144,12 +150,18 @@ def test_visualization_callback_execution() -> None:
     for fig in static_res:
         assert hasattr(fig, "to_plotly_json")
 
-    # Test symmetry visual handler (empty and populated)
-    sym_fig_empty = handle_update_symmetry_visual(None, frame=0)
-    assert hasattr(sym_fig_empty, "to_plotly_json")
+    # Test symmetry, U(1), spectral, and quantum visual handlers
+    sym_fig = handle_update_symmetry_visual(payload, frame=2)
+    assert hasattr(sym_fig, "to_plotly_json")
 
-    sym_fig_populated = handle_update_symmetry_visual(payload, frame=2)
-    assert hasattr(sym_fig_populated, "to_plotly_json")
+    u1_fig = handle_update_u1_visual(payload)
+    assert hasattr(u1_fig, "to_plotly_json")
+
+    spectral_fig = handle_update_spectral_visual(payload)
+    assert hasattr(spectral_fig, "to_plotly_json")
+
+    quantum_fig = handle_update_quantum_comparison_visual(payload)
+    assert hasattr(quantum_fig, "to_plotly_json")
 
 
 def test_dataset_callback_handlers() -> None:

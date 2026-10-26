@@ -1,11 +1,12 @@
-"""Spectral and topological diagnostics service for Kuramoto dynamics."""
+"""Spectral, Lie symmetry, and topological diagnostics service for Kuramoto dynamics."""
 
 from __future__ import annotations
 
-from typing import Any, Callable, Dict, Optional
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 import networkx as nx
 import numpy as np
+from scipy import signal
 
 try:
     from kuramoto.analysis.spectral import (
@@ -49,6 +50,7 @@ class DiagnosticRegistry:
         order_param: np.ndarray,
         adj_matrix: np.ndarray,
         omega: np.ndarray,
+        **kwargs: Any,
     ) -> Dict[str, Any]:
         """Compute all registered diagnostic metrics."""
         results: Dict[str, Any] = {}
@@ -60,6 +62,7 @@ class DiagnosticRegistry:
                     order_param=order_param,
                     adj_matrix=adj_matrix,
                     omega=omega,
+                    **kwargs,
                 )
             except Exception as exc:
                 results[name] = {"error": str(exc)}
@@ -103,30 +106,48 @@ def analyze_graph_topology(adj_matrix: np.ndarray) -> Dict[str, Any]:
 def analyze_spectral_dynamics(
     times: np.ndarray, order_param: np.ndarray, dt: Optional[float] = None
 ) -> Dict[str, Any]:
-    """Compute PSD and harmonic decomposition of order parameter time-series."""
-    if len(times) < 2:
-        return {}
+    """Compute PSD via Welch method and Fourier FFT spectrum vs frequency."""
+    times_arr = np.asarray(times, dtype=float)
+    r_arr = np.asarray(order_param, dtype=float)
 
-    step_dt = dt if dt is not None else float(times[1] - times[0])
+    if len(times_arr) < 4:
+        return {
+            "psd_freqs": [],
+            "psd_power": [],
+            "fft_freqs": [],
+            "fft_amplitude": [],
+        }
 
-    psd_result = None
-    if compute_psd is not None:
-        try:
-            psd_result = compute_psd(order_param, dt=step_dt)
-        except Exception:
-            pass
+    step_dt = dt if dt is not None else float(times_arr[1] - times_arr[0])
+    if step_dt <= 0:
+        step_dt = 0.05
+    fs = 1.0 / step_dt
 
-    harmonics = None
-    if harmonic_analysis is not None:
-        try:
-            harmonics = harmonic_analysis(order_param, dt=step_dt, max_harmonic=5)
-        except Exception:
-            pass
+    # 1. Welch PSD
+    try:
+        nperseg = min(len(r_arr), 256)
+        if nperseg < 4:
+            nperseg = len(r_arr)
+        freqs_welch, psd_welch = signal.welch(r_arr - np.mean(r_arr), fs=fs, nperseg=nperseg)
+    except Exception:
+        freqs_welch, psd_welch = np.array([]), np.array([])
+
+    # 2. Fourier FFT Amplitude Spectrum
+    try:
+        n_pts = len(r_arr)
+        fft_vals = np.fft.rfft(r_arr - np.mean(r_arr))
+        fft_freqs = np.fft.rfftfreq(n_pts, d=step_dt)
+        fft_amp = (2.0 / n_pts) * np.abs(fft_vals)
+    except Exception:
+        fft_freqs, fft_amp = np.array([]), np.array([])
 
     return {
         "dt": step_dt,
-        "psd": psd_result,
-        "harmonics": harmonics,
+        "psd_freqs": freqs_welch.tolist(),
+        "psd_power": psd_welch.tolist(),
+        "fft_freqs": fft_freqs.tolist(),
+        "fft_amplitude": fft_amp.tolist(),
+        "sampling_rate": fs,
     }
 
 
@@ -136,27 +157,10 @@ def analyze_lie_symmetries(
     adj_matrix: np.ndarray,
     coupling: float,
     omega: Optional[np.ndarray] = None,
+    dt: Optional[float] = None,
 ) -> Dict[str, Any]:
-    """Compute Lie symmetry invariants, Noether energy, and U(1) phase diagnostics.
-
-    Parameters
-    ----------
-    times : np.ndarray
-        Array of time steps shape (T,).
-    phases : np.ndarray
-        Oscillator phase time series shape (T, N).
-    adj_matrix : np.ndarray
-        Adjacency matrix shape (N, N).
-    coupling : float
-        Coupling strength K.
-    omega : np.ndarray | None
-        Natural frequency array shape (N,).
-
-    Returns
-    -------
-    Dict[str, Any]
-        Dictionary with interaction energy, Noether charge, rotor unitarity, and invariance errors.
-    """
+    """Compute Lie symmetry invariants, continuous U(1) phase invariance,
+    symplectic/time-reversibility residuals, and Noether charges."""
     t_arr = np.asarray(times, dtype=float)
     theta = np.asarray(phases, dtype=float)
     adj = np.asarray(adj_matrix, dtype=float)
@@ -182,19 +186,103 @@ def analyze_lie_symmetries(
     rotor_norms = np.cos(half_theta) ** 2 + np.sin(half_theta) ** 2
     rotor_unitarity = np.mean(rotor_norms, axis=1)
 
-    # 4. Global U(1) phase shift invariance test (alpha = pi/3):
-    alpha = np.pi / 3.0
-    shifted_diff = (theta[:, :, np.newaxis] + alpha) - (theta[:, np.newaxis, :] + alpha)
-    invariance_error = float(np.max(np.abs(np.sin(diff) - np.sin(shifted_diff))))
+    # 4. Continuous U(1) phase rotation invariance test over alpha in [0, 2pi):
+    alpha_vals = np.linspace(0, 2 * np.pi, 50)
+    u1_residuals = []
+    # For Kuramoto equations: d(theta_i + alpha)/dt == d(theta_i)/dt because sin((theta_j + a) - (theta_i + a)) == sin(theta_j - theta_i)
+    # Residual: || d/dt(theta + alpha) - d/dt(theta) ||_inf
+    for a in alpha_vals:
+        shifted_diff = (theta[:, :, np.newaxis] + a) - (theta[:, np.newaxis, :] + a)
+        u1_res = float(np.max(np.abs(np.sin(diff) - np.sin(shifted_diff))))
+        u1_residuals.append(u1_res)
+
+    # 5. Symplectic / Time-reversibility residual (dt -> -dt):
+    # Under exact time reversal with -dt and -omega, trajectory maps back to theta(t).
+    # Residual across steps: difference between forward-backward single-step map or trajectory residual
+    step_dt = float(dt) if dt is not None and dt > 0 else (float(t_arr[1] - t_arr[0]) if len(t_arr) > 1 else 0.05)
+    reversibility_residual = np.zeros(len(t_arr))
+    for t_idx in range(len(t_arr)):
+        th_current = theta[t_idx]
+        # Forward Euler velocity:
+        diff_curr = th_current[np.newaxis, :] - th_current[:, np.newaxis]
+        coupling_curr = np.sum(adj * np.sin(diff_curr), axis=1)
+        om = omega if omega is not None and len(omega) == n else np.zeros(n)
+        dtheta_fwd = om + (k_val / max(1.0, float(n))) * coupling_curr
+        th_fwd = th_current + step_dt * dtheta_fwd
+        
+        # Backward velocity from th_fwd with -step_dt:
+        diff_fwd = th_fwd[np.newaxis, :] - th_fwd[:, np.newaxis]
+        coupling_bwd = np.sum(adj * np.sin(diff_fwd), axis=1)
+        dtheta_bwd = om + (k_val / max(1.0, float(n))) * coupling_bwd
+        th_reconstructed = th_fwd - step_dt * dtheta_bwd
+        reversibility_residual[t_idx] = float(np.mean(np.abs(th_reconstructed - th_current)))
 
     return {
         "interaction_energy": energy.tolist(),
         "noether_charge": noether_charge_centered.tolist(),
         "rotor_unitarity": rotor_unitarity.tolist(),
-        "global_phase_invariance_error": invariance_error,
+        "u1_alphas": alpha_vals.tolist(),
+        "u1_residuals": u1_residuals,
+        "reversibility_residuals": reversibility_residual.tolist(),
+        "mean_reversibility_residual": float(np.mean(reversibility_residual)),
+        "global_phase_invariance_error": float(np.max(u1_residuals)),
         "mean_energy": float(np.mean(energy)),
         "energy_drift": float(energy[-1] - energy[0]) if len(energy) > 0 else 0.0,
         "mean_unitarity": float(np.mean(rotor_unitarity)),
+    }
+
+
+def compute_quantum_mode_comparison(
+    omega: np.ndarray,
+    adj_matrix: np.ndarray,
+    k_coupling: float,
+    t_span: float,
+    dt: float,
+    seed: int = 27,
+    shots: int = 1024,
+) -> Dict[str, Any]:
+    """Compute statevector baseline vs shot_sampling with dispersion for quantum comparison."""
+    from app.services.solvers import SolverRegistry
+    from kuramoto.model import order_parameter
+
+    # 1. Statevector baseline (noise-free)
+    t_exact, phases_exact = SolverRegistry._solve_quantum_method(
+        scheme="statevector",
+        omega=omega,
+        adj_matrix=adj_matrix,
+        k_coupling=k_coupling,
+        t_span=t_span,
+        dt=dt,
+        seed=seed,
+    )
+    r_exact = order_parameter(phases_exact)
+
+    # 2. Shot sampling runs (NISQ hardware shot dispersion)
+    shot_samples = []
+    for s_seed in [seed, seed + 1, seed + 2]:
+        _, p_shot = SolverRegistry._solve_quantum_method(
+            scheme="shot_sampling",
+            omega=omega,
+            adj_matrix=adj_matrix,
+            k_coupling=k_coupling,
+            t_span=t_span,
+            dt=dt,
+            seed=s_seed,
+            shots=shots,
+        )
+        shot_samples.append(order_parameter(p_shot))
+
+    shot_samples_arr = np.array(shot_samples)
+    r_shot_mean = np.mean(shot_samples_arr, axis=0)
+    r_shot_std = np.std(shot_samples_arr, axis=0)
+
+    return {
+        "time": t_exact.tolist(),
+        "r_statevector": r_exact.tolist(),
+        "r_shot_mean": r_shot_mean.tolist(),
+        "r_shot_std": r_shot_std.tolist(),
+        "r_shot_upper": (r_shot_mean + r_shot_std).tolist(),
+        "r_shot_lower": np.clip(r_shot_mean - r_shot_std, 0.0, 1.0).tolist(),
     }
 
 
@@ -204,7 +292,7 @@ DiagnosticRegistry.register(
 )
 DiagnosticRegistry.register(
     "spectral_dynamics",
-    lambda **kw: analyze_spectral_dynamics(kw["times"], kw["order_param"]),
+    lambda **kw: analyze_spectral_dynamics(kw["times"], kw["order_param"], kw.get("dt")),
 )
 DiagnosticRegistry.register(
     "lie_symmetries",
@@ -214,5 +302,6 @@ DiagnosticRegistry.register(
         kw["adj_matrix"],
         kw.get("coupling", 1.0),
         kw.get("omega"),
+        kw.get("dt"),
     ),
 )

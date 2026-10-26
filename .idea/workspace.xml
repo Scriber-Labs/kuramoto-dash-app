@@ -7,11 +7,28 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="036a4c8f-8947-4828-9ec4-48c52b6531ba" name="Changes" comment="Enhance telemetry, metrics UI, and visualizations. Added history-based trailing dots to unit circle plots, revamped metric cards with richer data display and PyCharm-inspired styling, updated colorscales, and improved CSS for dropdowns and buttons.">
+    <list default="true" id="036a4c8f-8947-4828-9ec4-48c52b6531ba" name="Changes" comment="Refactor service module structure: move services to `components/services` directory">
+      <changelist_data name="Sofia Scriber" email="sofiashriver@gmail.com" automatic="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/kuramoto-dash-app.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/kuramoto-dash-app.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.scriber-core" beforeDir="false" afterPath="$PROJECT_DIR$/.scriber-core" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.scriber-core/boilerplates/css/tse-boilerplate.css" beforeDir="false" afterPath="$PROJECT_DIR$/.scriber-core/boilerplates/css/tse-boilerplate.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.scriber-core/boilerplates/python/visualization_boilerplate.py" beforeDir="false" afterPath="$PROJECT_DIR$/.scriber-core/boilerplates/python/visualization_boilerplate.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/assets/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/app/assets/css/style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/callbacks/simulation.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/callbacks/simulation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/callbacks/visualization.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/callbacks/visualization.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/components/controls.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/components/controls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/components/plots.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/components/plots.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/layout.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/layout.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/benchmark.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/benchmark.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/diagnostics.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/diagnostics.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/simulation.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/simulation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/solvers.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/solvers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/validation.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/validation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/css/style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/integration.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/integration.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/services.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/services.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test_callbacks.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_callbacks.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test_components.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_components.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uv.lock" beforeDir="false" afterPath="$PROJECT_DIR$/uv.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,7 +36,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="72" />
+    <option name="cachedIndexableFilesCount" value="66" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="Git.Settings">
@@ -31,61 +48,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0111357764926345" />
-      <entry key="MS500" value="2.3995220383744376" />
-      <entry key="S2" value="7.91290013390669" />
-      <entry key="S5" value="13.384149401756218" />
-      <entry key="S10" value="16.59152290689378" />
-      <entry key="S30" value="19.368992815710026" />
-      <entry key="S60" value="20.16223537278242" />
-      <entry key="M2" value="20.575383277265857" />
-      <entry key="M5" value="20.829332102808053" />
-      <entry key="M10" value="21.114975695229052" />
-      <entry key="M15" value="22.3871221770242" />
-      <entry key="M30" value="31.768025352719036" />
-      <entry key="H1" value="52.15376450553685" />
-      <entry key="H2" value="75.78800785819195" />
-      <entry key="H4" value="94.61511014492284" />
-      <entry key="D1" value="115.94373931562572" />
-      <entry key="W1" value="120.25939922670618" />
+      <entry key="MS100" value="1.0307554471403966" />
+      <entry key="MS500" value="1.801423994816572" />
+      <entry key="S2" value="4.008897405308392" />
+      <entry key="S5" value="9.336075032759146" />
+      <entry key="S10" value="20.833765281827233" />
+      <entry key="S30" value="47.35235746812663" />
+      <entry key="S60" value="66.25167725039144" />
+      <entry key="M2" value="96.09500859000596" />
+      <entry key="M5" value="142.35980061323843" />
+      <entry key="M10" value="168.39544248690575" />
+      <entry key="M15" value="178.84720679801754" />
+      <entry key="M30" value="190.75345214161158" />
+      <entry key="H1" value="212.076521505447" />
+      <entry key="H2" value="300.4612651432993" />
+      <entry key="H4" value="463.2268334190972" />
+      <entry key="D1" value="792.3696763989534" />
+      <entry key="W1" value="881.7977585643746" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
-      <entry key="MS500" value="0.0" />
-      <entry key="S2" value="0.0" />
-      <entry key="S5" value="0.0" />
-      <entry key="S10" value="0.0" />
-      <entry key="S30" value="0.0" />
-      <entry key="S60" value="0.0" />
-      <entry key="M2" value="0.0" />
-      <entry key="M5" value="0.0" />
-      <entry key="M10" value="0.0" />
-      <entry key="M15" value="0.0" />
-      <entry key="M30" value="0.0" />
-      <entry key="H1" value="0.0" />
-      <entry key="H2" value="0.0" />
-      <entry key="H4" value="0.0" />
-      <entry key="D1" value="0.0" />
-      <entry key="W1" value="0.0" />
+      <entry key="MS500" value="5.719675439532982E-140" />
+      <entry key="S2" value="1.5464747960711838E-35" />
+      <entry key="S5" value="1.1905212140649034E-14" />
+      <entry key="S10" value="1.091110083385218E-7" />
+      <entry key="S30" value="0.004778477254295174" />
+      <entry key="S60" value="0.06912653075552956" />
+      <entry key="M2" value="0.26291924759425545" />
+      <entry key="M5" value="0.5860422840491422" />
+      <entry key="M10" value="0.7655339862142903" />
+      <entry key="M15" value="0.83684106615498" />
+      <entry key="M30" value="0.9147901760267086" />
+      <entry key="H1" value="0.9564466404492764" />
+      <entry key="H2" value="0.9779808998386798" />
+      <entry key="H4" value="0.9889291682616518" />
+      <entry key="D1" value="0.9981462919966174" />
+      <entry key="W1" value="0.999734973947573" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.9565855302011032" />
-      <entry key="MS500" value="2.3711405897531614" />
-      <entry key="S2" value="7.886609942213965" />
-      <entry key="S5" value="13.365114470082705" />
-      <entry key="S10" value="16.5794156870986" />
-      <entry key="S30" value="19.364197853592497" />
-      <entry key="S60" value="20.159728667182204" />
-      <entry key="M2" value="20.574101416704938" />
-      <entry key="M5" value="20.828812186837833" />
-      <entry key="M10" value="21.114681765527916" />
-      <entry key="M15" value="22.386785889059613" />
-      <entry key="M30" value="31.76733257862549" />
-      <entry key="H1" value="52.15288536108705" />
-      <entry key="H2" value="75.78728862957793" />
-      <entry key="H4" value="94.61464781411513" />
-      <entry key="D1" value="115.94364408057838" />
-      <entry key="W1" value="120.25938511539736" />
+      <entry key="MS100" value="1.0027749617850856" />
+      <entry key="MS500" value="1.7916967193552094" />
+      <entry key="S2" value="3.945287456984349" />
+      <entry key="S5" value="9.230817076781625" />
+      <entry key="S10" value="20.746262676377867" />
+      <entry key="S30" value="47.314774879105926" />
+      <entry key="S60" value="66.2963253636876" />
+      <entry key="M2" value="96.34333065678302" />
+      <entry key="M5" value="142.9386240702185" />
+      <entry key="M10" value="169.15699052150916" />
+      <entry key="M15" value="179.6812909199622" />
+      <entry key="M30" value="191.6668078803849" />
+      <entry key="H1" value="213.032198184657" />
+      <entry key="H2" value="301.4387069098204" />
+      <entry key="H4" value="464.2153122994841" />
+      <entry key="D1" value="793.3676748871652" />
+      <entry key="W1" value="882.7974693490848" />
     </decayedShown>
   </component>
   <component name="ProblemsViewState">
@@ -109,16 +126,18 @@
     &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
     &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
     &quot;com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1&quot;: &quot;true&quot;,
+    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;junie.plugin.stays.banner.dismissed&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
     &quot;python.packages.toolwindow.project.migrated.to.right.top.v2&quot;: &quot;true&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;project.propVCSSupport.DirectoryMappings&quot;,
     &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;
   }
 }</component>
@@ -348,7 +367,9 @@
     <MESSAGE value="Update cyclic colormap for plots and adjust IDEA workspace metadata." />
     <MESSAGE value="Add Lie symmetry tracking with updated diagnostics, UI integration, and improved plot styling." />
     <MESSAGE value="Enhance telemetry, metrics UI, and visualizations. Added history-based trailing dots to unit circle plots, revamped metric cards with richer data display and PyCharm-inspired styling, updated colorscales, and improved CSS for dropdowns and buttons." />
-    <option name="LAST_COMMIT_MESSAGE" value="Enhance telemetry, metrics UI, and visualizations. Added history-based trailing dots to unit circle plots, revamped metric cards with richer data display and PyCharm-inspired styling, updated colorscales, and improved CSS for dropdowns and buttons." />
+    <MESSAGE value="Refactor service module structure: move services to `components/services` directory" />
+    <MESSAGE value="Add WSGI deployment support, Plotly Cloud configuration, and dark-themed CSS styling for Kuramoto Lab." />
+    <option name="LAST_COMMIT_MESSAGE" value="Add WSGI deployment support, Plotly Cloud configuration, and dark-themed CSS styling for Kuramoto Lab." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

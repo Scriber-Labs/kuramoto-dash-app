@@ -105,17 +105,94 @@ def create_layout() -> html.Div:
                                         ),
                                         className="chart-card",
                                     ),
+                                    # Advanced Invariant, Symmetry, Spectral & Quantum Diagnostics Panel
                                     html.Div(
-                                        dcc.Graph(
-                                            id="symmetry-plot",
-                                            figure=empty_figure(
-                                                "Lie Symmetry & Noether Diagnostics",
-                                                "Select Rotor solver or enable Lie symmetry tracking to view U(1) and Noether curves.",
+                                        [
+                                            html.Div(
+                                                [
+                                                    html.P(
+                                                        "Benchmark & Invariant Diagnostics Suite",
+                                                        className="eyebrow",
+                                                    ),
+                                                    html.H3("Lie Symmetries, Spectral Dynamics & Quantum SCF"),
+                                                ],
+                                                className="panel-heading",
+                                                style={"marginBottom": "12px"},
                                             ),
-                                            config={"displayModeBar": False},
-                                        ),
+                                            dcc.Tabs(
+                                                id="diagnostic-tabs",
+                                                value="lie-symmetry-tab",
+                                                className="diagnostic-tabs",
+                                                children=[
+                                                    dcc.Tab(
+                                                        label="Lie Invariants & Reversibility",
+                                                        value="lie-symmetry-tab",
+                                                        className="custom-tab",
+                                                        selected_className="custom-tab--selected",
+                                                        children=[
+                                                            dcc.Graph(
+                                                                id="symmetry-plot",
+                                                                figure=empty_figure(
+                                                                    "Lie Symmetry & Invariant Diagnostics",
+                                                                    "Select a Lie group/Rotor solver or enable Lie symmetry tracking to view U(1) and Noether curves.",
+                                                                ),
+                                                                config={"displayModeBar": False},
+                                                            ),
+                                                        ],
+                                                    ),
+                                                    dcc.Tab(
+                                                        label="Continuous U(1) Invariance",
+                                                        value="u1-tab",
+                                                        className="custom-tab",
+                                                        selected_className="custom-tab--selected",
+                                                        children=[
+                                                            dcc.Graph(
+                                                                id="u1-invariance-plot",
+                                                                figure=empty_figure(
+                                                                    "Continuous U(1) Lie Rotation Invariance",
+                                                                    "Continuous U(1) rotation invariance data is generated during simulation runs.",
+                                                                ),
+                                                                config={"displayModeBar": False},
+                                                            ),
+                                                        ],
+                                                    ),
+                                                    dcc.Tab(
+                                                        label="Spectral Dynamics (PSD / FFT)",
+                                                        value="spectral-tab",
+                                                        className="custom-tab",
+                                                        selected_className="custom-tab--selected",
+                                                        children=[
+                                                            dcc.Graph(
+                                                                id="spectral-plot",
+                                                                figure=empty_figure(
+                                                                    "Spectral Dynamics: PSD (Welch) & Fourier FFT",
+                                                                    "Spectral dynamics will render after running a simulation.",
+                                                                ),
+                                                                config={"displayModeBar": False},
+                                                            ),
+                                                        ],
+                                                    ),
+                                                    dcc.Tab(
+                                                        label="Quantum Mode Comparison",
+                                                        value="quantum-tab",
+                                                        className="custom-tab",
+                                                        selected_className="custom-tab--selected",
+                                                        children=[
+                                                            dcc.Graph(
+                                                                id="quantum-comparison-plot",
+                                                                figure=empty_figure(
+                                                                    "Quantum Mode: Statevector Baseline vs NISQ Shot Sampling",
+                                                                    "Select a Quantum SCF solver to display statevector vs shot sampling with dispersion.",
+                                                                ),
+                                                                config={"displayModeBar": False},
+                                                            ),
+                                                        ],
+                                                    ),
+                                                ],
+                                            ),
+                                        ],
                                         id="symmetry-card-container",
-                                        className="chart-card",
+                                        className="chart-card diagnostic-suite-card",
                                     ),
                                 ],
                                 className="visual-panel",

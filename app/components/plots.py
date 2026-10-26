@@ -529,54 +529,71 @@ def symmetry_figure(
     symmetries: dict[str, Any] | None,
     current_index: int | None = None,
 ) -> go.Figure:
-    """Render Lie symmetry and Noether conservation curves (Hamiltonian Energy, U(1) Charge, Cl(2) Unitarity)."""
-    figure = base_figure("Lie Symmetry & Noether Diagnostics")
+    """Render Lie symmetry and Noether conservation curves (Hamiltonian Energy, U(1) Charge, Cl(2) Unitarity, Reversibility)."""
+    figure = base_figure("Lie Symmetry & Invariant Diagnostics")
     if not symmetries or "interaction_energy" not in symmetries:
         return empty_figure(
-            "Lie Symmetry & Noether Diagnostics",
-            "Select Rotor solver or enable Lie symmetry tracking to view U(1) and Noether curves.",
+            "Lie Symmetry & Invariant Diagnostics",
+            "Select a Lie group/Rotor solver or enable Lie symmetry tracking to view U(1) and Noether curves.",
         )
 
     t_arr = np.asarray(times, dtype=float)
-    energy = np.asarray(symmetries["interaction_energy"], dtype=float)
-    noether = np.asarray(symmetries["noether_charge"], dtype=float)
-    unitarity = np.asarray(symmetries["rotor_unitarity"], dtype=float)
+    energy = np.asarray(symmetries.get("interaction_energy", []), dtype=float)
+    noether = np.asarray(symmetries.get("noether_charge", []), dtype=float)
+    unitarity = np.asarray(symmetries.get("rotor_unitarity", []), dtype=float)
+    reversibility = np.asarray(symmetries.get("reversibility_residuals", []), dtype=float)
 
     # 1. Hamiltonian Interaction Energy E(t)
-    figure.add_trace(
-        go.Scatter(
-            x=t_arr,
-            y=energy,
-            mode="lines",
-            line={"color": "#00e8ff", "width": 2.2},
-            name="Interaction Energy E(t)",
-            hovertemplate="t=%{x:.2f}s<br>E(t)=%{y:.4f}<extra></extra>",
+    if len(energy) == len(t_arr):
+        figure.add_trace(
+            go.Scatter(
+                x=t_arr,
+                y=energy,
+                mode="lines",
+                line={"color": "#00e8ff", "width": 2.2},
+                name="Interaction Energy E(t)",
+                hovertemplate="t=%{x:.2f}s<br>E(t)=%{y:.4f}<extra></extra>",
+            )
         )
-    )
 
     # 2. Noether Charge / Invariant Q(t)
-    figure.add_trace(
-        go.Scatter(
-            x=t_arr,
-            y=noether,
-            mode="lines",
-            line={"color": "#9b7dff", "width": 1.8, "dash": "dash"},
-            name="Noether Invariant Q(t)",
-            hovertemplate="t=%{x:.2f}s<br>Q(t)=%{y:.4f}<extra></extra>",
+    if len(noether) == len(t_arr):
+        figure.add_trace(
+            go.Scatter(
+                x=t_arr,
+                y=noether,
+                mode="lines",
+                line={"color": "#9b7dff", "width": 1.8, "dash": "dash"},
+                name="Noether Invariant Q(t)",
+                hovertemplate="t=%{x:.2f}s<br>Q(t)=%{y:.4f}<extra></extra>",
+            )
         )
-    )
 
     # 3. Rotor Cl(2) Unitarity |R(t)|^2
-    figure.add_trace(
-        go.Scatter(
-            x=t_arr,
-            y=unitarity,
-            mode="lines",
-            line={"color": "#22f792", "width": 1.8, "dash": "dot"},
-            name="Rotor Unitarity |R|²",
-            hovertemplate="t=%{x:.2f}s<br>|R|²=%{y:.4f}<extra></extra>",
+    if len(unitarity) == len(t_arr):
+        figure.add_trace(
+            go.Scatter(
+                x=t_arr,
+                y=unitarity,
+                mode="lines",
+                line={"color": "#22f792", "width": 1.8, "dash": "dot"},
+                name="Rotor Unitarity |R|²",
+                hovertemplate="t=%{x:.2f}s<br>|R|²=%{y:.4f}<extra></extra>",
+            )
         )
-    )
+
+    # 4. Symplectic / Time-reversibility Residual
+    if len(reversibility) == len(t_arr):
+        figure.add_trace(
+            go.Scatter(
+                x=t_arr,
+                y=reversibility,
+                mode="lines",
+                line={"color": "#f78166", "width": 1.6, "dash": "dashdot"},
+                name="Reversibility Residual (Δt ↔ -Δt)",
+                hovertemplate="t=%{x:.2f}s<br>Residual=%{y:.2e}<extra></extra>",
+            )
+        )
 
     # Timeline scrubber vertical line
     if current_index is not None and 0 <= current_index < len(t_arr):
@@ -599,4 +616,144 @@ def symmetry_figure(
         hovermode="x unified",
         legend={"orientation": "h", "y": 1.12, "x": 0.0},
     )
+    return figure
+
+
+def u1_rotation_invariance_figure(symmetries: dict[str, Any] | None) -> go.Figure:
+    """Render Continuous U(1) phase rotation invariance test plot."""
+    figure = base_figure("Continuous U(1) Lie Rotation Invariance")
+    if not symmetries or "u1_alphas" not in symmetries or not symmetries["u1_alphas"]:
+        return empty_figure(
+            "Continuous U(1) Lie Rotation Invariance",
+            "Continuous U(1) rotation invariance data is generated during simulation runs.",
+        )
+
+    alphas = np.asarray(symmetries["u1_alphas"], dtype=float)
+    residuals = np.asarray(symmetries.get("u1_residuals", []), dtype=float)
+
+    figure.add_trace(
+        go.Scatter(
+            x=alphas,
+            y=residuals,
+            mode="lines+markers",
+            line={"color": "#00e8ff", "width": 2.5},
+            marker={"size": 6, "color": "#7652f5", "line": {"color": "#00e8ff", "width": 1.2}},
+            name="U(1) Residual ||Δ(θ+α) - Δ(θ)||_inf",
+            hovertemplate="Shift α=%{x:.2f} rad<br>Residual=%{y:.2e}<extra></extra>",
+        )
+    )
+    figure.update_xaxes(
+        title="global phase shift angle α (rad)",
+        gridcolor="rgba(160,180,220,.12)",
+        tickvals=[0, np.pi / 2, np.pi, 3 * np.pi / 2, 2 * np.pi],
+        ticktext=["0", "π/2", "π", "3π/2", "2π"],
+    )
+    figure.update_yaxes(title="invariance error (L_inf)", gridcolor="rgba(160,180,220,.12)")
+    figure.update_layout(height=280)
+    return figure
+
+
+def spectral_dynamics_figure(spectral_data: dict[str, Any] | None) -> go.Figure:
+    """Render Power Spectral Density (PSD) and Fourier Amplitude Spectrum."""
+    figure = base_figure("Spectral Dynamics: PSD (Welch) & Fourier FFT")
+    if not spectral_data or not spectral_data.get("psd_freqs"):
+        return empty_figure(
+            "Spectral Dynamics",
+            "Spectral dynamics (PSD & Fourier FFT) will render after running a simulation.",
+        )
+
+    psd_freqs = np.asarray(spectral_data.get("psd_freqs", []), dtype=float)
+    psd_power = np.asarray(spectral_data.get("psd_power", []), dtype=float)
+    fft_freqs = np.asarray(spectral_data.get("fft_freqs", []), dtype=float)
+    fft_amp = np.asarray(spectral_data.get("fft_amplitude", []), dtype=float)
+
+    if len(psd_freqs) > 0 and len(psd_power) > 0:
+        figure.add_trace(
+            go.Scatter(
+                x=psd_freqs,
+                y=psd_power,
+                mode="lines",
+                line={"color": "#00e8ff", "width": 2.2},
+                name="Welch PSD Power",
+                hovertemplate="f=%{x:.2f} Hz<br>PSD=%{y:.2e}<extra></extra>",
+            )
+        )
+
+    if len(fft_freqs) > 0 and len(fft_amp) > 0:
+        figure.add_trace(
+            go.Scatter(
+                x=fft_freqs,
+                y=fft_amp,
+                mode="lines",
+                line={"color": "#ec4899", "width": 1.8, "dash": "dot"},
+                name="Fourier FFT Amplitude",
+                hovertemplate="f=%{x:.2f} Hz<br>Amplitude=%{y:.4f}<extra></extra>",
+            )
+        )
+
+    figure.update_xaxes(title="frequency f (Hz)", gridcolor="rgba(160,180,220,.12)")
+    figure.update_yaxes(title="spectral power / amplitude", gridcolor="rgba(160,180,220,.12)", type="log")
+    figure.update_layout(height=280, legend={"orientation": "h", "y": 1.12, "x": 0.0})
+    return figure
+
+
+def quantum_mode_comparison_figure(quantum_data: dict[str, Any] | None) -> go.Figure:
+    """Render Quantum Statevector (noise-free baseline) vs Shot Sampling with dispersion."""
+    figure = base_figure("Quantum Mode: Statevector Baseline vs NISQ Shot Sampling")
+    if not quantum_data or "r_statevector" not in quantum_data:
+        return empty_figure(
+            "Quantum Mode Comparison",
+            "Select a Quantum SCF solver (or run Quantum comparison) to display statevector vs shot sampling.",
+        )
+
+    t_arr = np.asarray(quantum_data["time"], dtype=float)
+    r_state = np.asarray(quantum_data["r_statevector"], dtype=float)
+    r_mean = np.asarray(quantum_data.get("r_shot_mean", []), dtype=float)
+    r_upper = np.asarray(quantum_data.get("r_shot_upper", []), dtype=float)
+    r_lower = np.asarray(quantum_data.get("r_shot_lower", []), dtype=float)
+
+    # 1. Statevector noise-free baseline
+    figure.add_trace(
+        go.Scatter(
+            x=t_arr,
+            y=r_state,
+            mode="lines",
+            line={"color": "#00e8ff", "width": 2.5},
+            name="Statevector Baseline (Exact Unitary)",
+            hovertemplate="t=%{x:.2f}s<br>r(t)=%{y:.4f}<extra></extra>",
+        )
+    )
+
+    # 2. Shot sampling dispersion confidence band
+    if len(r_upper) == len(t_arr) and len(r_lower) == len(t_arr):
+        figure.add_trace(
+            go.Scatter(
+                x=t_arr.tolist() + t_arr[::-1].tolist(),
+                y=r_upper.tolist() + r_lower[::-1].tolist(),
+                fill="toself",
+                fillcolor="rgba(236, 72, 153, 0.2)",
+                line={"color": "rgba(255,255,255,0)"},
+                hoverinfo="skip",
+                showlegend=True,
+                name="Shot Sampling ±1σ Dispersion",
+            )
+        )
+
+    # 3. Shot sampling mean
+    if len(r_mean) == len(t_arr):
+        figure.add_trace(
+            go.Scatter(
+                x=t_arr,
+                y=r_mean,
+                mode="lines+markers",
+                line={"color": "#ec4899", "width": 1.8, "dash": "dash"},
+                marker={"size": 4, "color": "#f43f5e"},
+                name="NISQ Shot Sampling Mean",
+                hovertemplate="t=%{x:.2f}s<br>r_shot=%{y:.4f}<extra></extra>",
+            )
+        )
+
+    figure.update_xaxes(title="time t (s)", gridcolor="rgba(160,180,220,.12)")
+    figure.update_yaxes(title="order parameter r(t)", range=[0, 1.05], gridcolor="rgba(160,180,220,.12)")
+    figure.update_layout(height=280, legend={"orientation": "h", "y": 1.12, "x": 0.0})
     return figure

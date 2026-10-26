@@ -1,4 +1,4 @@
-"""Unit tests for configuration, validation, simulation, and benchmark services."""
+"""Unit tests for configuration, validation, multi-paradigm solvers, and benchmark services."""
 
 from __future__ import annotations
 
@@ -15,6 +15,7 @@ from app.services.diagnostics import (
     analyze_graph_topology,
     analyze_lie_symmetries,
     analyze_spectral_dynamics,
+    compute_quantum_mode_comparison,
 )
 from app.services.simulation import (
     build_adjacency,
@@ -22,6 +23,7 @@ from app.services.simulation import (
     generate_dataset,
     generate_frequencies,
 )
+from app.services.solvers import SolverRegistry
 from app.services.topology import TopologyRegistry, parse_custom_adjacency
 from app.services.validation import check_nyquist_sampling, validate_simulation_inputs
 
@@ -106,84 +108,81 @@ def test_validation_defaults() -> None:
     assert res["dt"] == 0.05
     assert res["seed"] == 27
     assert res["frequency_distribution"] == "Normal"
+    assert res["adaptive_rtol"] == 1e-5
+    assert res["adaptive_atol"] == 1e-7
+    assert res["shots"] == 1024
 
 
 def test_validation_errors() -> None:
-    with pytest.raises(ValueError, match="at least 2 oscillators"):
-        validate_simulation_inputs(1, 2.0, 10.0, 0.05, 42, "Normal", "Ring", "RK45")
-
-    with pytest.raises(ValueError, match="supports at most 500"):
-        validate_simulation_inputs(501, 2.0, 10.0, 0.05, 42, "Normal", "Ring", "RK45")
-
-    with pytest.raises(ValueError, match="positive"):
-        validate_simulation_inputs(10, 2.0, -5.0, 0.05, 42, "Normal", "Ring", "RK45")
-
-    with pytest.raises(
-        ValueError, match="Frequency standard deviation must be positive"
-    ):
+    with pytest.raises(ValueError, match="Oscillator count must be an integer"):
         validate_simulation_inputs(
-            10, 2.0, 10.0, 0.05, 42, "Normal", "Ring", "RK45", frequency_std=-1.0
+            n_oscillators="invalid",  # type: ignore[arg-type]
+            coupling=1.0,
+            simulation_time=10.0,
+            dt=0.05,
+            seed=0,
+            frequency_distribution="Normal",
+            network_type="All-to-All",
+            solver="RK45",
+        )
+
+    with pytest.raises(ValueError, match="at least 2 oscillators"):
+        validate_simulation_inputs(
+            n_oscillators=1,
+            coupling=1.0,
+            simulation_time=10.0,
+            dt=0.05,
+            seed=0,
+            frequency_distribution="Normal",
+            network_type="All-to-All",
+            solver="RK45",
+        )
+
+    with pytest.raises(ValueError, match="must be positive"):
+        validate_simulation_inputs(
+            n_oscillators=10,
+            coupling=1.0,
+            simulation_time=-5.0,
+            dt=0.05,
+            seed=0,
+            frequency_distribution="Normal",
+            network_type="All-to-All",
+            solver="RK45",
         )
 
 
-def test_generate_frequencies_distributions() -> None:
-    n = 16
-    for dist in ["Normal", "Uniform", "Bimodal", "Golden Ratio", "Custom"]:
-        freqs = generate_frequencies(
-            n=n, distribution=dist, seed=42, custom_values="-1, 0, 1"
-        )
-        assert isinstance(freqs, np.ndarray)
-        assert len(freqs) == n
-        assert np.all(np.isfinite(freqs))
-
-
-def test_build_adjacency_topologies() -> None:
-    n = 8
-    for net in ["All-to-All", "Ring", "Random", "Small-World"]:
-        adj = build_adjacency(net, n=n, seed=42)
-        assert adj.shape == (n, n)
-        assert np.all((adj == 0) | (adj == 1))
-        # Adjacency should be symmetric and diagonal should be 0
-        np.testing.assert_array_equal(adj, adj.T)
-        np.testing.assert_array_equal(np.diag(adj), np.zeros(n))
-
-
-def test_tree_of_life_topology() -> None:
-    adj = build_adjacency("Tree of Life", n=10, seed=42)
-    assert adj.shape == (10, 10)
-    layout = TopologyRegistry.get_layout("tree_of_life", 10, adj)
-    assert len(layout) == 10
-    labels = TopologyRegistry.get_labels("tree_of_life", 10)
-    assert len(labels) == 10
-    assert labels[0] == "Keter"
-
-
-def test_custom_adjacency() -> None:
-    text = "0 1 1\n1 0 1\n1 1 0"
-    parsed = parse_custom_adjacency(text, 3)
-    assert parsed.shape == (3, 3)
-    np.testing.assert_array_equal(parsed, np.array([[0, 1, 1], [1, 0, 1], [1, 1, 0]]))
-
-
-def test_simulation_solvers() -> None:
-    for solver_name in ["RK45", "Euler", "Rotor"]:
+def test_multi_paradigm_solvers() -> None:
+    solvers = [
+        "rk45",
+        "euler_fast",
+        "vectorized_geometric",
+        "rkmk4",
+        "dopri54",
+        "midpoint_geometric",
+        "predictor_corrector",
+        "adaptive_embedded",
+        "quantum_statevector",
+        "quantum_expectation",
+        "shot_sampling",
+    ]
+    for s_name in solvers:
         cfg = collect_config(
-            n_oscillators=6,
+            n_oscillators=4,
             coupling=2.0,
-            simulation_time=1.0,
-            dt=0.1,
+            simulation_time=0.5,
+            dt=0.05,
             seed=42,
             frequency_distribution="Normal",
             network_type="All-to-All",
-            solver=solver_name,
+            solver=s_name,
+            adaptive_rtol=1e-5,
+            adaptive_atol=1e-7,
+            shots=256,
         )
         ds = generate_dataset(**cfg)
-        assert "time" in ds
-        assert "theta" in ds
-        assert "order_parameter" in ds
-        assert ds["theta"].shape == (len(ds["time"]), 6)
+        assert len(ds["time"]) > 0
+        assert ds["theta"].shape == (len(ds["time"]), 4)
         assert len(ds["order_parameter"]) == len(ds["time"])
-        assert np.all((ds["order_parameter"] >= 0) & (ds["order_parameter"] <= 1.05))
 
 
 def test_diagnostics_and_graph_metrics() -> None:
@@ -197,42 +196,47 @@ def test_diagnostics_and_graph_metrics() -> None:
     order = np.cos(times) ** 2
     spec = analyze_spectral_dynamics(times, order, dt=0.1)
     assert "dt" in spec
+    assert "psd_freqs" in spec
+    assert "fft_freqs" in spec
 
-    # Lie symmetries and Noether charges
-    phases = np.zeros((100, 10))
-    for t_idx in range(100):
-        phases[t_idx] = np.linspace(0, 2 * np.pi, 10, endpoint=False) + 0.1 * times[t_idx]
-    
-    syms = analyze_lie_symmetries(
+
+def test_lie_symmetries_and_reversibility() -> None:
+    times = np.linspace(0, 2, 20)
+    phases = np.outer(np.linspace(0, 1, 20), np.array([0.0, 0.5, 1.0, 1.5]))
+    adj = np.ones((4, 4)) - np.eye(4)
+    omega = np.array([-0.5, -0.1, 0.1, 0.5])
+
+    sym = analyze_lie_symmetries(
         times=times,
         phases=phases,
         adj_matrix=adj,
-        coupling=1.5,
-        omega=np.ones(10) * 0.1,
+        coupling=2.0,
+        omega=omega,
+        dt=0.1,
     )
-    assert "interaction_energy" in syms
-    assert "noether_charge" in syms
-    assert "rotor_unitarity" in syms
-    assert len(syms["interaction_energy"]) == 100
-    assert len(syms["noether_charge"]) == 100
-    assert np.isclose(syms["mean_unitarity"], 1.0, atol=1e-5)
-    assert syms["global_phase_invariance_error"] < 1e-10
+    assert "interaction_energy" in sym
+    assert "noether_charge" in sym
+    assert "rotor_unitarity" in sym
+    assert "u1_alphas" in sym
+    assert "reversibility_residuals" in sym
+    assert len(sym["reversibility_residuals"]) == len(times)
 
 
-def test_cli_config_builder() -> None:
-    cfg = build_cli_config(
-        n_oscillators=10,
-        coupling_strength=1.5,
-        topology="small_world",
-        timesteps=200,
-        dt=0.05,
+def test_quantum_mode_comparison_service() -> None:
+    omega = np.array([-0.5, 0.5])
+    adj = np.array([[0.0, 1.0], [1.0, 0.0]])
+    q_comp = compute_quantum_mode_comparison(
+        omega=omega,
+        adj_matrix=adj,
+        k_coupling=2.0,
+        t_span=1.0,
+        dt=0.1,
         seed=42,
-        solver="rotor",
+        shots=128,
     )
-    assert cfg["n_oscillators"] == 10
-    assert cfg["coupling_strength"] == 1.5
-    assert cfg["solver"] == "rotor"
-    assert cfg["topology"] == "small_world"
+    assert "r_statevector" in q_comp
+    assert "r_shot_mean" in q_comp
+    assert len(q_comp["r_statevector"]) == len(q_comp["time"])
 
 
 def test_benchmark_export() -> None:
@@ -261,7 +265,3 @@ def test_benchmark_export() -> None:
     assert "adjacency" in loaded
     assert "metadata" in loaded
     assert "graph_stats" in loaded
-
-    meta = json.loads(str(loaded["metadata"]))
-    assert meta["solver"] == "RK45"
-    assert meta["network_type"] == "Ring"

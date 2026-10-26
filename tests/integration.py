@@ -6,7 +6,15 @@ import io
 
 import numpy as np
 
-from app.callbacks.visualization import handle_update_visuals
+from app.callbacks.visualization import (
+    handle_update_animation_visuals,
+    handle_update_quantum_comparison_visual,
+    handle_update_spectral_visual,
+    handle_update_static_visuals,
+    handle_update_symmetry_visual,
+    handle_update_u1_visual,
+    handle_update_visuals,
+)
 from app.services import (
     collect_config,
     export_dataset_npz,
@@ -49,7 +57,20 @@ def test_end_to_end_simulation_and_export_pipeline() -> None:
     figures_and_cards = handle_update_visuals(payload, frame=30)
     assert len(figures_and_cards) == 7
 
-    # 5. Export to compressed benchmark .npz
+    # 5. Advanced diagnostic views generation
+    sym_fig = handle_update_symmetry_visual(payload, frame=30)
+    assert hasattr(sym_fig, "to_plotly_json")
+
+    u1_fig = handle_update_u1_visual(payload)
+    assert hasattr(u1_fig, "to_plotly_json")
+
+    spectral_fig = handle_update_spectral_visual(payload)
+    assert hasattr(spectral_fig, "to_plotly_json")
+
+    quantum_fig = handle_update_quantum_comparison_visual(payload)
+    assert hasattr(quantum_fig, "to_plotly_json")
+
+    # 6. Export to compressed benchmark .npz
     buffer = io.BytesIO()
     export_dataset_npz(payload, buffer)
     buffer.seek(0)

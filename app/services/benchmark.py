@@ -47,8 +47,9 @@ def package_simulation_payload(
         r_downsampled = r_arr
 
     solver_val = str(config.get("solver", "rk45"))
+    dt_val = float(config.get("dt", 0.05))
     nyquist_info = check_nyquist_sampling(
-        dt=float(config.get("dt", 0.05)),
+        dt=dt_val,
         frequencies=freqs_arr,
         coupling=float(config.get("coupling", 2.0)),
         mean_freq=float(config.get("frequency_mean", 0.0)),
@@ -58,7 +59,17 @@ def package_simulation_payload(
 
     track_syms = bool(
         config.get("track_symmetries", False)
-        or solver_val.strip().lower() == "rotor"
+        or solver_val.strip().lower() in {
+            "rotor",
+            "vectorized_geometric",
+            "rkmk4",
+            "dopri54",
+            "midpoint_geometric",
+            "predictor_corrector",
+            "adaptive_embedded",
+            "euler_geometric",
+            "euler_fast",
+        }
     )
     symmetries_data = None
     if track_syms:
@@ -68,6 +79,7 @@ def package_simulation_payload(
             adj_matrix=adj,
             coupling=float(config.get("coupling", 2.0)),
             omega=freqs_arr,
+            dt=dt_val,
         )
 
     return {

@@ -155,6 +155,11 @@ def validate_simulation_inputs(
     custom_frequencies: str | None = None,
     custom_adjacency: str | None = None,
     track_symmetries: bool | list[str] | str | None = None,
+    adaptive_rtol: float | None = None,
+    adaptive_atol: float | None = None,
+    dt_min: float | None = None,
+    dt_max: float | None = None,
+    shots: int | None = None,
 ) -> dict[str, Any]:
     """Validate and sanitize user input simulation parameters.
 
@@ -254,6 +259,17 @@ def validate_simulation_inputs(
             else DEFAULTS.get("track_symmetries", False)
         )
 
+    # Adaptive solver parameters
+    rtol_val = float(adaptive_rtol if adaptive_rtol is not None else DEFAULTS.get("adaptive_rtol", 1e-5))
+    atol_val = float(adaptive_atol if adaptive_atol is not None else DEFAULTS.get("adaptive_atol", 1e-7))
+    dt_min_val = float(dt_min if dt_min is not None else DEFAULTS.get("dt_min", 1e-4))
+    dt_max_val = float(dt_max if dt_max is not None else DEFAULTS.get("dt_max", 0.5))
+
+    # Quantum solver parameters
+    shots_val = int(shots if shots is not None else DEFAULTS.get("shots", 1024))
+    if shots_val < 1:
+        shots_val = 1024
+
     return {
         "n_oscillators": n,
         "coupling": k,
@@ -268,4 +284,9 @@ def validate_simulation_inputs(
         "frequency_std": std_val,
         "custom_frequencies": cust_freq,
         "custom_adjacency": cust_adj,
+        "adaptive_rtol": rtol_val,
+        "adaptive_atol": atol_val,
+        "dt_min": dt_min_val,
+        "dt_max": dt_max_val,
+        "shots": shots_val,
     }

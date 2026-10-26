@@ -7,18 +7,24 @@ from typing import Any
 from dash import dcc, html
 
 from app.config import DEFAULTS, MAX_OSCILLATORS, MIN_OSCILLATORS
+from app.services.solvers import SolverRegistry
 
 
-def control_group(label: str, component: Any, hint: str | None = None) -> html.Div:
+def control_group(label: str, component: Any, hint: str | None = None, group_id: str | None = None) -> html.Div:
     """Wrap a form input component with a styled label and optional hint."""
     children = [html.Label(label, className="field-label"), component]
     if hint:
         children.append(html.Small(hint, className="field-hint"))
-    return html.Div(children, className="field")
+    kwargs = {"className": "field"}
+    if group_id:
+        kwargs["id"] = group_id
+    return html.Div(children, **kwargs)
 
 
 def sidebar_controls() -> html.Aside:
     """Build the configuration sidebar panel with all interactive inputs and buttons."""
+    solver_options = SolverRegistry.get_grouped_options()
+
     return html.Aside(
         [
             html.Div(
@@ -120,18 +126,147 @@ def sidebar_controls() -> html.Aside:
                 className="nyquist-banner nyquist-optimal",
             ),
             control_group(
-                "Solver",
-                dcc.RadioItems(
+                "Numerical Integrator / Solver",
+                dcc.Dropdown(
                     id="solver",
-                    options=[
-                        {"label": "RK45", "value": "RK45"},
-                        {"label": "Euler", "value": "Euler"},
-                        {"label": "Rotor (GA Cl(2))", "value": "Rotor"},
-                    ],
+                    options=solver_options,
                     value=DEFAULTS["solver"],
-                    className="radio-row",
-                    inputClassName="radio-input",
+                    className="dash-dropdown solver-dropdown",
+                    clearable=False,
                 ),
+                hint="Grouped by Classical, GA Mean-Field, Lie Group, and Quantum SCF paradigms.",
+            ),
+            # Conditional Adaptive Solver Controls Panel
+            html.Div(
+                id="adaptive-solver-panel",
+                children=[
+                    html.Div(
+                        [
+                            html.P("Adaptive Lie Step Controls", className="eyebrow", style={"fontSize": "11px", "marginBottom": "4px"}),
+                            html.Div(
+                                [
+                                    control_group(
+                                        "Rel Tol (rtol)",
+                                        dcc.Input(
+                                            id="adaptive-rtol",
+                                            type="number",
+                                            min=1e-12,
+                                            max=1e-1,
+                                            step=1e-6,
+                                            value=DEFAULTS.get("adaptive_rtol", 1e-5),
+                                        ),
+                                    ),
+                                    control_group(
+                                        "Abs Tol (atol)",
+                                        dcc.Input(
+                                            id="adaptive-atol",
+                                            type="number",
+                                            min=1e-12,
+                                            max=1e-1,
+                                            step=1e-8,
+                                            value=DEFAULTS.get("adaptive_atol", 1e-7),
+                                        ),
+                                    ),
+                                ],
+                                className="field-row",
+                            ),
+                            html.Div(
+                                [
+                                    control_group(
+                                        "dt min",
+                                        dcc.Input(
+                                            id="dt-min",
+                                            type="number",
+                                            min=1e-6,
+                                            max=0.1,
+                                            step=1e-4,
+                                            value=DEFAULTS.get("dt_min", 1e-4),
+                                        ),
+                                    ),
+                                    control_group(
+                                        "dt max",
+                                        dcc.Input(
+                                            id="dt-max",
+                                            type="number",
+                                            min=1e-3,
+                                            max=2.0,
+                                            step=0.01,
+                                            value=DEFAULTS.get("dt_max", 0.5),
+                                        ),
+                                    ),
+                                ],
+                                className="field-row",
+                            ),
+                        ],
+                        className="solver-subpanel",
+                    )
+                ],
+                style={"display": "none"},
+            ),
+            # Conditional Quantum Solver Controls Panel
+            html.Div(
+                id="quantum-solver-panel",
+                children=[
+                    html.Div(
+                        [
+                            html.P("Quantum SCF & NISQ Noise", className="eyebrow", style={"fontSize": "11px", "marginBottom": "4px"}),
+                            control_group(
+                                "NISQ Projective Shots",
+                                dcc.Slider(
+                                    id="shots-slider",
+                                    min=128,
+                                    max=8192,
+                                    step=128,
+                                    value=DEFAULTS.get("shots", 1024),
+                                    marks={
+                                        128: "128",
+                                        1024: "1k",
+                                        2048: "2k",
+                                        4096: "4k",
+                                        8192: "8k",
+                                    },
+                                    tooltip={"placement": "bottom", "always_visible": False},
+                                ),
+                                "Simulates hardware shot noise on N-qubit state measurement.",
+                            ),
+                            html.Div(
+                                [
+                                    html.Button(
+                                        "Export OpenQASM",
+                                        id="export-qasm-btn",
+                                        className="button button-secondary btn-hover color-9",
+                                        style={"width": "100%", "marginTop": "6px", "fontSize": "12px", "padding": "6px 12px"},
+                                    ),
+                                    dcc.Download(id="download-qasm"),
+                                ],
+                                style={"marginTop": "6px"},
+                            ),
+                            html.Div(
+                                id="qasm-viewer-container",
+                                children=[
+                                    dcc.Textarea(
+                                        id="qasm-code-display",
+                                        readOnly=True,
+                                        style={
+                                            "width": "100%",
+                                            "height": "90px",
+                                            "fontSize": "11px",
+                                            "fontFamily": "monospace",
+                                            "backgroundColor": "rgba(10, 14, 24, 0.8)",
+                                            "color": "#00e8ff",
+                                            "border": "1px solid rgba(0, 232, 255, 0.2)",
+                                            "borderRadius": "4px",
+                                            "marginTop": "8px",
+                                            "display": "none",
+                                        },
+                                    ),
+                                ],
+                            ),
+                        ],
+                        className="solver-subpanel",
+                    )
+                ],
+                style={"display": "none"},
             ),
             html.Div(
                 id="rotor-symmetry-toggle-group",
@@ -140,7 +275,7 @@ def sidebar_controls() -> html.Aside:
                         id="track-symmetries",
                         options=[
                             {
-                                "label": " Track Lie symmetries (U(1) & Noether charges)",
+                                "label": " Track Lie symmetries & U(1) Noether charges",
                                 "value": "track",
                             }
                         ],

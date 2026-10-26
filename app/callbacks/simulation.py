@@ -1,4 +1,4 @@
-"""Simulation execution and reset callbacks."""
+"""Simulation execution, UI visibility, and reset callbacks."""
 
 from __future__ import annotations
 
@@ -13,6 +13,29 @@ from app.services import (
     generate_frequencies,
     package_simulation_payload,
 )
+
+
+ADAPTIVE_SOLVERS = {
+    "dopri54",
+    "adaptive_dopri54",
+    "adaptive_embedded",
+    "adaptive",
+    "embedded",
+    "predictor_corrector",
+    "pc",
+}
+
+QUANTUM_SOLVERS = {
+    "quantum_statevector",
+    "quantum_expectation",
+    "shot_sampling",
+    "statevector",
+    "expectation",
+    "quantum",
+    "quantum_rotor",
+    "quantum_scf",
+    "quantum_shot_sampling",
+}
 
 
 def render_nyquist_banner(
@@ -33,7 +56,7 @@ def render_nyquist_banner(
     std_val = float(frequency_std if frequency_std is not None else 1.0)
     n_val = int(n_oscillators if n_oscillators is not None else 24)
     seed_val = int(seed if seed is not None else 27)
-    solver_val = str(solver or "RK45")
+    solver_val = str(solver or "rk45")
 
     try:
         freqs = generate_frequencies(
@@ -102,6 +125,11 @@ def handle_run_or_reset(
     custom_frequencies: str | None,
     custom_adjacency: str | None = None,
     track_symmetries: list[str] | bool | str | None = None,
+    adaptive_rtol: float | None = None,
+    adaptive_atol: float | None = None,
+    dt_min: float | None = None,
+    dt_max: float | None = None,
+    shots: int | None = None,
 ) -> tuple[dict[str, Any] | None, int, int, str]:
     """Execute simulation run or reset state."""
     if triggered_id == "reset-btn":
@@ -122,6 +150,11 @@ def handle_run_or_reset(
             custom_frequencies=custom_frequencies,
             custom_adjacency=custom_adjacency,
             track_symmetries=track_symmetries,
+            adaptive_rtol=adaptive_rtol,
+            adaptive_atol=adaptive_atol,
+            dt_min=dt_min,
+            dt_max=dt_max,
+            shots=shots,
         )
         dataset = generate_dataset(**config)
         payload = package_simulation_payload(dataset, config)
@@ -173,6 +206,73 @@ def register_simulation_callbacks(app: Dash) -> None:
             solver=solver,
         )
 
+    # Dynamic Solver Controls Visibility Callback
+    @app.callback(
+        Output("adaptive-solver-panel", "style"),
+        Output("quantum-solver-panel", "style"),
+        Input("solver", "value"),
+    )
+    def toggle_solver_subpanels(solver_val: str | None) -> tuple[dict[str, str], dict[str, str]]:
+        val = (solver_val or "").strip().lower()
+        adaptive_style = {"display": "block"} if val in ADAPTIVE_SOLVERS else {"display": "none"}
+        quantum_style = {"display": "block"} if val in QUANTUM_SOLVERS else {"display": "none"}
+        return adaptive_style, quantum_style
+
+    # Export OpenQASM Callback
+    @app.callback(
+        Output("download-qasm", "data"),
+        Output("qasm-code-display", "value"),
+        Output("qasm-code-display", "style"),
+        Input("export-qasm-btn", "n_clicks"),
+        State("n-oscillators", "value"),
+        State("coupling", "value"),
+        State("dt", "value"),
+        State("seed", "value"),
+        prevent_initial_call=True,
+    )
+    def export_openqasm(
+        n_clicks: int | None,
+        n_oscillators: int | None,
+        coupling: float | None,
+        dt: float | None,
+        seed: int | None,
+    ) -> tuple[Any, str, dict[str, str]]:
+        if not n_clicks:
+            return None, "", {"display": "none"}
+
+        n = int(n_oscillators if n_oscillators is not None else 4)
+        k = float(coupling if coupling is not None else 2.0)
+        step = float(dt if dt is not None else 0.05)
+        s_seed = int(seed if seed is not None else 27)
+
+        try:
+            from kuramoto.solvers.quantum_rotor import QuantumRotorSolver
+
+            q_solver = QuantumRotorSolver(n_oscillators=n, seed=s_seed)
+            qasm_str = q_solver.to_qasm(K=k, dt=step)
+        except Exception as exc:
+            qasm_str = f"// Error generating OpenQASM circuit: {exc}"
+
+        display_style = {
+            "width": "100%",
+            "height": "90px",
+            "fontSize": "11px",
+            "fontFamily": "monospace",
+            "backgroundColor": "rgba(10, 14, 24, 0.8)",
+            "color": "#00e8ff",
+            "border": "1px solid rgba(0, 232, 255, 0.2)",
+            "borderRadius": "4px",
+            "marginTop": "8px",
+            "display": "block",
+        }
+
+        download_dict = {
+            "content": qasm_str,
+            "filename": f"kuramoto_quantum_circuit_N{n}_K{k:.1f}.qasm",
+        }
+
+        return download_dict, qasm_str, display_style
+
     @app.callback(
         Output("simulation-store", "data"),
         Output("time-slider", "max"),
@@ -193,6 +293,11 @@ def register_simulation_callbacks(app: Dash) -> None:
         State("custom-frequencies", "value"),
         State("custom-adjacency", "value"),
         State("track-symmetries", "value"),
+        State("adaptive-rtol", "value"),
+        State("adaptive-atol", "value"),
+        State("dt-min", "value"),
+        State("dt-max", "value"),
+        State("shots-slider", "value"),
         prevent_initial_call="initial_duplicate",
     )
     def run_or_reset(
@@ -211,6 +316,11 @@ def register_simulation_callbacks(app: Dash) -> None:
         custom_frequencies: str | None,
         custom_adjacency: str | None,
         track_symmetries: list[str] | bool | str | None,
+        adaptive_rtol: float | None,
+        adaptive_atol: float | None,
+        dt_min: float | None,
+        dt_max: float | None,
+        shots: int | None,
     ) -> tuple[dict[str, Any] | None, int, int, str]:
         return handle_run_or_reset(
             triggered_id=getattr(ctx, "triggered_id", None),
@@ -227,4 +337,9 @@ def register_simulation_callbacks(app: Dash) -> None:
             custom_frequencies=custom_frequencies,
             custom_adjacency=custom_adjacency,
             track_symmetries=track_symmetries,
+            adaptive_rtol=adaptive_rtol,
+            adaptive_atol=adaptive_atol,
+            dt_min=dt_min,
+            dt_max=dt_max,
+            shots=shots,
         )
