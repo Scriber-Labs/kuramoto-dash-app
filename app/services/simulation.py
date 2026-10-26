@@ -6,7 +6,12 @@ import json
 from typing import Any, Optional
 
 import numpy as np
-from kuramoto.model import order_parameter
+try:
+    from kuramoto.model import order_parameter
+except ImportError:
+    def order_parameter(phases: np.ndarray) -> np.ndarray:
+        """Compute Kuramoto order parameter r(t) for phase time series."""
+        return np.abs(np.mean(np.exp(1j * phases), axis=-1))
 
 from app.services.distributions import DistributionRegistry
 from app.services.solvers import SolverRegistry

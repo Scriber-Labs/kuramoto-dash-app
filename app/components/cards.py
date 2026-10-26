@@ -5,7 +5,17 @@ from __future__ import annotations
 from typing import Any
 
 import numpy as np
+import dash
 from dash import html
+
+
+def _asset_url(filename: str) -> str:
+    """Safely obtain asset URL respecting Dash pathname prefix configuration."""
+    try:
+        return dash.get_asset_url(filename)
+    except Exception:
+        clean = filename.lstrip("/")
+        return f"/assets/{clean}"
 
 
 def metric_cards(data: dict[str, Any] | None, frame: int | None) -> html.Div | list:
@@ -141,7 +151,7 @@ def header_section() -> html.Header:
             html.Div(
                 [
                     html.Img(
-                        src="/assets/images/logo.png",
+                        src=_asset_url("images/logo.png"),
                         alt="Scriber Labs logo",
                         className="brand-mark",
                     ),
@@ -176,7 +186,7 @@ def footer_section() -> html.Footer:
                         html.Div(
                             [
                                 html.Img(
-                                    src="/assets/images/logo.png",
+                                    src=_asset_url("images/logo.png"),
                                     alt="Scriber Labs logo",
                                     className="footer-logo",
                                 ),

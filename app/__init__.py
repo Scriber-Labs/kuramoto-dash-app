@@ -2,4 +2,6 @@
 
 from __future__ import annotations
 
-__all__: list[str] = []
+from app.app import server
+
+__all__ = ["server"]
