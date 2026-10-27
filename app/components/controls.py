@@ -591,10 +591,20 @@ def timeline_controls() -> html.Div:
                     ),
                     html.Div(
                         [
-                            html.Label(
-                                "Inspect time slice",
-                                className="field-label",
-                                style={"marginBottom": "4px"},
+                            html.Div(
+                                [
+                                    html.Label(
+                                        "Time",
+                                        className="field-label",
+                                        style={"marginBottom": "0"},
+                                    ),
+                                    html.Span(
+                                        id="time-slider-label",
+                                        className="time-slider-value",
+                                        children="t = 0.00s",
+                                    ),
+                                ],
+                                className="timeline-slider-header",
                             ),
                             dcc.Slider(
                                 id="time-slider",

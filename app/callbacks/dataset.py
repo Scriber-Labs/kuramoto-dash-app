@@ -38,6 +38,22 @@ def register_dataset_callbacks(app: Dash) -> None:
     """Register animation progression and benchmark download callbacks."""
 
     @app.callback(
+        Output("time-slider-label", "children"),
+        Input("time-slider", "value"),
+        State("simulation-store", "data"),
+    )
+    def update_time_label(
+        frame: int | None,
+        stored_data: dict[str, Any] | None,
+    ) -> str:
+        """Display the actual time value corresponding to the current slider frame."""
+        if not stored_data or "time" not in stored_data or not stored_data["time"]:
+            return "t = 0.00s"
+        time_arr = stored_data["time"]
+        idx = max(0, min(int(frame or 0), len(time_arr) - 1))
+        return f"t = {float(time_arr[idx]):.2f}s"
+
+    @app.callback(
         Output("time-slider", "value", allow_duplicate=True),
         Input("heartbeat", "n_intervals"),
         State("simulation-store", "data"),

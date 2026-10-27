@@ -1261,10 +1261,33 @@ input[type="checkbox"] {
   flex-direction: column;
 }
 
+.timeline-slider-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
+.time-slider-value {
+  font-family: "Space Grotesk", monospace;
+  font-size: 13px;
+  font-weight: 600;
+  color: #00e8ff;
+  text-shadow: 0 0 8px rgba(0, 232, 255, 0.5);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
 .timeline-controls .rc-slider {
   flex: 1;
   min-width: 200px;
-  padding: 10px 0;
+  padding: 6px 0;
+}
+
+/* Hide the bulky slider tooltip — time is shown inline */
+.timeline-slider-group .rc-slider-tooltip {
+  display: none !important;
 }
 
 /* Glassmorphic & Glowing Slider Controls */

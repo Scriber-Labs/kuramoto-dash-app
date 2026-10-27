@@ -216,7 +216,15 @@ class SolverRegistry:
                 if initial_phases is not None:
                     model.phases = np.asarray(initial_phases, dtype=float).copy()
 
-                dataset = model.simulate(t_span=t_span, dt=dt, **sim_kwargs)
+                # KuramotoModel.simulate() expects n_points, not dt.
+                # Compute n_points from t_span and dt to match the requested resolution.
+                n_points = max(2, int(np.round(t_span / dt)))
+                # Pass dt_internal so the rotor solver uses the output dt directly
+                # instead of defaulting to min(diff(t_eval)) * 0.1 which causes
+                # excessive sub-stepping and very slow simulations.
+                if "dt_internal" not in sim_kwargs:
+                    sim_kwargs["dt_internal"] = dt
+                dataset = model.simulate(t_span=t_span, n_points=n_points, **sim_kwargs)
                 return dataset.time, dataset.phases
             except Exception:
                 pass
@@ -344,9 +352,9 @@ class SolverRegistry:
                 )
                 sim_kwargs: Dict[str, Any] = {}
                 if "adaptive_rtol" in kwargs:
-                    sim_kwargs["rtol"] = kwargs["adaptive_rtol"]
+                    sim_kwargs["adaptive_rtol"] = kwargs["adaptive_rtol"]
                 if "adaptive_atol" in kwargs:
-                    sim_kwargs["atol"] = kwargs["adaptive_atol"]
+                    sim_kwargs["adaptive_atol"] = kwargs["adaptive_atol"]
                 if "dt_min" in kwargs:
                     sim_kwargs["dt_min"] = kwargs["dt_min"]
                 if "dt_max" in kwargs:
