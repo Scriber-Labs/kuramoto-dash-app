@@ -7,10 +7,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="036a4c8f-8947-4828-9ec4-48c52b6531ba" name="Changes" comment="Update default port to 10000 for Render.com and improve `workspace.xml` metadata consistency">
+    <list default="true" id="036a4c8f-8947-4828-9ec4-48c52b6531ba" name="Changes" comment="&quot;Optimize solver sub-stepping with `dt_internal`, migrate `kuramoto-benchmark-suite` to PyPI, and refine `workspace.xml` metadata and dependencies.&quot;">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/solvers.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/solvers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uv.lock" beforeDir="false" afterPath="$PROJECT_DIR$/uv.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,61 +28,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0781184645021238" />
-      <entry key="MS500" value="1.7873935721734853" />
-      <entry key="S2" value="3.2793793786996117" />
-      <entry key="S5" value="4.754322090198638" />
-      <entry key="S10" value="5.6745628912924415" />
-      <entry key="S30" value="6.5844029945171325" />
-      <entry key="S60" value="8.116521379175671" />
-      <entry key="M2" value="12.872154701772864" />
-      <entry key="M5" value="28.17228842859717" />
-      <entry key="M10" value="59.869824121643234" />
-      <entry key="M15" value="98.967804998644" />
-      <entry key="M30" value="214.41655462379043" />
-      <entry key="H1" value="363.48891899614694" />
-      <entry key="H2" value="540.565982498328" />
-      <entry key="H4" value="763.164899795158" />
-      <entry key="D1" value="1195.7540113287794" />
-      <entry key="W1" value="1316.0444956874182" />
+      <entry key="MS100" value="1.00057676506677" />
+      <entry key="MS500" value="1.305961538925399" />
+      <entry key="S2" value="3.5402345499511743" />
+      <entry key="S5" value="6.5570586789511385" />
+      <entry key="S10" value="10.306069291857584" />
+      <entry key="S30" value="23.18685441313379" />
+      <entry key="S60" value="32.902887482594856" />
+      <entry key="M2" value="40.22481646773114" />
+      <entry key="M5" value="45.938811757456364" />
+      <entry key="M10" value="52.7832987596084" />
+      <entry key="M15" value="67.36789664361159" />
+      <entry key="M30" value="142.81313192011066" />
+      <entry key="H1" value="289.73113664771085" />
+      <entry key="H2" value="489.1557080396808" />
+      <entry key="H4" value="737.9180960047912" />
+      <entry key="D1" value="1225.2555917233112" />
+      <entry key="W1" value="1362.7978928389196" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
       <entry key="MS500" value="0.0" />
       <entry key="S2" value="0.0" />
-      <entry key="S5" value="8.58452597894334E-279" />
-      <entry key="S10" value="9.265271706185012E-140" />
-      <entry key="S30" value="4.5250083666294075E-47" />
-      <entry key="S60" value="6.726818242400667E-24" />
-      <entry key="M2" value="2.593611043005601E-12" />
-      <entry key="M5" value="2.3203950944506758E-5" />
-      <entry key="M10" value="0.004817047949160038" />
-      <entry key="M15" value="0.028522481878921327" />
-      <entry key="M30" value="0.16888600261395662" />
-      <entry key="H1" value="0.41095742189910095" />
-      <entry key="H2" value="0.6410596086941543" />
-      <entry key="H4" value="0.8006619815466095" />
-      <entry key="D1" value="0.9636253161758609" />
-      <entry key="W1" value="0.9947207365387065" />
+      <entry key="S5" value="0.0" />
+      <entry key="S10" value="1.3633267321889755E-204" />
+      <entry key="S30" value="1.1088342961206537E-68" />
+      <entry key="S60" value="1.0530120113848002E-34" />
+      <entry key="M2" value="1.0261637351732847E-17" />
+      <entry key="M5" value="1.6013514781940528E-7" />
+      <entry key="M10" value="4.0016889911561964E-4" />
+      <entry key="M15" value="0.005430363334779043" />
+      <entry key="M30" value="0.07369099900787791" />
+      <entry key="H1" value="0.2714608609134614" />
+      <entry key="H2" value="0.5210190600289606" />
+      <entry key="H4" value="0.7218165002470852" />
+      <entry key="D1" value="0.9471188224303375" />
+      <entry key="W1" value="0.992268511310428" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="1.0403549466799749" />
-      <entry key="MS500" value="1.772919075373527" />
-      <entry key="S2" value="3.272019396711327" />
-      <entry key="S5" value="4.749731156057719" />
-      <entry key="S10" value="5.671735827040594" />
-      <entry key="S30" value="6.58328711329421" />
-      <entry key="S60" value="8.115844169761102" />
-      <entry key="M2" value="12.871638055630887" />
-      <entry key="M5" value="28.171858828504476" />
-      <entry key="M10" value="59.87409745319075" />
-      <entry key="M15" value="98.99564836018907" />
-      <entry key="M30" value="214.58456100864936" />
-      <entry key="H1" value="363.89905781982526" />
-      <entry key="H2" value="541.206374642643" />
-      <entry key="H4" value="763.9650180706017" />
-      <entry key="D1" value="1196.7174605456498" />
-      <entry key="W1" value="1317.0391874896202" />
+      <entry key="MS100" value="0.9598173879287754" />
+      <entry key="MS500" value="1.2949473935422087" />
+      <entry key="S2" value="3.532004916869222" />
+      <entry key="S5" value="6.550882286001004" />
+      <entry key="S10" value="10.301159356057784" />
+      <entry key="S30" value="23.182913840727565" />
+      <entry key="S60" value="32.90000700492263" />
+      <entry key="M2" value="40.22302788993323" />
+      <entry key="M5" value="45.937987458119956" />
+      <entry key="M10" value="52.783223199380124" />
+      <entry key="M15" value="67.3729060666994" />
+      <entry key="M30" value="142.8862909402408" />
+      <entry key="H1" value="290.0019820964697" />
+      <entry key="H2" value="489.67614712945874" />
+      <entry key="H4" value="738.6394035575046" />
+      <entry key="D1" value="1226.2025343271823" />
+      <entry key="W1" value="1363.7901320391297" />
     </decayedShown>
   </component>
   <component name="ProblemsViewState">
@@ -361,7 +359,15 @@
       <option name="project" value="LOCAL" />
       <updated>1793105089579</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="&quot;Optimize solver sub-stepping with `dt_internal`, migrate `kuramoto-benchmark-suite` to PyPI, and refine `workspace.xml` metadata and dependencies.&quot;">
+      <option name="closed" value="true" />
+      <created>1793107772798</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1793107772798</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -378,7 +384,8 @@
     <MESSAGE value="&quot;Add JSON config import/export and collapsible UI sections with callbacks and styling&quot;" />
     <MESSAGE value="Migrate `kuramoto-benchmark-suite` to PyPI, add environment variable support for `app.run`, and update dependencies." />
     <MESSAGE value="Update default port to 10000 for Render.com and improve `workspace.xml` metadata consistency" />
-    <option name="LAST_COMMIT_MESSAGE" value="Update default port to 10000 for Render.com and improve `workspace.xml` metadata consistency" />
+    <MESSAGE value="&quot;Optimize solver sub-stepping with `dt_internal`, migrate `kuramoto-benchmark-suite` to PyPI, and refine `workspace.xml` metadata and dependencies.&quot;" />
+    <option name="LAST_COMMIT_MESSAGE" value="&quot;Optimize solver sub-stepping with `dt_internal`, migrate `kuramoto-benchmark-suite` to PyPI, and refine `workspace.xml` metadata and dependencies.&quot;" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

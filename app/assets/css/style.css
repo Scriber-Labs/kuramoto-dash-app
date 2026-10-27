@@ -74,6 +74,38 @@
   box-sizing: border-box;
 }
 
+/* Custom Dark Mode Scrollbar - No more glowing blue boxes */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(13, 17, 23, 0.8);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(0, 232, 255, 0.35) 0%, rgba(121, 82, 245, 0.35) 100%);
+  border-radius: 6px;
+  border: 2px solid rgba(13, 17, 23, 0.8);
+  transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(0, 232, 255, 0.55) 0%, rgba(121, 82, 245, 0.55) 100%);
+}
+
+::-webkit-scrollbar-corner {
+  background: rgba(13, 17, 23, 0.8);
+}
+
+/* Firefox scrollbar styling */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 232, 255, 0.35) rgba(13, 17, 23, 0.8);
+}
+
 body {
   margin: 0;
   background: #050816 url("../images/spacebackground.png") center top / cover fixed no-repeat;
@@ -300,6 +332,7 @@ button, input, textarea, select {
   position: sticky;
   top: 18px;
   border-color: rgba(20, 181, 255, 0.24);
+  overflow: visible;
 }
 
 .panel-heading {
@@ -449,8 +482,11 @@ input[type="number"]::-webkit-outer-spin-button {
   background-color: rgba(14, 28, 56, 0.9) !important;
   border-radius: 4px !important;
   border: 1px solid rgba(0, 232, 255, 0.35) !important;
-  filter: invert(0.9) sepia(100%) saturate(350%) hue-rotate(145deg) brightness(1.4) contrast(1.2) drop-shadow(0 0 3px rgba(0, 232, 255, 0.6)) !important;
-  transition: opacity 0.2s ease, transform 0.2s ease, filter 0.2s ease, background-color 0.2s ease !important;
+  color: #00e8ff !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  transition: opacity 0.2s ease, transform 0.2s ease, background-color 0.2s ease !important;
 }
 
 input[type="number"]::-webkit-inner-spin-button:hover,
@@ -459,7 +495,8 @@ input[type="number"]::-webkit-outer-spin-button:hover {
   background: rgba(20, 42, 85, 0.95) !important;
   background-color: rgba(20, 42, 85, 0.95) !important;
   border-color: rgba(0, 232, 255, 0.8) !important;
-  filter: invert(1) sepia(100%) saturate(600%) hue-rotate(145deg) brightness(1.8) drop-shadow(0 0 8px rgba(0, 232, 255, 1)) !important;
+  color: #ffffff !important;
+  text-shadow: 0 0 6px rgba(0, 232, 255, 0.8) !important;
   transform: scale(1.18) !important;
 }
 
@@ -532,6 +569,16 @@ body .dash-dropdown .Select-arrow,
 }
 
 /* Dropdown Menu Outer, List & Options - High-Contrast Dark Glassmorphism */
+/* Force dropdown menus to render above all charts and content */
+.dash-dropdown {
+  position: relative;
+  z-index: 1;
+}
+.dash-dropdown:hover,
+.dash-dropdown:focus-within {
+  z-index: 10000 !important;
+}
+
 body div[class*="-menu"],
 body div[class*="-Menu"],
 body div[class*="-MenuList"],
@@ -554,6 +601,7 @@ div[class*="MenuList"],
 .dash-dropdown div[class*="-MenuList"],
 div[role="listbox"],
 ul[role="listbox"] {
+  position: absolute !important;
   background: #080c1f !important;
   background-color: #080c1f !important;
   background-image: linear-gradient(145deg, rgba(8, 14, 34, 0.98) 0%, rgba(18, 14, 45, 0.98) 100%) !important;
@@ -563,8 +611,8 @@ ul[role="listbox"] {
   -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
   box-shadow: 0 14px 40px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 0 16px rgba(0, 232, 255, 0.15) !important;
   margin-top: 6px !important;
-  overflow: hidden !important;
-  z-index: 9999 !important;
+  overflow: visible !important;
+  z-index: 99999 !important;
   padding: 6px 0 !important;
 }
 
@@ -895,6 +943,7 @@ input[type="checkbox"] {
 
 .visual-panel {
   min-width: 0;
+  overflow: visible;
 }
 
 .metrics-wrapper {
@@ -1174,7 +1223,7 @@ input[type="checkbox"] {
 
 .chart-card {
   min-width: 0;
-  overflow: hidden;
+  overflow: visible;
   padding: 6px;
   border-color: rgba(255, 255, 255, 0.10);
   transition: border-color 0.25s ease, box-shadow 0.25s ease;
@@ -1640,7 +1689,7 @@ div[data-tab-parent],
 .dash-graph {
   background: rgba(3, 7, 18, 0.45);
   border-radius: 14px;
-  overflow: hidden;
+  overflow: visible;
 }
 
 /* ==============================================================================

@@ -15,7 +15,7 @@ def create_layout() -> html.Div:
         [
             dcc.Store(id="simulation-store"),
             dcc.Download(id="dataset-download"),
-            dcc.Interval(id="heartbeat", interval=120, n_intervals=0, disabled=False),
+            dcc.Interval(id="heartbeat", interval=200, n_intervals=0, disabled=False),
             header_section(),
             html.Main(
                 [
