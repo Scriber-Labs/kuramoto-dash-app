@@ -85,6 +85,7 @@ body {
 
 button, input, textarea, select {
   font: inherit;
+  color-scheme: dark;
 }
 
 .app-shell {
@@ -347,16 +348,22 @@ button, input, textarea, select {
  * ============================================================================== */
 
 /* Glassmorphic Dark Blue Baseline for all Inputs, Textareas, and Dropdown Controls */
+.dash-dropdown,
+.dash-dropdown > div,
+.dash-dropdown [class*="-container"],
+.dash-dropdown .Select,
 .dash-dropdown .Select-control,
+.dash-dropdown div[class*="-control"],
+.dash-dropdown [class*="control"],
 .Select .Select-control,
 .Select-control,
 .dash-input,
 input,
 textarea,
 select {
-  background: linear-gradient(135deg, rgba(7, 18, 38, 0.84) 0%, rgba(12, 28, 56, 0.78) 50%, rgba(18, 20, 52, 0.82) 100%) !important;
-  background-color: rgba(7, 18, 38, 0.84) !important;
-  background-image: linear-gradient(135deg, rgba(7, 18, 38, 0.84) 0%, rgba(12, 28, 56, 0.78) 50%, rgba(18, 20, 52, 0.82) 100%) !important;
+  background: linear-gradient(135deg, rgba(7, 18, 38, 0.88) 0%, rgba(12, 28, 56, 0.82) 50%, rgba(18, 20, 52, 0.85) 100%) !important;
+  background-color: rgba(7, 18, 38, 0.88) !important;
+  background-image: linear-gradient(135deg, rgba(7, 18, 38, 0.88) 0%, rgba(12, 28, 56, 0.82) 50%, rgba(18, 20, 52, 0.85) 100%) !important;
   color: #e0f2fe !important;
   -webkit-text-fill-color: #e0f2fe !important;
   border: 1px solid rgba(0, 232, 255, 0.32) !important;
@@ -365,16 +372,47 @@ select {
   backdrop-filter: blur(14px) saturate(160%) !important;
   -webkit-backdrop-filter: blur(14px) saturate(160%) !important;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  color-scheme: dark !important;
 }
 
-/* Hover & Focus Interactions for Sidebar Inputs */
+/* Specific Dropdown Container resets so only the control box renders borders/shadows */
+.dash-dropdown,
+.dash-dropdown > div,
+.dash-dropdown [class*="-container"] {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Control Box min-height and styling */
+.dash-dropdown .Select-control,
+.dash-dropdown div[class*="-control"],
+.dash-dropdown [class*="control"],
+body .dash-dropdown div[class*="-control"],
+body #network-type div[class*="-control"],
+body #frequency-distribution div[class*="-control"],
+body #solver-type div[class*="-control"],
+body #diagnostic-type div[class*="-control"] {
+  min-height: 42px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* Hover & Focus Interactions for Sidebar Inputs and Dropdowns */
 input:hover,
 textarea:hover,
 select:hover,
 .dash-dropdown .Select-control:hover,
+.dash-dropdown div[class*="-control"]:hover,
+.dash-dropdown div[class*="-control"][class*="--is-focused"],
 .Select-control:hover {
   border-color: rgba(0, 232, 255, 0.65) !important;
-  background: linear-gradient(135deg, rgba(10, 24, 48, 0.88) 0%, rgba(16, 36, 70, 0.82) 50%, rgba(24, 26, 64, 0.85) 100%) !important;
+  background: linear-gradient(135deg, rgba(10, 24, 48, 0.92) 0%, rgba(16, 36, 70, 0.86) 50%, rgba(24, 26, 64, 0.88) 100%) !important;
+  background-color: rgba(10, 24, 48, 0.92) !important;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 6px 22px rgba(0, 0, 0, 0.45), 0 0 18px rgba(0, 232, 255, 0.35) !important;
 }
 
@@ -382,120 +420,249 @@ input:focus,
 textarea:focus,
 select:focus,
 .dash-dropdown .Select-control:focus-within,
+.dash-dropdown div[class*="-control"]:focus-within,
+.dash-dropdown div[class*="-control"][class*="--is-focused"],
 .Select-control:focus-within,
 .Select.is-focused:not(.is-open) > .Select-control {
   border-color: var(--cyan-bright) !important;
-  background: linear-gradient(135deg, rgba(12, 28, 56, 0.92) 0%, rgba(18, 42, 80, 0.88) 50%, rgba(28, 30, 72, 0.90) 100%) !important;
+  background: linear-gradient(135deg, rgba(12, 28, 56, 0.95) 0%, rgba(18, 42, 80, 0.90) 50%, rgba(28, 30, 72, 0.92) 100%) !important;
+  background-color: rgba(12, 28, 56, 0.95) !important;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 0 24px rgba(0, 232, 255, 0.55), 0 0 12px rgba(121, 82, 245, 0.40) !important;
   outline: none !important;
 }
 
-/* Number Input Stepper Controls (+ and - buttons) - Crisp & Clearly Visible */
+/* Number Input Stepper Controls (+ and - up/down buttons) - Crisp & Clearly Visible in Dark Mode */
+input[type="number"] {
+  color-scheme: dark !important;
+}
+
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
-  opacity: 0.85;
-  cursor: pointer;
-  height: 28px;
-  margin-right: 4px;
-  filter: hue-rotate(190deg) saturate(3) brightness(1.1);
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  -webkit-appearance: inner-spin-button !important;
+  appearance: inner-spin-button !important;
+  opacity: 1 !important;
+  cursor: pointer !important;
+  height: 28px !important;
+  width: 18px !important;
+  margin-right: 4px !important;
+  background: rgba(14, 28, 56, 0.9) !important;
+  background-color: rgba(14, 28, 56, 0.9) !important;
+  border-radius: 4px !important;
+  border: 1px solid rgba(0, 232, 255, 0.35) !important;
+  filter: invert(0.9) sepia(100%) saturate(350%) hue-rotate(145deg) brightness(1.4) contrast(1.2) drop-shadow(0 0 3px rgba(0, 232, 255, 0.6)) !important;
+  transition: opacity 0.2s ease, transform 0.2s ease, filter 0.2s ease, background-color 0.2s ease !important;
 }
 
 input[type="number"]::-webkit-inner-spin-button:hover,
 input[type="number"]::-webkit-outer-spin-button:hover {
-  opacity: 1;
-  filter: hue-rotate(190deg) saturate(4) brightness(1.3);
-  transform: scale(1.15);
+  opacity: 1 !important;
+  background: rgba(20, 42, 85, 0.95) !important;
+  background-color: rgba(20, 42, 85, 0.95) !important;
+  border-color: rgba(0, 232, 255, 0.8) !important;
+  filter: invert(1) sepia(100%) saturate(600%) hue-rotate(145deg) brightness(1.8) drop-shadow(0 0 8px rgba(0, 232, 255, 1)) !important;
+  transform: scale(1.18) !important;
 }
 
-/* Dropdown Menu Outer, List & Options - High-Contrast Dark Glassmorphism */
-body .dash-dropdown .Select-control,
-body #network-type .Select-control,
-body #frequency-distribution .Select-control {
-  min-height: 40px;
+/* Dropdown Value Labels, Text, Placeholders & Input Elements */
+body .dash-dropdown .Select-value-label,
+body .dash-dropdown .Select-placeholder,
+body .dash-dropdown .Select-value,
+body .dash-dropdown .Select-input input,
+.dash-dropdown div[class*="-singleValue"],
+.dash-dropdown div[class*="-SingleValue"],
+.dash-dropdown div[class*="-placeholder"],
+.dash-dropdown div[class*="-Placeholder"],
+.dash-dropdown div[class*="-ValueContainer"],
+.dash-dropdown div[class*="-valueContainer"],
+.dash-dropdown div[class*="-Input"],
+.dash-dropdown div[class*="-input"],
+.dash-dropdown div[class*="-Input"] input,
+.dash-dropdown div[class*="-input"] input,
+.dash-dropdown input {
+  color: #e0f2fe !important;
+  -webkit-text-fill-color: #e0f2fe !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  font-family: inherit;
+  font-size: 13px !important;
 }
 
-body .dash-dropdown .Select-arrow {
+.dash-dropdown div[class*="-placeholder"],
+.dash-dropdown .Select-placeholder {
+  color: #8b949e !important;
+  -webkit-text-fill-color: #8b949e !important;
+  opacity: 0.8 !important;
+}
+
+/* Dropdown Indicator Icons, Arrows, Separators & Clear Buttons */
+body .dash-dropdown .Select-arrow,
+.dash-dropdown .Select-arrow {
   border-color: #00e8ff transparent transparent !important;
   filter: drop-shadow(0 0 4px rgba(0, 232, 255, 0.8));
 }
 
-body .dash-dropdown .Select-menu-outer,
-body .dash-dropdown .Select-menu,
-body .dash-dropdown div[class*="-menu"],
-body .dash-dropdown div[class*="-MenuList"],
-.dash-dropdown .Select-menu-outer,
-.dash-dropdown .Select-menu {
-  background: #0b0f24 !important;
-  background-color: #0b0f24 !important;
-  background-image: linear-gradient(145deg, rgba(8, 14, 34, 0.98) 0%, rgba(18, 14, 45, 0.98) 100%) !important;
-  border: 1px solid rgba(121, 82, 245, 0.45) !important;
-  border-radius: 12px !important;
-  backdrop-filter: blur(20px) saturate(160%) !important;
-  -webkit-backdrop-filter: blur(20px) saturate(160%) !important;
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.85), 0 0 24px rgba(121, 82, 245, 0.30) !important;
-  margin-top: 5px;
-  overflow: hidden;
-  z-index: 1000 !important;
-}
-
-body .dash-dropdown .Select-option,
-body .dash-dropdown .VirtualizedSelectOption,
-body .dash-dropdown div[class*="-option"],
-.dash-dropdown .Select-option,
-.dash-dropdown .VirtualizedSelectOption {
-  background: transparent !important;
-  background-color: transparent !important;
-  color: #e0f2fe !important;
-  -webkit-text-fill-color: #e0f2fe !important;
-  padding: 10px 14px !important;
+.dash-dropdown div[class*="-indicatorContainer"],
+.dash-dropdown div[class*="-IndicatorsContainer"],
+.dash-dropdown div[class*="-indicatorContainer"] svg,
+.dash-dropdown div[class*="-indicatorContainer"] path,
+.dash-dropdown div[class*="-ClearIndicator"] svg,
+.dash-dropdown div[class*="-clearIndicator"] svg,
+.dash-dropdown div[class*="-dropdownIndicator"] svg {
+  color: #00e8ff !important;
+  fill: #00e8ff !important;
+  stroke: #00e8ff !important;
+  opacity: 0.9 !important;
   cursor: pointer !important;
-  font-size: 13px !important;
   transition: all 0.2s ease !important;
 }
 
-body .dash-dropdown .Select-option:hover,
-body .dash-dropdown .Select-option.is-focused,
-body .dash-dropdown .VirtualizedSelectFocusedOption,
-body .dash-dropdown div[class*="-option"]:hover,
-body .dash-dropdown div[class*="-option"][class*="is-focused"],
+.dash-dropdown div[class*="-indicatorContainer"]:hover svg,
+.dash-dropdown div[class*="-indicatorContainer"]:hover path,
+.dash-dropdown div[class*="-dropdownIndicator"]:hover svg {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+  stroke: #ffffff !important;
+  filter: drop-shadow(0 0 6px rgba(0, 232, 255, 0.95)) !important;
+}
+
+.dash-dropdown div[class*="-indicatorSeparator"] {
+  background-color: rgba(0, 232, 255, 0.25) !important;
+  margin-top: 8px !important;
+  margin-bottom: 8px !important;
+}
+
+/* Dropdown Menu Outer, List & Options - High-Contrast Dark Glassmorphism */
+body div[class*="-menu"],
+body div[class*="-Menu"],
+body div[class*="-MenuList"],
+body div[class*="-menuList"],
+body div[class*="--menu"],
+body div[class*="menuList"],
+body div[class*="MenuList"],
+body .Select-menu-outer,
+body .Select-menu,
+div[class*="-menu"],
+div[class*="-Menu"],
+div[class*="-MenuList"],
+div[class*="-menuList"],
+div[class*="--menu"],
+div[class*="menuList"],
+div[class*="MenuList"],
+.dash-dropdown .Select-menu-outer,
+.dash-dropdown .Select-menu,
+.dash-dropdown div[class*="-menu"],
+.dash-dropdown div[class*="-MenuList"],
+div[role="listbox"],
+ul[role="listbox"] {
+  background: #080c1f !important;
+  background-color: #080c1f !important;
+  background-image: linear-gradient(145deg, rgba(8, 14, 34, 0.98) 0%, rgba(18, 14, 45, 0.98) 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  border-radius: 12px !important;
+  backdrop-filter: blur(24px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 0 16px rgba(0, 232, 255, 0.15) !important;
+  margin-top: 6px !important;
+  overflow: hidden !important;
+  z-index: 9999 !important;
+  padding: 6px 0 !important;
+}
+
+/* Individual Option Rows in Dropdown Menu */
+body div[class*="-option"],
+body div[class*="-Option"],
+body .Select-option,
+body .VirtualizedSelectOption,
+div[class*="-option"],
+div[class*="-Option"],
+.dash-dropdown .Select-option,
+.dash-dropdown .VirtualizedSelectOption,
+.dash-dropdown div[class*="-option"],
+div[role="option"],
+li[role="option"],
+body .dash-dropdown div[class*="-option"]:not(:hover):not([class*="--is-selected"]):not([class*="--is-focused"]) {
+  background: transparent !important;
+  background-color: transparent !important;
+  color: #e2e8f0 !important;
+  -webkit-text-fill-color: #e2e8f0 !important;
+  padding: 10px 16px !important;
+  cursor: pointer !important;
+  font-size: 13px !important;
+  transition: all 0.15s ease !important;
+  border-radius: 8px !important;
+  margin: 3px 6px !important;
+  border: 1px solid transparent !important;
+}
+
+/* Hover / Focus on Option Rows */
+body div[class*="-option"]:hover,
+body div[class*="-option"][class*="--is-focused"],
+body div[class*="-option"][class*="is-focused"],
+body div[class*="-option"]:focus,
+body div[class*="-Option"]:hover,
+body div[class*="-Option"][class*="--is-focused"],
+body .Select-option:hover,
+body .Select-option.is-focused,
+body .VirtualizedSelectFocusedOption,
+div[class*="-option"]:hover,
+div[class*="-option"][class*="--is-focused"],
 .dash-dropdown .Select-option:hover,
 .dash-dropdown .Select-option.is-focused,
-.dash-dropdown .VirtualizedSelectFocusedOption {
-  background: linear-gradient(90deg, rgba(0, 112, 235, 0.35) 0%, rgba(121, 82, 245, 0.40) 100%) !important;
-  background-color: rgba(121, 82, 245, 0.35) !important;
+.dash-dropdown .VirtualizedSelectFocusedOption,
+.dash-dropdown div[class*="-option"]:hover,
+.dash-dropdown div[class*="-option"][class*="--is-focused"],
+div[role="option"]:hover,
+div[role="option"][aria-selected="false"]:hover {
+  background: linear-gradient(90deg, rgba(0, 112, 235, 0.45) 0%, rgba(121, 82, 245, 0.50) 100%) !important;
+  background-color: rgba(121, 82, 245, 0.45) !important;
+  border: 1px solid rgba(0, 232, 255, 0.35) !important;
   color: #ffffff !important;
   -webkit-text-fill-color: #ffffff !important;
   text-shadow: 0 0 8px rgba(0, 232, 255, 0.8) !important;
 }
 
-body .dash-dropdown .Select-option.is-selected,
-body .dash-dropdown .VirtualizedSelectSelectedOption,
-body .dash-dropdown div[class*="-option"][class*="is-selected"],
+/* Selected Option in Dropdown Menu */
+body div[class*="-option"][class*="--is-selected"],
+body div[class*="-option"][class*="is-selected"],
+body div[class*="-option"][aria-selected="true"],
+body div[class*="-Option"][class*="--is-selected"],
+body .Select-option.is-selected,
+body .VirtualizedSelectSelectedOption,
+div[class*="-option"][class*="--is-selected"],
+div[class*="-Option"][class*="--is-selected"],
 .dash-dropdown .Select-option.is-selected,
-.dash-dropdown .VirtualizedSelectSelectedOption {
-  background: linear-gradient(90deg, rgba(0, 112, 235, 0.50) 0%, rgba(121, 82, 245, 0.55) 70%, rgba(236, 72, 153, 0.45) 100%) !important;
-  background-color: rgba(121, 82, 245, 0.55) !important;
+.dash-dropdown .VirtualizedSelectSelectedOption,
+.dash-dropdown div[class*="-option"][class*="--is-selected"],
+div[role="option"][aria-selected="true"] {
+  background: linear-gradient(90deg, rgba(0, 112, 235, 0.60) 0%, rgba(121, 82, 245, 0.65) 60%, rgba(236, 72, 153, 0.50) 100%) !important;
+  background-color: rgba(121, 82, 245, 0.65) !important;
+  border: 1px solid rgba(255, 255, 255, 0.35) !important;
   color: #00e8ff !important;
   -webkit-text-fill-color: #00e8ff !important;
   font-weight: 700 !important;
   text-shadow: 0 0 10px rgba(0, 232, 255, 0.9) !important;
 }
 
+/* Group headings if options are grouped */
+body .dash-dropdown div[class*="-GroupHeading"],
+body .dash-dropdown div[class*="-groupHeading"],
+.dash-dropdown div[class*="-GroupHeading"],
+.dash-dropdown div[class*="-groupHeading"] {
+  color: #9b7dff !important;
+  -webkit-text-fill-color: #9b7dff !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.08em !important;
+  padding: 8px 16px 4px !important;
+}
+
 /* Native select element options */
 select option,
 select optgroup {
-  background: #0b0f24 !important;
-  background-color: #0b0f24 !important;
+  background: #080c1f !important;
+  background-color: #080c1f !important;
   color: #e0f2fe !important;
-}
-
-body .dash-dropdown .Select-value-label,
-body .dash-dropdown .Select-placeholder,
-body .dash-dropdown .Select-value,
-body .dash-dropdown .Select-input input {
-  color: var(--ink) !important;
-  background: transparent !important;
 }
 
 input {
@@ -1147,6 +1314,106 @@ input[type="range"]::-webkit-slider-thumb:hover {
   flex: 0 0 auto;
   min-width: 150px;
   white-space: nowrap;
+}
+
+/* ==============================================================================
+ * 1️⃣0️⃣ TABS & DIAGNOSTIC NAVIGATION (Dark Glassmorphic Style)
+ * ============================================================================== */
+
+/* Tab bar container */
+.diagnostic-tabs,
+.tab-container,
+.tab-parent,
+div[role="tablist"],
+.diagnostic-suite-card .diagnostic-tabs {
+  background: rgba(6, 12, 28, 0.85) !important;
+  background-color: rgba(6, 12, 28, 0.85) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  border-radius: 14px !important;
+  padding: 6px !important;
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+  backdrop-filter: blur(18px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(160%) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 8px 24px rgba(0, 0, 0, 0.45) !important;
+  margin-bottom: 12px !important;
+}
+
+/* Individual Unselected Tab */
+.custom-tab,
+.tab,
+div[role="tab"],
+button[role="tab"],
+.diagnostic-tabs .tab,
+.diagnostic-tabs > div {
+  background: rgba(12, 20, 42, 0.65) !important;
+  background-color: rgba(12, 20, 42, 0.65) !important;
+  color: #cbd9f1 !important;
+  -webkit-text-fill-color: #cbd9f1 !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 10px !important;
+  padding: 10px 18px !important;
+  font-family: inherit !important;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 2px 8px rgba(0, 0, 0, 0.25) !important;
+  text-align: center !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 1 1 auto !important;
+}
+
+/* Tab Hover State */
+.custom-tab:hover,
+.tab:hover,
+div[role="tab"]:hover,
+button[role="tab"]:hover,
+.diagnostic-tabs .tab:hover,
+.diagnostic-tabs > div:hover {
+  background: linear-gradient(135deg, rgba(18, 34, 70, 0.90) 0%, rgba(28, 24, 75, 0.86) 100%) !important;
+  background-color: rgba(18, 34, 70, 0.90) !important;
+  border: 1px solid rgba(255, 255, 255, 0.35) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 4px 14px rgba(0, 0, 0, 0.40) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Tab Selected State */
+.custom-tab--selected,
+.tab--selected,
+div[role="tab"][aria-selected="true"],
+button[role="tab"][aria-selected="true"],
+.diagnostic-tabs .tab--selected,
+.custom-tab.custom-tab--selected {
+  background: linear-gradient(135deg, rgba(14, 45, 95, 0.85) 0%, rgba(55, 30, 115, 0.85) 65%, rgba(95, 25, 80, 0.80) 100%) !important;
+  background-color: rgba(55, 30, 115, 0.85) !important;
+  border: 1px solid rgba(255, 255, 255, 0.40) !important;
+  border-radius: 10px !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 700 !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 4px 16px rgba(0, 0, 0, 0.55), 0 0 12px rgba(255, 255, 255, 0.15) !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9), 0 0 12px rgba(0, 232, 255, 0.90) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Tab Content Container */
+.tab-content,
+div[role="tabpanel"],
+div[data-tab-parent],
+.diagnostic-suite-card .tab-content {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  padding: 8px 0 0 0 !important;
 }
 
 .footer {
