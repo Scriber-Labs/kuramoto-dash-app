@@ -337,18 +337,25 @@ class SolverRegistry:
         seed: Optional[int] = None,
         **kwargs: Any,
     ) -> Tuple[np.ndarray, np.ndarray]:
+        """Dispatch rotor-based methods using the real clifford-based RotorSolver."""
         n = len(omega)
         t_eval = np.arange(0.0, t_span + dt / 2.0, dt)
 
         if RotorSolver is not None:
             try:
+                if initial_phases is None:
+                    rng = np.random.default_rng(seed)
+                    init_phases = rng.uniform(0, 2 * np.pi, n)
+                else:
+                    init_phases = np.asarray(initial_phases, dtype=float)
+
                 solver = RotorSolver(
                     n_oscillators=n,
                     dim=2,
                     seed=seed,
                     natural_frequencies=omega,
                     adjacency_matrix=adj_matrix,
-                    initial_phases=initial_phases,
+                    initial_phases=init_phases,
                 )
                 sim_kwargs: Dict[str, Any] = {}
                 if "adaptive_rtol" in kwargs:
@@ -359,9 +366,6 @@ class SolverRegistry:
                     sim_kwargs["dt_min"] = kwargs["dt_min"]
                 if "dt_max" in kwargs:
                     sim_kwargs["dt_max"] = kwargs["dt_max"]
-
-                # Pass dt_internal to avoid excessive sub-stepping.
-                # Use the output dt directly instead of 0.1 * dt to reduce sub-steps by 10x.
                 sim_kwargs["dt_internal"] = dt
 
                 times, phases = solver.simulate(
