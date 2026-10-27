@@ -5,6 +5,7 @@ from __future__ import annotations
 from dash import Dash
 
 from app.callbacks.dataset import register_dataset_callbacks
+from app.callbacks.json_config import register_json_callbacks
 from app.callbacks.simulation import register_simulation_callbacks
 from app.callbacks.visualization import register_visualization_callbacks
 
@@ -14,6 +15,7 @@ def register_callbacks(app: Dash) -> None:
     register_simulation_callbacks(app)
     register_visualization_callbacks(app)
     register_dataset_callbacks(app)
+    register_json_callbacks(app)
 
 
 __all__ = [
@@ -21,4 +23,5 @@ __all__ = [
     "register_simulation_callbacks",
     "register_visualization_callbacks",
     "register_dataset_callbacks",
+    "register_json_callbacks",
 ]

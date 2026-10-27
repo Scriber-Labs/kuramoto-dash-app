@@ -6,7 +6,7 @@ from typing import Any
 
 import numpy as np
 import dash
-from dash import html
+from dash import dcc, html
 
 
 def _asset_url(filename: str) -> str:
@@ -123,7 +123,10 @@ def equation_card() -> html.Div:
 
 
 def hero_section() -> html.Section:
-    """Generate the hero banner section with problem summary and model equation."""
+    """Generate the hero banner section with problem summary, model equation, and solver selector."""
+    from app.services.solvers import SolverRegistry
+    solver_options = SolverRegistry.get_grouped_options()
+    
     return html.Section(
         [
             html.Div(
@@ -137,6 +140,23 @@ def hero_section() -> html.Section:
                     ),
                 ],
                 className="hero-copy-block",
+            ),
+            # Solver Selector - Prominent at the top
+            html.Div(
+                [
+                    html.Label(
+                        "🔬 Integration Scheme",
+                        className="field-label hero-solver-label",
+                    ),
+                    dcc.Dropdown(
+                        id="solver-hero",
+                        options=solver_options,
+                        value="rk45",
+                        className="dash-dropdown hero-solver-dropdown",
+                        clearable=False,
+                    ),
+                ],
+                className="hero-solver-selector",
             ),
             equation_card(),
         ],

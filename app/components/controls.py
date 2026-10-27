@@ -2,12 +2,57 @@
 
 from __future__ import annotations
 
+import json
 from typing import Any
 
 from dash import dcc, html
 
 from app.config import DEFAULTS, MAX_OSCILLATORS, MIN_OSCILLATORS
 from app.services.solvers import SolverRegistry
+
+
+# 0️⃣ JSON Configuration Examples
+
+_JSON_EXAMPLE_BASIC = {
+    "n_oscillators": 24,
+    "coupling": 2.0,
+    "simulation_time": 50.0,
+    "dt": 0.05,
+    "seed": 27,
+    "frequency_distribution": "Normal",
+    "frequency_mean": 0.0,
+    "frequency_std": 1.0,
+    "network_type": "All-to-All",
+    "solver": "rk45",
+}
+
+_JSON_EXAMPLE_ADVANCED = {
+    "n_oscillators": 50,
+    "coupling": 3.5,
+    "simulation_time": 100.0,
+    "dt": 0.02,
+    "seed": 42,
+    "frequency_distribution": "Bimodal",
+    "frequency_mean": 0.0,
+    "frequency_std": 0.5,
+    "network_type": "Small-World",
+    "solver": "dopri54",
+    "track_symmetries": True,
+}
+
+_JSON_EXAMPLE_CUSTOM_FREQ = {
+    "n_oscillators": 10,
+    "coupling": 1.5,
+    "simulation_time": 30.0,
+    "dt": 0.05,
+    "seed": 7,
+    "frequency_distribution": "Custom",
+    "custom_frequencies": "-2, -1, -0.5, 0, 0.5, 1, 2, 3, 4, 5",
+    "network_type": "Ring",
+    "solver": "euler",
+}
+
+_JSON_DEFAULT_EXAMPLE = json.dumps(_JSON_EXAMPLE_BASIC, indent=2)
 
 
 def control_group(label: str, component: Any, hint: str | None = None, group_id: str | None = None) -> html.Div:
@@ -21,9 +66,483 @@ def control_group(label: str, component: Any, hint: str | None = None, group_id:
     return html.Div(children, **kwargs)
 
 
+def _collapsible_section(title: str, children: list[Any], default_open: bool = False, section_id: str | None = None) -> html.Div:
+    """Build a collapsible accordion section with a toggle button."""
+    toggle_id = f"toggle-{section_id}" if section_id else None
+    content_id = f"content-{section_id}" if section_id else None
+    return html.Div(
+        [
+            html.Button(
+                [
+                    html.Span("▸", className="collapse-icon", id=toggle_id + "-icon" if toggle_id else None),
+                    html.Span(title, className="collapse-title"),
+                ],
+                id=toggle_id,
+                className="collapse-toggle",
+                n_clicks=0,
+            ),
+            html.Div(
+                children,
+                id=content_id,
+                className="collapse-content",
+                style={"display": "block"} if default_open else {"display": "none"},
+            ),
+        ],
+        className="collapsible-section",
+    )
+
+
 def sidebar_controls() -> html.Aside:
-    """Build the configuration sidebar panel with all interactive inputs and buttons."""
+    """Build the configuration sidebar panel with JSON import, collapsible sections, and inputs."""
     solver_options = SolverRegistry.get_grouped_options()
+
+    # ── JSON Configuration Input Section ──
+    json_config_section = html.Div(
+        [
+            html.Div(
+                [
+                    html.P("⚡ Quick Config", className="eyebrow"),
+                    html.H3("JSON Parameters"),
+                ],
+                className="panel-heading",
+            ),
+            html.Div(
+                [
+                    dcc.Textarea(
+                        id="json-config-input",
+                        value=_JSON_DEFAULT_EXAMPLE,
+                        placeholder='{"n_oscillators": 24, "coupling": 2.0, ...}',
+                        className="json-textarea",
+                        style={
+                            "width": "100%",
+                            "height": "160px",
+                            "fontSize": "11px",
+                            "fontFamily": "'Fira Code', monospace",
+                            "backgroundColor": "rgba(0, 0, 0, 0.4)",
+                            "color": "#c5f8ff",
+                            "border": "1px solid rgba(0, 232, 255, 0.2)",
+                            "borderRadius": "6px",
+                            "padding": "8px",
+                            "resize": "vertical",
+                        },
+                    ),
+                ],
+                className="field",
+            ),
+            html.Div(
+                [
+                    html.Button(
+                        "Apply Config",
+                        id="apply-json-btn",
+                        className="button button-primary btn-hover color-1",
+                        style={"flex": "1"},
+                    ),
+                    html.Button(
+                        "Export Current",
+                        id="export-json-btn",
+                        className="button button-quiet btn-hover color-3",
+                        style={"flex": "1"},
+                    ),
+                ],
+                className="button-row",
+                style={"marginBottom": "8px"},
+            ),
+            # Examples expander
+            html.Details(
+                [
+                    html.Summary(
+                        html.Span("Examples", className="collapse-title"),
+                        className="json-examples-summary",
+                    ),
+                    html.Div(
+                        [
+                            html.Div(
+                                [
+                                    html.Button(
+                                        "Basic",
+                                        id="json-example-basic",
+                                        className="button button-quiet btn-hover color-3 json-example-btn",
+                                        style={"fontSize": "11px", "padding": "4px 10px"},
+                                    ),
+                                    html.Button(
+                                        "Advanced",
+                                        id="json-example-advanced",
+                                        className="button button-quiet btn-hover color-3 json-example-btn",
+                                        style={"fontSize": "11px", "padding": "4px 10px"},
+                                    ),
+                                    html.Button(
+                                        "Custom Freq",
+                                        id="json-example-custom",
+                                        className="button button-quiet btn-hover color-3 json-example-btn",
+                                        style={"fontSize": "11px", "padding": "4px 10px"},
+                                    ),
+                                ],
+                                style={"display": "flex", "gap": "6px", "marginBottom": "8px"},
+                            ),
+                            html.Div(
+                                id="json-example-display",
+                                children=[
+                                    html.Pre(
+                                        _JSON_DEFAULT_EXAMPLE,
+                                        style={
+                                            "fontSize": "10px",
+                                            "fontFamily": "'Fira Code', monospace",
+                                            "backgroundColor": "rgba(0, 0, 0, 0.3)",
+                                            "color": "#8b949e",
+                                            "padding": "8px",
+                                            "borderRadius": "4px",
+                                            "overflow": "auto",
+                                            "maxHeight": "150px",
+                                            "whiteSpace": "pre-wrap",
+                                            "wordBreak": "break-word",
+                                        },
+                                    ),
+                                ],
+                            ),
+                        ],
+                    ),
+                ],
+                className="json-examples",
+            ),
+            html.Div(id="json-config-status", style={"marginTop": "6px"}),
+        ],
+        className="json-config-section",
+    )
+
+    # ── Collapsible: Core Parameters (Open by default) ──
+    core_params = [
+        html.Div(
+            [
+                control_group(
+                    "Oscillators",
+                    dcc.Input(
+                        id="n-oscillators",
+                        type="number",
+                        min=MIN_OSCILLATORS,
+                        max=MAX_OSCILLATORS,
+                        step=1,
+                        value=DEFAULTS["n_oscillators"],
+                    ),
+                ),
+                control_group(
+                    "Coupling K",
+                    dcc.Input(
+                        id="coupling",
+                        type="number",
+                        min=0,
+                        max=20,
+                        step=0.1,
+                        value=DEFAULTS["coupling"],
+                    ),
+                ),
+            ],
+            className="field-row",
+        ),
+        html.Div(
+            [
+                control_group(
+                    "Simulation time",
+                    dcc.Input(
+                        id="simulation-time",
+                        type="number",
+                        min=1,
+                        max=500,
+                        step=1,
+                        value=DEFAULTS["simulation_time"],
+                    ),
+                ),
+                control_group(
+                    "Time step",
+                    dcc.Input(
+                        id="dt",
+                        type="number",
+                        min=0.001,
+                        max=1.0,
+                        step=0.005,
+                        value=DEFAULTS["dt"],
+                    ),
+                ),
+            ],
+            className="field-row",
+        ),
+        control_group(
+            "Random seed",
+            dcc.Input(
+                id="seed",
+                type="number",
+                min=0,
+                max=999999,
+                step=1,
+                value=DEFAULTS["seed"],
+            ),
+            "Same seed = same dataset.",
+        ),
+        html.Div(
+            id="nyquist-warning-banner",
+            className="nyquist-banner nyquist-optimal",
+        ),
+    ]
+
+    # ── Collapsible: Network & Frequencies ──
+    network_freq_params = [
+        control_group(
+            "Network",
+            dcc.Dropdown(
+                id="network-type",
+                className="dash-dropdown",
+                options=[
+                    {"label": "All-to-All", "value": "All-to-All"},
+                    {"label": "Ring / Nearest Neighbor", "value": "Ring"},
+                    {"label": "Random Sparse", "value": "Random"},
+                    {"label": "Small-World (Watts-Strogatz)", "value": "Small-World"},
+                    {"label": "Tree of Life (Etz Hayim)", "value": "Tree of Life"},
+                    {"label": "Custom Adjacency Matrix", "value": "Custom Adjacency"},
+                ],
+                value=DEFAULTS["network_type"],
+                clearable=False,
+            ),
+        ),
+        control_group(
+            "Custom Adjacency Matrix (Rows/CSV/JSON)",
+            dcc.Textarea(
+                id="custom-adjacency",
+                value=DEFAULTS["custom_adjacency"],
+                placeholder="0 1 1\n1 0 1\n1 1 0",
+                style={"width": "100%", "height": "60px", "fontSize": "12px"},
+            ),
+            "Used when Custom Adjacency Matrix is selected.",
+        ),
+        control_group(
+            "Natural frequencies",
+            dcc.Dropdown(
+                id="frequency-distribution",
+                className="dash-dropdown",
+                options=[
+                    {"label": "Normal", "value": "Normal"},
+                    {"label": "Uniform", "value": "Uniform"},
+                    {"label": "Bimodal", "value": "Bimodal"},
+                    {"label": "Golden ratio sequence", "value": "Golden Ratio"},
+                    {"label": "Custom values", "value": "Custom"},
+                ],
+                value=DEFAULTS["frequency_distribution"],
+                clearable=False,
+            ),
+        ),
+        html.Div(
+            [
+                control_group(
+                    "Mean",
+                    dcc.Input(
+                        id="frequency-mean", type="number", step=0.1, value=0.0
+                    ),
+                ),
+                control_group(
+                    "Std. dev.",
+                    dcc.Input(
+                        id="frequency-std",
+                        type="number",
+                        min=0.01,
+                        step=0.1,
+                        value=1.0,
+                    ),
+                ),
+            ],
+            className="field-row",
+        ),
+        control_group(
+            "Custom values (comma-separated)",
+            dcc.Input(
+                id="custom-frequencies",
+                type="text",
+                value=DEFAULTS["custom_frequencies"],
+            ),
+            "Used when Custom values is selected.",
+        ),
+    ]
+
+    # ── Collapsible: Advanced Options ──
+    advanced_params = [
+        control_group(
+            "Numerical Integrator / Solver",
+            dcc.Dropdown(
+                id="solver",
+                options=solver_options,
+                value=DEFAULTS["solver"],
+                className="dash-dropdown solver-dropdown",
+                clearable=False,
+            ),
+            hint="Grouped by Classical, GA Mean-Field, Lie Group, and Quantum SCF paradigms.",
+        ),
+        # Conditional Adaptive Solver Controls Panel
+        html.Div(
+            id="adaptive-solver-panel",
+            children=[
+                html.Div(
+                    [
+                        html.P("Adaptive Lie Step Controls", className="eyebrow", style={"fontSize": "11px", "marginBottom": "4px"}),
+                        html.Div(
+                            [
+                                control_group(
+                                    "Rel Tol (rtol)",
+                                    dcc.Input(
+                                        id="adaptive-rtol",
+                                        type="number",
+                                        min=1e-12,
+                                        max=1e-1,
+                                        step=1e-6,
+                                        value=DEFAULTS.get("adaptive_rtol", 1e-5),
+                                    ),
+                                ),
+                                control_group(
+                                    "Abs Tol (atol)",
+                                    dcc.Input(
+                                        id="adaptive-atol",
+                                        type="number",
+                                        min=1e-12,
+                                        max=1e-1,
+                                        step=1e-8,
+                                        value=DEFAULTS.get("adaptive_atol", 1e-7),
+                                    ),
+                                ),
+                            ],
+                            className="field-row",
+                        ),
+                        html.Div(
+                            [
+                                control_group(
+                                    "dt min",
+                                    dcc.Input(
+                                        id="dt-min",
+                                        type="number",
+                                        min=1e-6,
+                                        max=0.1,
+                                        step=1e-4,
+                                        value=DEFAULTS.get("dt_min", 1e-4),
+                                    ),
+                                ),
+                                control_group(
+                                    "dt max",
+                                    dcc.Input(
+                                        id="dt-max",
+                                        type="number",
+                                        min=1e-3,
+                                        max=2.0,
+                                        step=0.01,
+                                        value=DEFAULTS.get("dt_max", 0.5),
+                                    ),
+                                ),
+                            ],
+                            className="field-row",
+                        ),
+                    ],
+                    className="solver-subpanel",
+                )
+            ],
+            style={"display": "none"},
+        ),
+        # Conditional Quantum Solver Controls Panel
+        html.Div(
+            id="quantum-solver-panel",
+            children=[
+                html.Div(
+                    [
+                        html.P("Quantum SCF & NISQ Noise", className="eyebrow", style={"fontSize": "11px", "marginBottom": "4px"}),
+                        control_group(
+                            "NISQ Projective Shots",
+                            dcc.Slider(
+                                id="shots-slider",
+                                min=128,
+                                max=8192,
+                                step=128,
+                                value=DEFAULTS.get("shots", 1024),
+                                marks={
+                                    128: "128",
+                                    1024: "1k",
+                                    2048: "2k",
+                                    4096: "4k",
+                                    8192: "8k",
+                                },
+                                tooltip={"placement": "bottom", "always_visible": False},
+                            ),
+                            "Simulates hardware shot noise on N-qubit state measurement.",
+                        ),
+                        html.Div(
+                            [
+                                html.Button(
+                                    "Export OpenQASM",
+                                    id="export-qasm-btn",
+                                    className="button button-secondary btn-hover color-9",
+                                    style={"width": "100%", "marginTop": "6px", "fontSize": "12px", "padding": "6px 12px"},
+                                ),
+                                dcc.Download(id="download-qasm"),
+                            ],
+                            style={"marginTop": "6px"},
+                        ),
+                        html.Div(
+                            id="qasm-viewer-container",
+                            children=[
+                                dcc.Textarea(
+                                    id="qasm-code-display",
+                                    readOnly=True,
+                                    style={
+                                        "width": "100%",
+                                        "height": "90px",
+                                        "fontSize": "11px",
+                                        "fontFamily": "monospace",
+                                        "backgroundColor": "rgba(10, 14, 24, 0.8)",
+                                        "color": "#00e8ff",
+                                        "border": "1px solid rgba(0, 232, 255, 0.2)",
+                                        "borderRadius": "4px",
+                                        "marginTop": "8px",
+                                        "display": "none",
+                                    },
+                                ),
+                            ],
+                        ),
+                    ],
+                    className="solver-subpanel",
+                )
+            ],
+            style={"display": "none"},
+        ),
+        html.Div(
+            id="rotor-symmetry-toggle-group",
+            children=[
+                dcc.Checklist(
+                    id="track-symmetries",
+                    options=[
+                        {
+                            "label": " Track Lie symmetries & U(1) Noether charges",
+                            "value": "track",
+                        }
+                    ],
+                    value=["track"] if DEFAULTS.get("track_symmetries", False) else [],
+                    className="symmetry-checklist",
+                    inputClassName="checklist-input",
+                ),
+            ],
+            className="field",
+            style={"marginTop": "-4px", "marginBottom": "12px"},
+        ),
+    ]
+
+    # ── Export Section ──
+    export_section = html.Div(
+        [
+            html.P("Benchmark export", className="eyebrow"),
+            html.P(
+                "The current run uses the benchmark-suite schema and can be downloaded "
+                "as a compressed NumPy archive.",
+                className="panel-note",
+            ),
+            html.Button(
+                "Download .npz dataset",
+                id="download-btn",
+                className="button button-secondary btn-hover color-4",
+            ),
+        ],
+        className="export-card",
+    )
 
     return html.Aside(
         [
@@ -34,333 +553,15 @@ def sidebar_controls() -> html.Aside:
                 ],
                 className="panel-heading",
             ),
-            control_group(
-                "Network",
-                dcc.Dropdown(
-                    id="network-type",
-                    className="dash-dropdown",
-                    options=[
-                        {"label": "All-to-All", "value": "All-to-All"},
-                        {"label": "Ring / Nearest Neighbor", "value": "Ring"},
-                        {"label": "Random Sparse", "value": "Random"},
-                        {
-                            "label": "Small-World (Watts-Strogatz)",
-                            "value": "Small-World",
-                        },
-                        {"label": "Tree of Life (Etz Hayim)", "value": "Tree of Life"},
-                        {
-                            "label": "Custom Adjacency Matrix",
-                            "value": "Custom Adjacency",
-                        },
-                    ],
-                    value=DEFAULTS["network_type"],
-                    clearable=False,
-                ),
-            ),
-            control_group(
-                "Custom Adjacency Matrix (Rows/CSV/JSON)",
-                dcc.Textarea(
-                    id="custom-adjacency",
-                    value=DEFAULTS["custom_adjacency"],
-                    placeholder="0 1 1\n1 0 1\n1 1 0",
-                    style={"width": "100%", "height": "60px", "fontSize": "12px"},
-                ),
-                "Used when Custom Adjacency Matrix is selected.",
-            ),
-            html.Div(
-                [
-                    control_group(
-                        "Oscillators",
-                        dcc.Input(
-                            id="n-oscillators",
-                            type="number",
-                            min=MIN_OSCILLATORS,
-                            max=MAX_OSCILLATORS,
-                            step=1,
-                            value=DEFAULTS["n_oscillators"],
-                        ),
-                    ),
-                    control_group(
-                        "Coupling K",
-                        dcc.Input(
-                            id="coupling",
-                            type="number",
-                            min=0,
-                            max=20,
-                            step=0.1,
-                            value=DEFAULTS["coupling"],
-                        ),
-                    ),
-                ],
-                className="field-row",
-            ),
-            html.Div(
-                [
-                    control_group(
-                        "Simulation time",
-                        dcc.Input(
-                            id="simulation-time",
-                            type="number",
-                            min=1,
-                            max=500,
-                            step=1,
-                            value=DEFAULTS["simulation_time"],
-                        ),
-                    ),
-                    control_group(
-                        "Time step",
-                        dcc.Input(
-                            id="dt",
-                            type="number",
-                            min=0.001,
-                            max=1.0,
-                            step=0.005,
-                            value=DEFAULTS["dt"],
-                        ),
-                    ),
-                ],
-                className="field-row",
-            ),
-            html.Div(
-                id="nyquist-warning-banner",
-                className="nyquist-banner nyquist-optimal",
-            ),
-            control_group(
-                "Numerical Integrator / Solver",
-                dcc.Dropdown(
-                    id="solver",
-                    options=solver_options,
-                    value=DEFAULTS["solver"],
-                    className="dash-dropdown solver-dropdown",
-                    clearable=False,
-                ),
-                hint="Grouped by Classical, GA Mean-Field, Lie Group, and Quantum SCF paradigms.",
-            ),
-            # Conditional Adaptive Solver Controls Panel
-            html.Div(
-                id="adaptive-solver-panel",
-                children=[
-                    html.Div(
-                        [
-                            html.P("Adaptive Lie Step Controls", className="eyebrow", style={"fontSize": "11px", "marginBottom": "4px"}),
-                            html.Div(
-                                [
-                                    control_group(
-                                        "Rel Tol (rtol)",
-                                        dcc.Input(
-                                            id="adaptive-rtol",
-                                            type="number",
-                                            min=1e-12,
-                                            max=1e-1,
-                                            step=1e-6,
-                                            value=DEFAULTS.get("adaptive_rtol", 1e-5),
-                                        ),
-                                    ),
-                                    control_group(
-                                        "Abs Tol (atol)",
-                                        dcc.Input(
-                                            id="adaptive-atol",
-                                            type="number",
-                                            min=1e-12,
-                                            max=1e-1,
-                                            step=1e-8,
-                                            value=DEFAULTS.get("adaptive_atol", 1e-7),
-                                        ),
-                                    ),
-                                ],
-                                className="field-row",
-                            ),
-                            html.Div(
-                                [
-                                    control_group(
-                                        "dt min",
-                                        dcc.Input(
-                                            id="dt-min",
-                                            type="number",
-                                            min=1e-6,
-                                            max=0.1,
-                                            step=1e-4,
-                                            value=DEFAULTS.get("dt_min", 1e-4),
-                                        ),
-                                    ),
-                                    control_group(
-                                        "dt max",
-                                        dcc.Input(
-                                            id="dt-max",
-                                            type="number",
-                                            min=1e-3,
-                                            max=2.0,
-                                            step=0.01,
-                                            value=DEFAULTS.get("dt_max", 0.5),
-                                        ),
-                                    ),
-                                ],
-                                className="field-row",
-                            ),
-                        ],
-                        className="solver-subpanel",
-                    )
-                ],
-                style={"display": "none"},
-            ),
-            # Conditional Quantum Solver Controls Panel
-            html.Div(
-                id="quantum-solver-panel",
-                children=[
-                    html.Div(
-                        [
-                            html.P("Quantum SCF & NISQ Noise", className="eyebrow", style={"fontSize": "11px", "marginBottom": "4px"}),
-                            control_group(
-                                "NISQ Projective Shots",
-                                dcc.Slider(
-                                    id="shots-slider",
-                                    min=128,
-                                    max=8192,
-                                    step=128,
-                                    value=DEFAULTS.get("shots", 1024),
-                                    marks={
-                                        128: "128",
-                                        1024: "1k",
-                                        2048: "2k",
-                                        4096: "4k",
-                                        8192: "8k",
-                                    },
-                                    tooltip={"placement": "bottom", "always_visible": False},
-                                ),
-                                "Simulates hardware shot noise on N-qubit state measurement.",
-                            ),
-                            html.Div(
-                                [
-                                    html.Button(
-                                        "Export OpenQASM",
-                                        id="export-qasm-btn",
-                                        className="button button-secondary btn-hover color-9",
-                                        style={"width": "100%", "marginTop": "6px", "fontSize": "12px", "padding": "6px 12px"},
-                                    ),
-                                    dcc.Download(id="download-qasm"),
-                                ],
-                                style={"marginTop": "6px"},
-                            ),
-                            html.Div(
-                                id="qasm-viewer-container",
-                                children=[
-                                    dcc.Textarea(
-                                        id="qasm-code-display",
-                                        readOnly=True,
-                                        style={
-                                            "width": "100%",
-                                            "height": "90px",
-                                            "fontSize": "11px",
-                                            "fontFamily": "monospace",
-                                            "backgroundColor": "rgba(10, 14, 24, 0.8)",
-                                            "color": "#00e8ff",
-                                            "border": "1px solid rgba(0, 232, 255, 0.2)",
-                                            "borderRadius": "4px",
-                                            "marginTop": "8px",
-                                            "display": "none",
-                                        },
-                                    ),
-                                ],
-                            ),
-                        ],
-                        className="solver-subpanel",
-                    )
-                ],
-                style={"display": "none"},
-            ),
-            html.Div(
-                id="rotor-symmetry-toggle-group",
-                children=[
-                    dcc.Checklist(
-                        id="track-symmetries",
-                        options=[
-                            {
-                                "label": " Track Lie symmetries & U(1) Noether charges",
-                                "value": "track",
-                            }
-                        ],
-                        value=["track"] if DEFAULTS.get("track_symmetries", False) else [],
-                        className="symmetry-checklist",
-                        inputClassName="checklist-input",
-                    ),
-                ],
-                className="field",
-                style={"marginTop": "-4px", "marginBottom": "12px"},
-            ),
-            control_group(
-                "Natural frequencies",
-                dcc.Dropdown(
-                    id="frequency-distribution",
-                    className="dash-dropdown",
-                    options=[
-                        {"label": "Normal", "value": "Normal"},
-                        {"label": "Uniform", "value": "Uniform"},
-                        {"label": "Bimodal", "value": "Bimodal"},
-                        {"label": "Golden ratio sequence", "value": "Golden Ratio"},
-                        {"label": "Custom values", "value": "Custom"},
-                    ],
-                    value=DEFAULTS["frequency_distribution"],
-                    clearable=False,
-                ),
-            ),
-            html.Div(
-                [
-                    control_group(
-                        "Mean",
-                        dcc.Input(
-                            id="frequency-mean", type="number", step=0.1, value=0.0
-                        ),
-                    ),
-                    control_group(
-                        "Std. dev.",
-                        dcc.Input(
-                            id="frequency-std",
-                            type="number",
-                            min=0.01,
-                            step=0.1,
-                            value=1.0,
-                        ),
-                    ),
-                ],
-                className="field-row",
-            ),
-            control_group(
-                "Custom values (comma-separated)",
-                dcc.Input(
-                    id="custom-frequencies",
-                    type="text",
-                    value=DEFAULTS["custom_frequencies"],
-                ),
-                "Used when Custom values is selected.",
-            ),
-            control_group(
-                "Random seed",
-                dcc.Input(
-                    id="seed",
-                    type="number",
-                    min=0,
-                    max=999999,
-                    step=1,
-                    value=DEFAULTS["seed"],
-                ),
-                "Same seed = same dataset.",
-            ),
-            html.Div(
-                [
-                    html.P("Benchmark export", className="eyebrow"),
-                    html.P(
-                        "The current run uses the benchmark-suite schema and can be downloaded "
-                        "as a compressed NumPy archive.",
-                        className="panel-note",
-                    ),
-                    html.Button(
-                        "Download .npz dataset",
-                        id="download-btn",
-                        className="button button-secondary btn-hover color-4",
-                    ),
-                ],
-                className="export-card",
-            ),
+            # JSON Config at the top
+            json_config_section,
+            html.Hr(style={"borderColor": "rgba(255,255,255,0.08)", "margin": "12px 0"}),
+            # Collapsible sections
+            _collapsible_section("Core Parameters", core_params, default_open=True, section_id="core"),
+            _collapsible_section("Network & Frequencies", network_freq_params, default_open=False, section_id="network"),
+            _collapsible_section("Advanced Options", advanced_params, default_open=False, section_id="advanced"),
+            html.Hr(style={"borderColor": "rgba(255,255,255,0.08)", "margin": "12px 0"}),
+            export_section,
         ],
         className="control-panel",
     )

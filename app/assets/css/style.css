@@ -1644,6 +1644,154 @@ div[data-tab-parent],
 }
 
 /* ==============================================================================
+* 5️⃣ JSON CONFIG & COLLAPSIBLE SECTIONS
+* ============================================================================== */
+
+/* JSON Config Section */
+.json-config-section {
+  margin-bottom: 8px;
+}
+
+.json-textarea {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.json-textarea:focus {
+  border-color: rgba(0, 232, 255, 0.5) !important;
+  box-shadow: 0 0 12px rgba(0, 232, 255, 0.2);
+  outline: none;
+}
+
+/* JSON Examples */
+.json-examples {
+  margin-top: 8px;
+  margin-bottom: 4px;
+}
+
+.json-examples-summary {
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: background 0.2s ease;
+  list-style: none;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.json-examples-summary:hover {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.json-examples-summary::-webkit-details-marker {
+  display: none;
+}
+
+.json-examples-summary::before {
+  content: "▸ ";
+  transition: transform 0.2s ease;
+}
+
+.json-examples[open] > .json-examples-summary::before {
+  content: "▾ ";
+}
+
+.json-example-btn {
+  transition: all 0.2s ease;
+}
+
+.json-example-btn:hover {
+  background: rgba(0, 232, 255, 0.15);
+  border-color: rgba(0, 232, 255, 0.4);
+}
+
+/* Collapsible Sections */
+.collapsible-section {
+  margin-bottom: 6px;
+}
+
+.collapse-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  color: var(--ink);
+  font-family: "Aclonica", sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.collapse-toggle:hover {
+  background: rgba(0, 0, 0, 0.55);
+  border-color: rgba(0, 232, 255, 0.25);
+}
+
+.collapse-icon {
+  font-size: 10px;
+  color: var(--cyan);
+  transition: transform 0.2s ease;
+  min-width: 12px;
+}
+
+.collapse-title {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.collapse-content {
+  padding: 8px 10px;
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.2s ease;
+}
+
+/* Hero Solver Selector */
+.hero-solver-selector {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  margin: 12px 0;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1.5px solid rgba(0, 232, 255, 0.3);
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 232, 255, 0.15),
+              inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  max-width: 500px;
+}
+
+.hero-solver-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--cyan-bright);
+  text-shadow: 0 0 10px rgba(0, 232, 255, 0.5);
+  white-space: nowrap;
+}
+
+.hero-solver-dropdown {
+  flex: 1;
+  min-width: 200px;
+}
+
+.hero-solver-dropdown .dash-dropdown {
+  background: rgba(0, 0, 0, 0.5) !important;
+  border: 1px solid rgba(0, 232, 255, 0.25) !important;
+  border-radius: 6px !important;
+  color: var(--ink) !important;
+  font-family: "Aclonica", sans-serif !important;
+  font-size: 13px !important;
+  padding: 6px 10px !important;
+}
+
+/* ==============================================================================
  * 6️⃣ RESPONSIVE BREAKPOINTS
  * ============================================================================== */
 
@@ -1652,6 +1800,7 @@ div[data-tab-parent],
   .control-panel { position: static; }
   .hero { align-items: start; flex-direction: column; }
   .equation-card { width: 100%; max-width: none; }
+  .hero-solver-selector { max-width: 100%; flex-direction: column; align-items: stretch; }
 }
 
 @media (max-width: 700px) {
@@ -1662,6 +1811,8 @@ div[data-tab-parent],
   .chart-grid, .chart-grid-top { grid-template-columns: 1fr; }
   .metric-grid { grid-template-columns: 1fr 1fr; }
   .hero h2 { font-size: 34px; }
+  .hero-solver-selector { padding: 10px 14px; }
+  .hero-solver-label { font-size: 12px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
