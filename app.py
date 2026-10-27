@@ -18,4 +18,8 @@ if "__path__" not in globals():
 from app.app import app, server
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    import os
+    host = os.environ.get("HOST", "0.0.0.0")
+    port = int(os.environ.get("PORT", "7860"))  # Hugging Face Spaces uses 7860
+    debug = os.environ.get("DEBUG", "false").lower() == "true"
+    app.run(host=host, port=port, debug=debug)

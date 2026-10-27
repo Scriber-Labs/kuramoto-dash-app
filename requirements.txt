@@ -6,3 +6,4 @@ networkx>=3.0
 pandas>=2.0.0
 matplotlib>=3.8.0
 gunicorn>=23.0.0
+kuramoto-benchmark-suite>=2.0.0

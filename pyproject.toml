@@ -30,8 +30,10 @@ where = ["."]
 include = ["app*"]
 exclude = ["assets*", "notebooks*", "docs*", "tests*"]
 
-[tool.uv.sources]
-kuramoto-benchmark-suite = { path = "../kuramoto-benchmark-suite", editable = true }
+# kuramoto-benchmark-suite is now installed from PyPI: pip install kuramoto-benchmark-suite
+# Remove this section if you need to switch back to local development:
+# [tool.uv.sources]
+# kuramoto-benchmark-suite = { path = "../kuramoto-benchmark-suite", editable = true }
 
 [dependency-groups]
 dev = [

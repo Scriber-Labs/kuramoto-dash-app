@@ -7,13 +7,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="036a4c8f-8947-4828-9ec4-48c52b6531ba" name="Changes" comment="Refactor service module structure: move services to `components/services` directory">
-      <changelist_data name="Sofia Scriber" email="sofiashriver@gmail.com" automatic="false" />
+    <list default="true" id="036a4c8f-8947-4828-9ec4-48c52b6531ba" name="Changes" comment="&quot;Add JSON config import/export and collapsible UI sections with callbacks and styling&quot;">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/assets/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/app/assets/css/style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/callbacks/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/callbacks/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/components/cards.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/components/cards.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/components/controls.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/components/controls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pyproject.toml" beforeDir="false" afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,61 +29,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.3278363462113727" />
-      <entry key="MS500" value="3.289930518555327" />
-      <entry key="S2" value="7.626583343891765" />
-      <entry key="S5" value="12.112846171908863" />
-      <entry key="S10" value="14.925045359623155" />
-      <entry key="S30" value="17.47422134163961" />
-      <entry key="S60" value="19.027778749266904" />
-      <entry key="M2" value="27.06399652063574" />
-      <entry key="M5" value="69.80478225092992" />
-      <entry key="M10" value="139.66799710053064" />
-      <entry key="M15" value="186.95442027283505" />
-      <entry key="M30" value="257.97865510878876" />
-      <entry key="H1" value="318.41023827352194" />
-      <entry key="H2" value="424.8002453986558" />
-      <entry key="H4" value="597.8941506864282" />
-      <entry key="D1" value="946.9494753625255" />
-      <entry key="W1" value="1042.6260008920142" />
+      <entry key="MS100" value="1.1528532187619378" />
+      <entry key="MS500" value="1.9028320831661536" />
+      <entry key="S2" value="3.4847607050012153" />
+      <entry key="S5" value="5.183459497986323" />
+      <entry key="S10" value="7.28367846618615" />
+      <entry key="S30" value="10.406941781183908" />
+      <entry key="S60" value="12.466892946016724" />
+      <entry key="M2" value="22.015134952823974" />
+      <entry key="M5" value="64.04466502227746" />
+      <entry key="M10" value="131.48614886381725" />
+      <entry key="M15" value="188.68927108955737" />
+      <entry key="M30" value="296.6621339248618" />
+      <entry key="H1" value="395.96995308363455" />
+      <entry key="H2" value="525.9975924223353" />
+      <entry key="H4" value="713.7340334198014" />
+      <entry key="D1" value="1087.3273271693045" />
+      <entry key="W1" value="1190.2726731673374" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
       <entry key="MS500" value="0.0" />
-      <entry key="S2" value="3.2536304732562606E-194" />
-      <entry key="S5" value="4.026681605589962E-78" />
-      <entry key="S10" value="2.006659314779151E-39" />
-      <entry key="S30" value="1.2613178692081808E-13" />
-      <entry key="S60" value="3.5515037226619696E-7" />
-      <entry key="M2" value="5.959449406331063E-4" />
-      <entry key="M5" value="0.051295876473903546" />
-      <entry key="M10" value="0.22648592996895744" />
-      <entry key="M15" value="0.37155874298079566" />
-      <entry key="M30" value="0.6095561852534964" />
-      <entry key="H1" value="0.780740792615253" />
-      <entry key="H2" value="0.8835953783351586" />
-      <entry key="H4" value="0.9399975416644223" />
-      <entry key="D1" value="0.9897399935136637" />
-      <entry key="W1" value="0.9985277985872837" />
+      <entry key="S2" value="0.0" />
+      <entry key="S5" value="1.6332996247656215E-142" />
+      <entry key="S10" value="1.2780061129609705E-71" />
+      <entry key="S30" value="2.3379989424549206E-24" />
+      <entry key="S60" value="1.5290516480665168E-12" />
+      <entry key="M2" value="1.236548279715157E-6" />
+      <entry key="M5" value="0.004333955332961515" />
+      <entry key="M10" value="0.06583278311723975" />
+      <entry key="M15" value="0.1630402416477166" />
+      <entry key="M30" value="0.40378241869565934" />
+      <entry key="H1" value="0.635438760775306" />
+      <entry key="H2" value="0.7971441279814511" />
+      <entry key="H4" value="0.8928292826635119" />
+      <entry key="D1" value="0.9812840450760939" />
+      <entry key="W1" value="0.9973045941658977" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="1.2847804236107827" />
-      <entry key="MS500" value="3.269850260761485" />
-      <entry key="S2" value="7.61036812935546" />
-      <entry key="S5" value="12.098300429284246" />
-      <entry key="S10" value="14.914821650787282" />
-      <entry key="S30" value="17.469866402875827" />
-      <entry key="S60" value="19.025383359022833" />
-      <entry key="M2" value="27.062973358923234" />
-      <entry key="M5" value="69.85416366061233" />
-      <entry key="M10" value="139.89227083558706" />
-      <entry key="M15" value="187.32391550606425" />
-      <entry key="M30" value="258.5867331644862" />
-      <entry key="H1" value="319.190056953881" />
-      <entry key="H2" value="425.6831977284227" />
-      <entry key="H4" value="598.833639815714" />
-      <entry key="D1" value="947.9390550457712" />
-      <entry key="W1" value="1043.624502557347" />
+      <entry key="MS100" value="1.0982519396602817" />
+      <entry key="MS500" value="1.8848300283100687" />
+      <entry key="S2" value="3.47701772405519" />
+      <entry key="S5" value="5.178866172658877" />
+      <entry key="S10" value="7.280386425160989" />
+      <entry key="S30" value="10.405336114458104" />
+      <entry key="S60" value="12.465902485731275" />
+      <entry key="M2" value="22.01412414626585" />
+      <entry key="M5" value="64.04758027807762" />
+      <entry key="M10" value="131.5503069782301" />
+      <entry key="M15" value="188.85058652492395" />
+      <entry key="M30" value="297.06444704968646" />
+      <entry key="H1" value="396.6043728676879" />
+      <entry key="H2" value="526.7940158656382" />
+      <entry key="H4" value="714.6263078856338" />
+      <entry key="D1" value="1088.3084400545213" />
+      <entry key="W1" value="1191.2699499088756" />
     </decayedShown>
   </component>
   <component name="ProblemsViewState">
@@ -340,7 +336,15 @@
       <option name="project" value="LOCAL" />
       <updated>1792877452465</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="&quot;Add JSON config import/export and collapsible UI sections with callbacks and styling&quot;">
+      <option name="closed" value="true" />
+      <created>1793103407430</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1793103407430</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -354,7 +358,8 @@
     <MESSAGE value="Enhance telemetry, metrics UI, and visualizations. Added history-based trailing dots to unit circle plots, revamped metric cards with richer data display and PyCharm-inspired styling, updated colorscales, and improved CSS for dropdowns and buttons." />
     <MESSAGE value="Refactor service module structure: move services to `components/services` directory" />
     <MESSAGE value="Add WSGI deployment support, Plotly Cloud configuration, and dark-themed CSS styling for Kuramoto Lab." />
-    <option name="LAST_COMMIT_MESSAGE" value="Add WSGI deployment support, Plotly Cloud configuration, and dark-themed CSS styling for Kuramoto Lab." />
+    <MESSAGE value="&quot;Add JSON config import/export and collapsible UI sections with callbacks and styling&quot;" />
+    <option name="LAST_COMMIT_MESSAGE" value="&quot;Add JSON config import/export and collapsible UI sections with callbacks and styling&quot;" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
