@@ -645,7 +645,7 @@ wheels = [
 [[package]]
 name = "kuramoto-benchmark-suite"
 version = "2.0.0"
-source = { editable = "../kuramoto-benchmark-suite" }
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
     { name = "clifford" },
@@ -657,24 +657,10 @@ dependencies = [
     { name = "sympy" },
     { name = "tabulate" },
 ]
-
-[package.metadata]
-requires-dist = [
-    { name = "black", marker = "extra == 'dev'", specifier = ">=23.0" },
-    { name = "click", specifier = ">=8.0" },
-    { name = "clifford", specifier = ">=1.5.1" },
-    { name = "ipykernel", marker = "extra == 'dev'", specifier = ">=6.0" },
-    { name = "matplotlib", specifier = ">=3.5" },
-    { name = "networkx", specifier = ">=3.0" },
-    { name = "numpy", specifier = ">=1.23" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = ">=7.0" },
-    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.1.0" },
-    { name = "scipy", specifier = ">=1.10" },
-    { name = "seaborn", specifier = ">=0.12" },
-    { name = "sympy", specifier = ">=1.12" },
-    { name = "tabulate", specifier = ">=0.9" },
+sdist = { url = "https://files.pythonhosted.org/packages/d4/3d/4cb9a0fbf75830a71438ca6378674a8c4259098906c00f897a6d1d9194fe/kuramoto_benchmark_suite-2.0.0.tar.gz", hash = "sha256:0a121765062ea6acb917913f2aeb9653887790ce5f02f5139f7b0d4bef108f0a", size = 88953, upload-time = "2026-10-27T12:37:40.799Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/36/07/d5986deda7370acb5cdc55c1f3b95ac2051875dce287d02225665bce6914/kuramoto_benchmark_suite-2.0.0-py3-none-any.whl", hash = "sha256:c670982ce8b9f0072dadc0317855a959eb47d2031e83356a43d416ad571228a0", size = 93664, upload-time = "2026-10-27T12:37:39.277Z" },
 ]
-provides-extras = ["dev"]
 
 [[package]]
 name = "kuramoto-dash-app"
@@ -702,7 +688,7 @@ dev = [
 requires-dist = [
     { name = "black", specifier = ">=26.5.1" },
     { name = "dash", specifier = ">=4.4.1" },
-    { name = "kuramoto-benchmark-suite", editable = "../kuramoto-benchmark-suite" },
+    { name = "kuramoto-benchmark-suite" },
     { name = "matplotlib", specifier = ">=3.11.2" },
     { name = "networkx", specifier = ">=3.7" },
     { name = "numpy", specifier = ">=2.5.3" },

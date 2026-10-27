@@ -7,7 +7,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="036a4c8f-8947-4828-9ec4-48c52b6531ba" name="Changes" comment="Migrate `kuramoto-benchmark-suite` to PyPI, add environment variable support for `app.run`, and update dependencies." />
+    <list default="true" id="036a4c8f-8947-4828-9ec4-48c52b6531ba" name="Changes" comment="Update default port to 10000 for Render.com and improve `workspace.xml` metadata consistency">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/solvers.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/solvers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uv.lock" beforeDir="false" afterPath="$PROJECT_DIR$/uv.lock" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -26,61 +30,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0677404683811633" />
-      <entry key="MS500" value="2.1632937408029447" />
-      <entry key="S2" value="4.513328809261354" />
-      <entry key="S5" value="6.1456988860793" />
-      <entry key="S10" value="7.032215955387136" />
-      <entry key="S30" value="12.365847674602383" />
-      <entry key="S60" value="22.403769281484692" />
-      <entry key="M2" value="33.859373955786225" />
-      <entry key="M5" value="52.4392980825481" />
-      <entry key="M10" value="95.36987961723585" />
-      <entry key="M15" value="144.82199880917182" />
-      <entry key="M30" value="261.92196170272445" />
-      <entry key="H1" value="386.0069045725773" />
-      <entry key="H2" value="535.8405761667019" />
-      <entry key="H4" value="737.2108702412731" />
-      <entry key="D1" value="1133.4569240037274" />
-      <entry key="W1" value="1243.0385816472142" />
+      <entry key="MS100" value="1.0781184645021238" />
+      <entry key="MS500" value="1.7873935721734853" />
+      <entry key="S2" value="3.2793793786996117" />
+      <entry key="S5" value="4.754322090198638" />
+      <entry key="S10" value="5.6745628912924415" />
+      <entry key="S30" value="6.5844029945171325" />
+      <entry key="S60" value="8.116521379175671" />
+      <entry key="M2" value="12.872154701772864" />
+      <entry key="M5" value="28.17228842859717" />
+      <entry key="M10" value="59.869824121643234" />
+      <entry key="M15" value="98.967804998644" />
+      <entry key="M30" value="214.41655462379043" />
+      <entry key="H1" value="363.48891899614694" />
+      <entry key="H2" value="540.565982498328" />
+      <entry key="H4" value="763.164899795158" />
+      <entry key="D1" value="1195.7540113287794" />
+      <entry key="W1" value="1316.0444956874182" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
       <entry key="MS500" value="0.0" />
       <entry key="S2" value="0.0" />
-      <entry key="S5" value="8.979497375366129E-197" />
-      <entry key="S10" value="9.476020987400812E-99" />
-      <entry key="S30" value="2.1161283457116685E-33" />
-      <entry key="S60" value="4.600139504092982E-17" />
-      <entry key="M2" value="6.782432826127334E-9" />
-      <entry key="M5" value="5.401995280968236E-4" />
-      <entry key="M10" value="0.02324219284183028" />
-      <entry key="M15" value="0.08144255694021697" />
-      <entry key="M30" value="0.285381423607454" />
-      <entry key="H1" value="0.5342110290956678" />
-      <entry key="H2" value="0.7308974135237242" />
-      <entry key="H4" value="0.8549253847697551" />
-      <entry key="D1" value="0.9742147531577462" />
-      <entry key="W1" value="0.9962750244475992" />
+      <entry key="S5" value="8.58452597894334E-279" />
+      <entry key="S10" value="9.265271706185012E-140" />
+      <entry key="S30" value="4.5250083666294075E-47" />
+      <entry key="S60" value="6.726818242400667E-24" />
+      <entry key="M2" value="2.593611043005601E-12" />
+      <entry key="M5" value="2.3203950944506758E-5" />
+      <entry key="M10" value="0.004817047949160038" />
+      <entry key="M15" value="0.028522481878921327" />
+      <entry key="M30" value="0.16888600261395662" />
+      <entry key="H1" value="0.41095742189910095" />
+      <entry key="H2" value="0.6410596086941543" />
+      <entry key="H4" value="0.8006619815466095" />
+      <entry key="D1" value="0.9636253161758609" />
+      <entry key="W1" value="0.9947207365387065" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="1.023264910684954" />
-      <entry key="MS500" value="2.1404083418912827" />
-      <entry key="S2" value="4.499795691859004" />
-      <entry key="S5" value="6.138187560145897" />
-      <entry key="S10" value="7.027903059847229" />
-      <entry key="S30" value="12.363353203386191" />
-      <entry key="S60" value="22.401528293245047" />
-      <entry key="M2" value="33.85768517807081" />
-      <entry key="M5" value="52.438774899251875" />
-      <entry key="M10" value="95.39204255666249" />
-      <entry key="M15" value="144.9022436932246" />
-      <entry key="M30" value="262.2061310385225" />
-      <entry key="H1" value="386.5401706953264" />
-      <entry key="H2" value="536.5707682947948" />
-      <entry key="H4" value="738.0652420246294" />
-      <entry key="D1" value="1134.430965094152" />
-      <entry key="W1" value="1244.0348283137675" />
+      <entry key="MS100" value="1.0403549466799749" />
+      <entry key="MS500" value="1.772919075373527" />
+      <entry key="S2" value="3.272019396711327" />
+      <entry key="S5" value="4.749731156057719" />
+      <entry key="S10" value="5.671735827040594" />
+      <entry key="S30" value="6.58328711329421" />
+      <entry key="S60" value="8.115844169761102" />
+      <entry key="M2" value="12.871638055630887" />
+      <entry key="M5" value="28.171858828504476" />
+      <entry key="M10" value="59.87409745319075" />
+      <entry key="M15" value="98.99564836018907" />
+      <entry key="M30" value="214.58456100864936" />
+      <entry key="H1" value="363.89905781982526" />
+      <entry key="H2" value="541.206374642643" />
+      <entry key="H4" value="763.9650180706017" />
+      <entry key="D1" value="1196.7174605456498" />
+      <entry key="W1" value="1317.0391874896202" />
     </decayedShown>
   </component>
   <component name="ProblemsViewState">
@@ -349,7 +353,15 @@
       <option name="project" value="LOCAL" />
       <updated>1793104749233</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Update default port to 10000 for Render.com and improve `workspace.xml` metadata consistency">
+      <option name="closed" value="true" />
+      <created>1793105089579</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1793105089579</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -365,7 +377,8 @@
     <MESSAGE value="Add WSGI deployment support, Plotly Cloud configuration, and dark-themed CSS styling for Kuramoto Lab." />
     <MESSAGE value="&quot;Add JSON config import/export and collapsible UI sections with callbacks and styling&quot;" />
     <MESSAGE value="Migrate `kuramoto-benchmark-suite` to PyPI, add environment variable support for `app.run`, and update dependencies." />
-    <option name="LAST_COMMIT_MESSAGE" value="Migrate `kuramoto-benchmark-suite` to PyPI, add environment variable support for `app.run`, and update dependencies." />
+    <MESSAGE value="Update default port to 10000 for Render.com and improve `workspace.xml` metadata consistency" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update default port to 10000 for Render.com and improve `workspace.xml` metadata consistency" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

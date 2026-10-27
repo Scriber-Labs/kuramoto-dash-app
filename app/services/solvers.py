@@ -352,6 +352,10 @@ class SolverRegistry:
                 if "dt_max" in kwargs:
                     sim_kwargs["dt_max"] = kwargs["dt_max"]
 
+                # Pass dt_internal to avoid excessive sub-stepping.
+                # Use the output dt directly instead of 0.1 * dt to reduce sub-steps by 10x.
+                sim_kwargs["dt_internal"] = dt
+
                 times, phases = solver.simulate(
                     K=k_coupling,
                     t_eval=t_eval,
