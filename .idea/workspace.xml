@@ -7,14 +7,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="036a4c8f-8947-4828-9ec4-48c52b6531ba" name="Changes" comment="Enhance slider UI with inline time display, optimize Kuramoto model sub-stepping with `dt_internal`, and refine workspace metadata.">
-      <change afterPath="$PROJECT_DIR$/assets/images/ember.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/images/moon.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/images/orb.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/kuramoto-dash-app.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/kuramoto-dash-app.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/css/style.css" afterDir="false" />
-    </list>
+    <list default="true" id="036a4c8f-8947-4828-9ec4-48c52b6531ba" name="Changes" comment="Enhance slider UI with inline time display, optimize Kuramoto model sub-stepping with `dt_internal`, and refine workspace metadata." />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -417,7 +410,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1791510221867</updated>
-      <workItem from="1793240957424" duration="1520000" />
+      <workItem from="1793240957424" duration="2190000" />
     </task>
     <task id="LOCAL-00001" summary="Add project setup files, design tokens, and developer guidelines.">
       <option name="closed" value="true" />
@@ -507,7 +500,15 @@
       <option name="project" value="LOCAL" />
       <updated>1793110539438</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="Enhance slider UI with inline time display, optimize Kuramoto model sub-stepping with `dt_internal`, and refine workspace metadata.">
+      <option name="closed" value="true" />
+      <created>1793242567258</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1793242567258</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
